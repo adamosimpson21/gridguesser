@@ -13,6 +13,17 @@ const config: Phaser.Types.Core.GameConfig = {
     height: 768,
     parent: 'game-container',
     backgroundColor: '#028af8',
+    physics: {
+        default: 'arcade',
+        arcade: {
+            debug: false,
+        },
+    },
+    render: {
+        antialiasGL: false,
+        pixelArt: true,
+    }, 
+    autoFocus: true,
     scene: [
         Boot,
         Preloader,
