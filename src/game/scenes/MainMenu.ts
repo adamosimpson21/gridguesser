@@ -7,6 +7,8 @@ export class MainMenu extends Scene
     background: GameObjects.Image;
     logo: GameObjects.Image;
     title: GameObjects.Text;
+    overworldButton: GameObjects.Text;
+    fightSceneButton: GameObjects.Text;
     logoTween: Phaser.Tweens.Tween | null;
 
     constructor ()
@@ -18,13 +20,27 @@ export class MainMenu extends Scene
     {
         this.background = this.add.image(512, 384, 'background');
 
-        this.logo = this.add.image(512, 300, 'logo').setDepth(100);
+        this.title = this.add.text(512, 250, 'Grid Guesser', {
+            fontFamily: 'Arial Black', fontSize: 56, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 8,
+            align: 'center'
+        }).setOrigin(0.5).setDepth(100);
 
-        this.title = this.add.text(512, 460, 'Main Menu', {
+        this.overworldButton = this.add.text(512, 460, 'Go to Overworld', {
             fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
             stroke: '#000000', strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
+        this.overworldButton.setInteractive();
+        this.overworldButton.on('pointerdown', () => this.scene.start('Overworld'))
+
+        this.fightSceneButton = this.add.text(512, 520, 'Go to Fight Page', {
+            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 8,
+            align: 'center'
+        }).setOrigin(0.5).setDepth(100);
+        this.fightSceneButton.setInteractive();
+        this.fightSceneButton.on('pointerdown', () => this.scene.start('Game'))
 
         EventBus.emit('current-scene-ready', this);
     }
