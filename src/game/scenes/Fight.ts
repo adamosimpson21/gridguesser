@@ -2,7 +2,7 @@ import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
 import Grid from '../classes/Grid'
 
-export class Game extends Scene
+export class Fight extends Scene
 {
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
@@ -12,7 +12,7 @@ export class Game extends Scene
 
     constructor ()
     {
-        super('Game');
+        super('Fight');
     }
 
     
@@ -31,9 +31,9 @@ export class Game extends Scene
         //     align: 'center'
         // }).setOrigin(0.5).setDepth(100);
         
-        const gridWidth = 20;
-        const gridHeight = 28;
-        const numBombs = 30
+        const gridWidth = 8;
+        const gridHeight = 8;
+        const numBombs = 4   
         this.grid = new Grid(this, gridWidth, gridHeight, numBombs)
 
         // this.mine = this.add.image(200, 200, 'mine')

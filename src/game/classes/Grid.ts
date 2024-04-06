@@ -213,6 +213,7 @@ export default class Grid
         this.time1.setFrame(0);
         this.time2.setFrame(0);
         this.time3.setFrame(0);
+        this.scene.scene.stop('Game')
     }
 
     gameOver ()
@@ -241,6 +242,7 @@ export default class Grid
         this.timer.paused = true;
 
         this.button.setFrame(3);
+        this.scene.add.text(this.board.x, this.board.y - 100, "+5 gold! 🥇🥇🥇🥇🥇")
     }
 
     checkWinState ()

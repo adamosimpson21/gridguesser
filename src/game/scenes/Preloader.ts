@@ -25,6 +25,7 @@ export class Preloader extends Scene
             bar.width = 4 + (460 * progress);
 
         });        
+        this.input.mouse?.disableContextMenu();
         
     }
 

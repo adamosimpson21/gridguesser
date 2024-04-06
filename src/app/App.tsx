@@ -56,7 +56,7 @@ function App()
                 const x = Phaser.Math.Between(64, scene.scale.width - 64);
                 const y = Phaser.Math.Between(64, scene.scale.height - 64);
     
-                //  `add.sprite` is a Phaser GameObjectFactory method and it returns a Sprite Game Object instance
+                //  `add.sprite` is a Phaser GameObjectFactory method and it returns a Sprite Fight Object instance
                 const star = scene.add.sprite(x, y, 'star');
     
                 //  ... which you can then act upon. Here we create a Phaser Tween to fade the star sprite in and out.

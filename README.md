@@ -43,7 +43,7 @@ We have provided a default project structure to get you started. This is as foll
 - `src/app/globals.css` - Some simple global CSS rules to help with page layout. You can enable Tailwind CSS here.
 - `src/app/page.tsx` - The main Next.js component.
 - `src/app/App.tsx` - Midleware component used to run Phaser in client mode.
-- `src/game/PhaserGame.tsx` - The React component that initializes the Phaser Game and serve like a bridge between React and Phaser.
+- `src/game/PhaserGame.tsx` - The React component that initializes the Phaser Fight and serve like a bridge between React and Phaser.
 - `src/game/EventBus.ts` - A simple event bus to communicate between React and Phaser.
 - `src/game` - Contains the game source code.
 - `src/game/main.tsx` - The main **game** entry point. This contains the game configuration and start the game.
@@ -92,7 +92,7 @@ class MyScene extends Phaser.Scene
 
     create ()
     {
-        // Your Game Objects and logic here
+        // Your Fight Objects and logic here
 
         // At the end of create method:
         EventBus.emit('current-scene-ready', this);
@@ -130,7 +130,7 @@ const ReactComponent = () => {
 }
 ```
 
-In the code above, you can get a reference to the current Phaser Game instance and the current Scene by creating a reference with `useRef()` and assign to PhaserGame component.
+In the code above, you can get a reference to the current Phaser Fight instance and the current Scene by creating a reference with `useRef()` and assign to PhaserGame component.
 
 From this state reference, the game instance is available via `phaserRef.current.game` and the most recently active Scene via `phaserRef.current.scene`.
 

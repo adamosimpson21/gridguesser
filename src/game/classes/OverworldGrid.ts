@@ -176,10 +176,22 @@ export default class OverworldGrid
         homeCell.value = 1;
         
         // Boss
+        const bossWall = Phaser.Math.Between(0, 1);
         const bossX = Phaser.Math.Between(0, this.width-1);
         const bossY = Phaser.Math.Between(0, this.height-1);
-        const bossCell = this.getCellXY(bossX, bossY);
-        bossCell.value = 4;
+        if(bossWall < 0.25){
+            const bossCell = this.getCellXY(0, bossY);
+            bossCell.value = 4;
+        } else if (bossWall < 0.5){
+            const bossCell = this.getCellXY(this.width-1, bossY);
+            bossCell.value = 4;
+        } else if (bossWall < 0.75){
+            const bossCell = this.getCellXY(bossX, 0);
+            bossCell.value = 4;
+        } else {
+            const bossCell = this.getCellXY(bossX, this.height-1);
+            bossCell.value = 4;
+        }
         
         
         

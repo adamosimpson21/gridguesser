@@ -71,7 +71,7 @@ export default class OverworldCell
         this.tile = grid.scene.make.text({
             x: grid.offset.x + (x * 48),
             y: grid.offset.y + (y * 48), 
-            text: 'EMP', style: {fontSize: '32px'}
+            text: '❓', style: {fontSize: '32px'}
             })
 
         grid.board.add(this.tile);
@@ -104,7 +104,7 @@ export default class OverworldCell
             this.grid.generate(this.index);
         }
 
-        else if (!this.flagged && !this.query)
+        if (!this.flagged && !this.query)
         {
             this.onClick();
         }
@@ -116,9 +116,10 @@ export default class OverworldCell
             case 0:
             case 1:
                 this.grid.floodFill(this.x, this.y);
+                this.show();
                 break;
             case 2:
-                this.grid.scene.scene.start('Game')
+                this.grid.scene.scene.launch('Fight')
                 this.show();
                 break;
             case -1:
