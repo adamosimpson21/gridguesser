@@ -1,7 +1,7 @@
 import {Scene} from "phaser";
 import Cell from './Cell';
 
-export default class Grid
+export default class OverworldGrid
 {
     private scene: Phaser.Scene;
     private width: number;
@@ -386,10 +386,6 @@ export default class Grid
                 this.floodFill(x, y + 1);
                 this.floodFill(x - 1, y);
                 this.floodFill(x + 1, y);
-                this.floodFill(x+1, y+1);
-                this.floodFill(x-1, y+1);
-                this.floodFill(x-1, y-1);
-                this.floodFill(x+1, y-1);                
             }
         }
     }
