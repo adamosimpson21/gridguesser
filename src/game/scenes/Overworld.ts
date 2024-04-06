@@ -1,12 +1,12 @@
 import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
-import Grid from '../classes/Grid'
+import OverworldGrid from '../classes/OverworldGrid'
 
 export class Overworld extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
     gameText: Phaser.GameObjects.Text;
-    private grid: Grid;
+    private overworldGrid: OverworldGrid;
     constructor ()
     {
         super('Overworld');
@@ -22,8 +22,12 @@ export class Overworld extends Scene {
 
         const gridWidth = 5;
         const gridHeight = 5;
-        const numBombs = 0;
-        this.grid = new Grid(this, gridWidth, gridHeight, numBombs)
+        const numShops = 2;
+        const numFights = 5;
+        const numBosses = 1;
+        const numBuffs = 2;
+        const numTraps = 2;
+        this.overworldGrid = new OverworldGrid(this, gridWidth, gridHeight, {numBosses, numFights, numShops, numBuffs, numTraps})
 
         // this.mine = this.add.image(200, 200, 'mine')
         this.add.text(200, 200, '💣')
