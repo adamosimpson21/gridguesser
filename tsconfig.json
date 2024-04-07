@@ -19,7 +19,7 @@
         "strictPropertyInitialization": false,
         "plugins": [
             {
-                "name": "next"
+                "name": "next",
             }
         ],
         "paths": {

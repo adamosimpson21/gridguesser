@@ -7,5 +7,6 @@ export const SCENES = {
     Overworld: 'Overworld',
     MainGame: 'MainGame',
     GameOver: 'GameOver',
-    Fight: 'Fight'
+    Fight: 'Fight',
+    Hud: 'Hud'
 }

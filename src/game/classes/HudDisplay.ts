@@ -1,6 +1,6 @@
 import {Scene} from "phaser";
 
-export default class Hud {
+export default class HudDisplay {
     public scene: Phaser.Scene;
     public name: string;
     public hp: number;

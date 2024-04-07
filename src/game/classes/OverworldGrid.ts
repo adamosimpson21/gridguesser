@@ -2,9 +2,10 @@ import {Scene} from "phaser";
 import FightGridCell from './FightGridCell';
 import OverworldCell from './OverworldCell';
 import {CELL_TYPES} from "@/game/types/cells";
-import Hud from "@/game/classes/Hud";
+import HudDisplay from "@/game/classes/HudDisplay";
 import Trap from "@/game/classes/Trap";
 import EventDisplay from "@/game/classes/EventDisplay";
+import {Hud} from "@/game/scenes/Hud";
 
 
 export default class OverworldGrid
@@ -37,7 +38,7 @@ export default class OverworldGrid
     private numTraps: number;
     public Hud: Hud;
     public eventDisplay: EventDisplay;
-    constructor (scene:Scene, Hud:Hud, eventDisplay:EventDisplay, width:number, height:number,{numBosses, numFights, numShops, numBuffs, numTraps}:{numBosses:number, numFights:number, numShops:number, numBuffs:number, numTraps:number})
+    constructor (scene:Scene, Hud:Hud, width:number, height:number, {numBosses, numFights, numShops, numBuffs, numTraps}:{numBosses:number, numFights:number, numShops:number, numBuffs:number, numTraps:number})
     {
         this.scene = scene;
 
@@ -46,7 +47,6 @@ export default class OverworldGrid
         this.size = width * height;
         this.offset = new Phaser.Math.Vector2(12, 55);
         this.Hud = Hud;
-        this.eventDisplay = eventDisplay;
         
         this.numBosses = numBosses;
         this.numFights = numFights;
@@ -322,11 +322,11 @@ export default class OverworldGrid
                     const posNeg = type===6 ? -1 : 1;
                     const severity = (rngCall % 3) + 1;
                     if(rngCall > 72){
-                        cell.typeInfo = new Trap(this.Hud, this.scene, this.eventDisplay,'MONEY', posNeg *severity);
+                        cell.typeInfo = new Trap(this.Hud, this.scene,'MONEY', posNeg *severity);
                     } else {
-                        cell.typeInfo = new Trap(this.Hud, this.scene, this.eventDisplay,'HP', posNeg *severity);
+                        cell.typeInfo = new Trap(this.Hud, this.scene,'HP', posNeg *severity);
                     }
-                    // cell.typeInfo = new Trap(this.Hud, 'HP', -1);       
+                    // cell.typeInfo = new Trap(this.HudDisplay, 'HP', -1);       
                     }
                 numCells--;
             }
