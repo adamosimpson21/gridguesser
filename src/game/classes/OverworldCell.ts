@@ -15,7 +15,8 @@ export default class OverworldCell
     private exploded: boolean;
     private value: number;
     private tile: any;
-    constructor (grid:any, index:number, x:number, y:number, type: string)
+    private typeInfo: any;
+    constructor (grid:any, index:number, x:number, y:number, type: string, typeInfo: any)
     {
         this.grid = grid;
 
@@ -29,6 +30,7 @@ export default class OverworldCell
         this.flagged = false;
         this.query = false;
         this.exploded = false;
+        this.typeInfo = typeInfo;
 
         //  0 = empty, 1,2,3,4,5,6,7,8 = number of adjacent bombs
         this.value = 0;
@@ -121,16 +123,18 @@ export default class OverworldCell
                 this.show();
                 break;
             case 2:
-                this.grid.scene.scene.launch(SCENES.Fight)
+                this.grid.scene.scene.launch(SCENES.Fight);
                 this.show();
                 break;
 
+            case 5:
             case 6:
-                
+                this.typeInfo.trigger();
+                this.show();
+                break;                
             case -1:
             case 3:
             case 4:
-            case 5:
                 this.show();
                 break;
             default:

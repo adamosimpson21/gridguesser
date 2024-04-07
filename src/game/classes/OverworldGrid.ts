@@ -2,6 +2,9 @@ import {Scene} from "phaser";
 import Cell from './Cell';
 import OverworldCell from './OverworldCell';
 import {CELL_TYPES} from "@/game/types/cells";
+import Hud from "@/game/classes/Hud";
+import Trap from "@/game/classes/Trap";
+import EventDisplay from "@/game/classes/EventDisplay";
 
 
 export default class OverworldGrid
@@ -32,7 +35,9 @@ export default class OverworldGrid
     private numShops: number;
     private numBuffs: number;
     private numTraps: number;
-    constructor (scene:Scene, width:number, height:number,{numBosses, numFights, numShops, numBuffs, numTraps}:{numBosses:number, numFights:number, numShops:number, numBuffs:number, numTraps:number})
+    public Hud: Hud;
+    public eventDisplay: EventDisplay;
+    constructor (scene:Scene, Hud:Hud, eventDisplay:EventDisplay, width:number, height:number,{numBosses, numFights, numShops, numBuffs, numTraps}:{numBosses:number, numFights:number, numShops:number, numBuffs:number, numTraps:number})
     {
         this.scene = scene;
 
@@ -40,6 +45,8 @@ export default class OverworldGrid
         this.height = height;
         this.size = width * height;
         this.offset = new Phaser.Math.Vector2(12, 55);
+        this.Hud = Hud;
+        this.eventDisplay = eventDisplay;
         
         this.numBosses = numBosses;
         this.numFights = numFights;
@@ -91,7 +98,7 @@ export default class OverworldGrid
 
             for (let y = 0; y < this.height; y++)
             {
-                this.data[x][y] = new OverworldCell(this, i, x, y, CELL_TYPES.empty);
+                this.data[x][y] = new OverworldCell(this, i, x, y, CELL_TYPES.empty, {});
 
                 i++;
             }
@@ -306,10 +313,21 @@ export default class OverworldGrid
     
     populateCell(type: number, numCells:number){
         do{
-            const location = Phaser.Math.Between(0, this.size-1)
+            const location = Phaser.Math.Between(0, this.size-1);
             const cell = this.getCell(location);
             if(cell.value === 0){
                 cell.value = type;
+                if(type===6 || type===5){
+                    const rngCall = Math.floor(Phaser.Math.Between(0, 144));
+                    const posNeg = type===6 ? -1 : 1;
+                    const severity = (rngCall % 3) + 1;
+                    if(rngCall > 72){
+                        cell.typeInfo = new Trap(this.Hud, this.scene, this.eventDisplay,'MONEY', posNeg *severity);
+                    } else {
+                        cell.typeInfo = new Trap(this.Hud, this.scene, this.eventDisplay,'HP', posNeg *severity);
+                    }
+                    // cell.typeInfo = new Trap(this.Hud, 'HP', -1);       
+                    }
                 numCells--;
             }
         }while(numCells > 0);
