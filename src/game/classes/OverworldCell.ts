@@ -32,7 +32,6 @@ export default class OverworldCell
         this.exploded = false;
         this.typeInfo = typeInfo;
 
-        //  0 = empty, 1,2,3,4,5,6,7,8 = number of adjacent bombs
         this.value = 0;
         switch(type){
             case CELL_TYPES.home:
@@ -129,8 +128,19 @@ export default class OverworldCell
 
             case 5:
             case 6:
-                this.typeInfo.trigger();
                 this.show();
+                this.typeInfo.trigger();
+                const fadeTween = this.grid.scene.add.tween({
+                    targets: this.tile,
+                    duration: '3000',
+                    alpha: 0,
+                })
+                fadeTween.on('complete', (tween, targets) => {
+                    console.log('target:', targets)
+                    this.value = -1;
+                    targets[0].setText('🟢');
+                    targets[0].setAlpha(1);
+                })
                 break;                
             case -1:
             case 3:
