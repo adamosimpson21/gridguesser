@@ -10,8 +10,8 @@ export class Overworld extends Scene {
     background: Phaser.GameObjects.Image;
     gameText: Phaser.GameObjects.Text;
     private overworldGrid: OverworldGrid;
-    private Hud: Hud;
-    private eventDisplay: EventDisplay;
+    public Hud: Hud;
+    public eventDisplay: EventDisplay;
     constructor ()
     {
         super(SCENES.Overworld);

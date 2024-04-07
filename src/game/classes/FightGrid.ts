@@ -41,6 +41,7 @@ export default class FightGrid
         this.populated = false;
 
         this.timer = scene.time.addEvent(new Phaser.Time.TimerEvent({}));
+        
 
         //  0 = waiting to create the grid
         //  1 = playing
@@ -244,6 +245,7 @@ export default class FightGrid
 
         this.button.setFrame(3);
         this.scene.add.text(this.board.x, this.board.y - 100, "+5 gold! 🥇🥇🥇🥇🥇")
+        
     }
 
     checkWinState ()
@@ -273,7 +275,7 @@ export default class FightGrid
 
         // console.log('Check', correct, 'out of', this.bombQty, 'open', open, 'of', this.size);
 
-        if (correct === this.bombQty && open === this.size)
+        if ((correct === this.bombQty && open === this.size) || (open + (this.bombQty-correct) >= this.size))
         {
             this.gameWon();
         }
