@@ -1,7 +1,7 @@
 import {Scene} from "phaser";
-import Cell from './Cell';
+import FightGridCell from './FightGridCell';
 
-export default class Grid
+export default class FightGrid
 {
     private scene: Phaser.Scene;
     private width: number;
@@ -74,7 +74,8 @@ export default class Grid
         this.button.on('pointerdown', this.onButtonDown, this);
         this.button.on('pointerup', this.onButtonUp, this);
     }
-
+    
+    
     createCells ()
     {
         let i = 0;
@@ -85,7 +86,7 @@ export default class Grid
 
             for (let y = 0; y < this.height; y++)
             {
-                this.data[x][y] = new Cell(this, i, x, y);
+                this.data[x][y] = new FightGridCell(this, i, x, y);
 
                 i++;
             }

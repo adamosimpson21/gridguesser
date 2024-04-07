@@ -16,6 +16,7 @@ export default class OverworldCell
     private value: number;
     private tile: any;
     private typeInfo: any;
+    private hasTriggered: boolean;
     constructor (grid:any, index:number, x:number, y:number, type: string, typeInfo: any)
     {
         this.grid = grid;
@@ -26,6 +27,7 @@ export default class OverworldCell
 
         this.open = false;
         this.bomb = false;
+        this.hasTriggered = false;
 
         this.flagged = false;
         this.query = false;
@@ -113,44 +115,47 @@ export default class OverworldCell
         }
     }
 
-    onClick ()
-    {
-        switch(this.value){
-            case 0:
-            case 1:
-                this.grid.floodFill(this.x, this.y);
-                this.show();
-                break;
-            case 2:
-                this.grid.scene.scene.launch(SCENES.Fight);
-                this.show();
-                break;
+    onClick () {
+        if (!this.hasTriggered) {
+            switch (this.value) {
+                case 0:
+                case 1:
+                    this.grid.floodFill(this.x, this.y);
+                    this.show();
+                    break;
+                case 2:
+                    // this.grid.scene.scene.launch(SCENES.Fight);
+                    this.grid.scene.transitionScene(SCENES.Fight)
+                    this.show();
+                    break;
 
-            case 5:
-            case 6:
-                this.show();
-                this.typeInfo.trigger();
-                const fadeTween = this.grid.scene.add.tween({
-                    targets: this.tile,
-                    duration: '3000',
-                    alpha: 0,
-                })
-                fadeTween.on('complete', (tween, targets) => {
-                    console.log('target:', targets)
-                    this.value = -1;
-                    targets[0].setText('🟢');
-                    targets[0].setAlpha(1);
-                })
-                break;                
-            case -1:
-            case 3:
-            case 4:
-                this.show();
-                break;
-            default:
-                this.show();
-                break;
+                case 5:
+                case 6:
+                    this.show();
+                    this.typeInfo.trigger();
+                    this.tile.setInteractive(false)
+                    const fadeTween = this.grid.scene.add.tween({
+                        targets: this.tile,
+                        duration: '3000',
+                        alpha: 0,
+                    })
+                    fadeTween.on('complete', (tween: any, targets: any) => {
+                        this.value = -1;
+                        targets[0].setText('🟢');
+                        targets[0].setAlpha(1);
+                    })
+                    break;
+                case -1:
+                case 3:
+                case 4:
+                    this.show();
+                    break;
+                default:
+                    this.show();
+                    break;
+            }
         }
+        this.hasTriggered = true;
     }
 
     onPointerUp ()

@@ -1,4 +1,4 @@
-export default class Cell
+export default class FightGridCell
 {
     private grid: any;
     private index: number;

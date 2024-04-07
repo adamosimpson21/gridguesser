@@ -21,7 +21,7 @@ export class MainMenu extends Scene
     {
         this.background = this.add.image(512, 384, 'background');
 
-        this.title = this.add.text(512, 250, 'Grid Guesser', {
+        this.title = this.add.text(512, 250, 'FightGrid Guesser', {
             fontFamily: 'Arial Black', fontSize: 56, color: '#ffffff',
             stroke: '#000000', strokeThickness: 8,
             align: 'center'

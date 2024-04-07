@@ -47,4 +47,11 @@ export class Overworld extends Scene {
     {
         this.scene.start(SCENES.Fight);
     }
+    
+    transitionScene(scene: string){
+        this.camera.fadeOut(1000, 0, 0, 0);
+        this.camera.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam: any) => {
+            this.scene.start(scene)
+        })
+    }
 }

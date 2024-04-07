@@ -1,5 +1,5 @@
 import {Scene} from "phaser";
-import Cell from './Cell';
+import FightGridCell from './FightGridCell';
 import OverworldCell from './OverworldCell';
 import {CELL_TYPES} from "@/game/types/cells";
 import Hud from "@/game/classes/Hud";
