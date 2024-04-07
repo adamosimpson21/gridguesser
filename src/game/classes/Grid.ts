@@ -99,7 +99,7 @@ export default class Grid
 
         //  55 added to the top, 8 added to the bottom (63)
         //  12 added to the left, 8 added to the right (20)
-        //  cells start at 12 x 55
+        //  cells.ts start at 12 x 55
 
         const width = this.width * 16;
         const height = this.height * 16;
@@ -302,7 +302,7 @@ export default class Grid
 
         bombs.forEach(cell => {
 
-            //  Update the 8 cells around this bomb cell
+            //  Update the 8 cells.ts around this bomb cell
 
             const adjacent = this.getAdjacentCells(cell);
 

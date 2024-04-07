@@ -1,6 +1,7 @@
 import { GameObjects, Scene } from 'phaser';
 
 import { EventBus } from '../EventBus';
+import {SCENES} from "@/game/types/scenes";
 
 export class MainMenu extends Scene
 {
@@ -32,7 +33,7 @@ export class MainMenu extends Scene
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
         this.overworldButton.setInteractive();
-        this.overworldButton.on('pointerdown', () => this.scene.start('Overworld'))
+        this.overworldButton.on('pointerdown', () => this.scene.start(SCENES.Overworld))
 
         this.fightSceneButton = this.add.text(512, 520, 'Go to Fight Page', {
             fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
@@ -40,7 +41,7 @@ export class MainMenu extends Scene
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
         this.fightSceneButton.setInteractive();
-        this.fightSceneButton.on('pointerdown', () => this.scene.start('Game'))
+        this.fightSceneButton.on('pointerdown', () => this.scene.start(SCENES.Fight))
 
         EventBus.emit('current-scene-ready', this);
     }

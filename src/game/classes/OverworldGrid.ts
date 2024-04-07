@@ -1,6 +1,7 @@
 import {Scene} from "phaser";
 import Cell from './Cell';
 import OverworldCell from './OverworldCell';
+import {CELL_TYPES} from "@/game/types/cells";
 
 
 export default class OverworldGrid
@@ -90,7 +91,7 @@ export default class OverworldGrid
 
             for (let y = 0; y < this.height; y++)
             {
-                this.data[x][y] = new OverworldCell(this, i, x, y, "EMPTY");
+                this.data[x][y] = new OverworldCell(this, i, x, y, CELL_TYPES.empty);
 
                 i++;
             }
@@ -104,7 +105,7 @@ export default class OverworldGrid
 
         //  55 added to the top, 8 added to the bottom (63)
         //  12 added to the left, 8 added to the right (20)
-        //  cells start at 12 x 55
+        //  cells.ts start at 12 x 55
 
         const width = this.width * 48;
         const height = this.height * 48;
@@ -227,7 +228,7 @@ export default class OverworldGrid
         //
         // bombs.forEach(cell => {
         //
-        //     //  Update the 8 cells around this bomb cell
+        //     //  Update the 8 cells.ts around this bomb cell
         //
         //     const adjacent = this.getAdjacentCells(cell);
         //

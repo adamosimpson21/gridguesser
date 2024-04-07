@@ -2,6 +2,7 @@ import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
 import OverworldGrid from '../classes/OverworldGrid'
 import Hud from "@/game/classes/Hud";
+import {SCENES} from "@/game/types/scenes";
 
 export class Overworld extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -11,7 +12,7 @@ export class Overworld extends Scene {
     private hud: Hud;
     constructor ()
     {
-        super('Overworld');
+        super(SCENES.Overworld);
     }
 
     create ()
@@ -40,6 +41,6 @@ export class Overworld extends Scene {
 
     changeScene ()
     {
-        this.scene.start('Fight');
+        this.scene.start(SCENES.Fight);
     }
 }

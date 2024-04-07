@@ -1,10 +1,11 @@
 import { Scene } from 'phaser';
+import {SCENES} from "@/game/types/scenes";
 
 export class Preloader extends Scene
 {
     constructor ()
     {
-        super('Preloader');
+        super(SCENES.Preloader);
     }
 
     init ()
@@ -44,6 +45,6 @@ export class Preloader extends Scene
         //  For example, you can define global animations here, so we can use them in other scenes.
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-        this.scene.start('Overworld');
+        this.scene.start(SCENES.Overworld);
     }
 }

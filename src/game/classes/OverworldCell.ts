@@ -1,4 +1,6 @@
 import {Scene} from "phaser";
+import {CELL_TYPES} from "@/game/types/cells";
+import {SCENES} from "@/game/types/scenes";
 
 export default class OverworldCell
 {
@@ -31,29 +33,29 @@ export default class OverworldCell
         //  0 = empty, 1,2,3,4,5,6,7,8 = number of adjacent bombs
         this.value = 0;
         switch(type){
-            case 'HOME':
+            case CELL_TYPES.home:
                 this.value=1;
                 break;
-            case 'FIGHT':
+            case CELL_TYPES.fight:
                 this.value=2;
                 break;
 
-            case 'SHOP':
+            case CELL_TYPES.shop:
                 this.value=3;
                 break;
 
-            case 'BOSS':
+            case CELL_TYPES.boss:
                 this.value=4;
                 break;
 
-            case 'BUFF':
+            case CELL_TYPES.buff:
                 this.value=5;
                 break;
 
-            case 'TRAP':
+            case CELL_TYPES.trap:
                 this.value=6;
                 break;
-            case 'VISITED':
+            case CELL_TYPES.visited:
                 this.value = -1;
                 break;
             default:
@@ -119,14 +121,16 @@ export default class OverworldCell
                 this.show();
                 break;
             case 2:
-                this.grid.scene.scene.launch('Fight')
+                this.grid.scene.scene.launch(SCENES.Fight)
                 this.show();
                 break;
+
+            case 6:
+                
             case -1:
             case 3:
             case 4:
             case 5:
-            case 6:
                 this.show();
                 break;
             default:

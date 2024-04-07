@@ -1,6 +1,7 @@
 import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
 import Grid from '../classes/Grid'
+import {SCENES} from "@/game/types/scenes";
 
 export class Fight extends Scene
 {
@@ -12,7 +13,7 @@ export class Fight extends Scene
 
     constructor ()
     {
-        super('Fight');
+        super(SCENES.Fight);
     }
 
     
@@ -44,6 +45,6 @@ export class Fight extends Scene
 
     changeScene ()
     {
-        this.scene.start('GameOver');
+        this.scene.start(SCENES.GameOver);
     }
 }
