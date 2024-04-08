@@ -6,7 +6,6 @@ import { AUTO, Game } from 'phaser';
 import { Preloader } from './scenes/Preloader';
 import {Overworld} from "@/game/scenes/Overworld";
 import {Hud} from "@/game/scenes/Hud";
-import SceneWatcherPlugin from '../../';
 
 //  Find out more information about the Fight Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -36,18 +35,7 @@ const config: Phaser.Types.Core.GameConfig = {
         Fight,
         Hud
         
-    ],
-    plugins: {
-        global: [
-            { key: 'SceneWatcher', plugin: SceneWatcherPlugin, start: true }
-        ]
-    },
-    callbacks: {
-        postBoot: function (game) {
-            // @ts-ignore
-            game.plugins.get('SceneWatcher').watchAll();
-        }
-    }
+    ]
 };
 
 const StartGame = (parent: string) => {

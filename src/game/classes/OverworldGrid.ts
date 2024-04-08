@@ -38,7 +38,7 @@ export default class OverworldGrid
     private numTraps: number;
     public Hud: Hud;
     public eventDisplay: EventDisplay;
-    constructor (scene:Scene, Hud:Hud, width:number, height:number, {numBosses, numFights, numShops, numBuffs, numTraps}:{numBosses:number, numFights:number, numShops:number, numBuffs:number, numTraps:number})
+    constructor (scene:Scene, width:number, height:number, {numBosses, numFights, numShops, numBuffs, numTraps}:{numBosses:number, numFights:number, numShops:number, numBuffs:number, numTraps:number})
     {
         this.scene = scene;
 
@@ -46,7 +46,6 @@ export default class OverworldGrid
         this.height = height;
         this.size = width * height;
         this.offset = new Phaser.Math.Vector2(12, 55);
-        this.Hud = Hud;
         
         this.numBosses = numBosses;
         this.numFights = numFights;
@@ -322,9 +321,9 @@ export default class OverworldGrid
                     const posNeg = type===6 ? -1 : 1;
                     const severity = (rngCall % 3) + 1;
                     if(rngCall > 72){
-                        cell.typeInfo = new Trap(this.Hud, this.scene,'MONEY', posNeg *severity);
+                        cell.typeInfo = new Trap(this.scene,'MONEY', posNeg *severity);
                     } else {
-                        cell.typeInfo = new Trap(this.Hud, this.scene,'HP', posNeg *severity);
+                        cell.typeInfo = new Trap(this.scene,'HP', posNeg *severity);
                     }
                     // cell.typeInfo = new Trap(this.HudDisplay, 'HP', -1);       
                     }

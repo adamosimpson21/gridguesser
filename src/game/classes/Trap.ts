@@ -2,16 +2,16 @@ import HudDisplay from "@/game/classes/HudDisplay";
 import {Scene} from "phaser";
 import EventDisplay from "@/game/classes/EventDisplay";
 import {Hud} from "@/game/scenes/Hud";
+import {EventBus} from "@/game/EventBus";
+import {PLAYER_EVENTS} from "@/game/types/events";
 
 export default class Trap {
     private type: string;
     private severity: number;
-    private Hud: Hud;
     private scene: Phaser.Scene;
     private eventDisplay: EventDisplay;
     
-    constructor(Hud: Hud, scene:Scene, type: string, severity: number) {
-        this.Hud = Hud;
+    constructor(scene:Scene, type: string, severity: number) {
         this.scene = scene;
         this.type = type;
         this.severity = severity;
@@ -20,19 +20,17 @@ export default class Trap {
     trigger(){
         switch(this.type){
             case 'HP':
-                this.Hud.HudDisplay.updateHp(this.Hud.HudDisplay.hp + this.severity, this.Hud.HudDisplay.maxHp);
                 if(this.severity > 0){
-                    this.Hud.eventDisplay.addEvent({type: "MESSAGE", message: `Yum! You gained ${this.severity} life`}, '5000')
+                    EventBus.emit(PLAYER_EVENTS.GAIN_HP, this.severity)
                 } else {
-                    this.Hud.eventDisplay.addEvent({type: "MESSAGE", message: `Ouch! You took ${-this.severity} damage`}, '5000')
+                    EventBus.emit(PLAYER_EVENTS.LOSE_HP, this.severity)
                 }
                  break;
             case 'MONEY':
-                this.Hud.HudDisplay.updateGold(this.severity);
                 if(this.severity > 0){
-                    this.Hud.eventDisplay.addEvent({type: "MESSAGE", message: `🥇🥇🥇 You gained ${this.severity} money`}, '5000')
+                    EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, this.severity)
                 } else {
-                    this.Hud.eventDisplay.addEvent({type: "MESSAGE", message: `Ouch! You lost ${-this.severity} money`}, '5000')
+                    EventBus.emit(PLAYER_EVENTS.LOSE_GOLD, this.severity)
                 }
                 break;
             default:
