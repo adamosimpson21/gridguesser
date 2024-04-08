@@ -30,9 +30,11 @@ export default class HudDisplay {
     create(){
         EventBus.on(UI_EVENTS.UPDATE_GOLD, (gold:number) => {
             this.goldDisplay.setText(`Gold: ${gold} 🥇`)
+            EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {type: UI_EVENTS.UPDATE_GOLD, message: `New gold amount ${gold} gold 🥇`},'5000')
         })
         EventBus.on(UI_EVENTS.UPDATE_HEALTH, (hp: number, maxHp: number) => {
             this.hpDisplay.setText(`Health: ${new Array(hp).fill('♥').concat(new Array(maxHp - hp).fill('💔')).join(' ')}`)
+            EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {type: UI_EVENTS.UPDATE_HEALTH, message: `New HP amount ${hp}`}, '5000')
         })
     }
 }

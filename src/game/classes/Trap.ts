@@ -15,14 +15,17 @@ export default class Trap {
         this.scene = scene;
         this.type = type;
         this.severity = severity;
+        
     }
     
     trigger(){
+        console.log('triggered trap', this.type, this.severity);
         switch(this.type){
             case 'HP':
                 if(this.severity > 0){
                     EventBus.emit(PLAYER_EVENTS.GAIN_HP, this.severity)
                 } else {
+                    console.log("you are in lose hp")
                     EventBus.emit(PLAYER_EVENTS.LOSE_HP, this.severity)
                 }
                  break;
@@ -30,6 +33,7 @@ export default class Trap {
                 if(this.severity > 0){
                     EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, this.severity)
                 } else {
+                    console.log("you are in lose gold")
                     EventBus.emit(PLAYER_EVENTS.LOSE_GOLD, this.severity)
                 }
                 break;

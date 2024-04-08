@@ -18,7 +18,6 @@ export class Hud extends Scene {
     create(){
         this.HudDisplay = new HudDisplay(this, 'Starting Name', 5, 5, 5);
         this.eventDisplay = new EventDisplay(this);
-
         EventBus.emit('current-scene-ready', this);
     }
 }

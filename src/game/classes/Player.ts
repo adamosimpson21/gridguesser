@@ -18,7 +18,7 @@ export default class Player {
             this.updateHp(this.hp+severity, this.maxHp)
         })
         EventBus.on(PLAYER_EVENTS.LOSE_HP, (severity: number) => {
-            this.updateHp(this.hp-severity, this.maxHp)
+            this.updateHp(this.hp+severity, this.maxHp)
         })
         EventBus.on(PLAYER_EVENTS.GAIN_GOLD, (severity: number) => {
             this.updateGold(severity)
@@ -49,7 +49,7 @@ export default class Player {
     
     updateGold(goldDifference:number){
         let goldToUpdate = goldDifference;
-        if(goldDifference + this.gold >= 0){
+        if((goldDifference + this.gold) >= 0){
             goldToUpdate = this.gold + goldDifference;
         } else {
             goldToUpdate = 0;
