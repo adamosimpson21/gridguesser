@@ -172,6 +172,7 @@ export default class OverworldGrid
     
     generate ()
     {
+        console.log("you are in overworld grid generate");
         let qtyFights = this.numFights;
         
         //some loop
@@ -320,14 +321,12 @@ export default class OverworldGrid
                     const rngCall = Math.floor(Phaser.Math.Between(0, 144));
                     const posNeg = type===6 ? -1 : 1;
                     const severity = (rngCall % 3) + 1;
-                    console.log("rng call:", rngCall, 'posNeg', posNeg, 'severity', severity)
                     if(rngCall > 72){
                         cell.typeInfo = new Trap(this.scene,'MONEY', posNeg *severity);
                     } else {
                         cell.typeInfo = new Trap(this.scene,'HP', posNeg *severity);
                     }
-                    // cell.typeInfo = new Trap(this.HudDisplay, 'HP', -1);       
-                    }
+                }
                 numCells--;
             }
         }while(numCells > 0);

@@ -1,9 +1,13 @@
 import {Scene} from "phaser";
 import FightGridCell from './FightGridCell';
+import {PLAYER_EVENTS} from "@/game/types/events";
+import {EventBus} from "@/game/EventBus";
+import {Fight} from "@/game/scenes/Fight";
+import {SCENES} from "@/game/types/scenes";
 
 export default class FightGrid
 {
-    private scene: Phaser.Scene;
+    private scene: Fight;
     private width: number;
     private height: number;
     private size: number;
@@ -24,7 +28,7 @@ export default class FightGrid
     private time2: Phaser.GameObjects.Image;
     private time3: Phaser.GameObjects.Image;
     private button: any;
-    constructor (scene:Scene, width:number, height:number, bombs:number)
+    constructor (scene:Fight, width:number, height:number, bombs:number)
     {
         this.scene = scene;
 
@@ -244,8 +248,16 @@ export default class FightGrid
         this.timer.paused = true;
 
         this.button.setFrame(3);
-        this.scene.add.text(this.board.x, this.board.y - 100, "+5 gold! 🥇🥇🥇🥇🥇")
-        
+        EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, 5)
+        this.scene.time.addEvent({
+            delay: 1000,
+            loop: false,
+            callback: () => {
+                this.scene.scene.stop(SCENES.Fight);
+                this.scene.scene.resume(SCENES.Overworld);
+            },
+            callbackScope: this
+        })
     }
 
     checkWinState ()

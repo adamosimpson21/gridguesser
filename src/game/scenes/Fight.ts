@@ -9,7 +9,7 @@ export class Fight extends Scene
     background: Phaser.GameObjects.Image;
     mine: Phaser.GameObjects.Image;
     gameText: Phaser.GameObjects.Text;
-    private grid: FightGrid;
+    grid: FightGrid;
 
     constructor ()
     {

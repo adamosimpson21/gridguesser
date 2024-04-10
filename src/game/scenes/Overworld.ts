@@ -39,17 +39,22 @@ export class Overworld extends Scene {
         this.Player = new Player('New name', 5, 5);
 
         EventBus.emit('current-scene-ready', this);
+        
+        this.events.on(Phaser.Scenes.Events.RESUME, () => {
+            this.camera.fadeIn(500, 0, 0, 0);
+        }, this)
     }
 
     changeScene ()
     {
         this.scene.start(SCENES.Fight);
     }
-    
+        
     transitionScene(scene: string){
         this.camera.fadeOut(1000, 0, 0, 0);
         this.camera.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam: any) => {
-            this.scene.start(scene)
+            this.scene.launch(SCENES.Fight);
+            this.scene.pause(SCENES.Overworld);
         })
     }
     
