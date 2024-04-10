@@ -2,6 +2,7 @@ import {Scene} from "phaser";
 import {EventBus} from "@/game/EventBus";
 import {UI_EVENTS} from "@/game/types/events";
 import {shopItemType} from "@/game/types/shopItems";
+import {Player} from "@/game/classes/Player";
 
 export default class HudDisplay {
     public scene: Phaser.Scene;
@@ -22,9 +23,9 @@ export default class HudDisplay {
         this.gold = gold;
         this.create();
 
-        this.nameDisplay = this.scene.add.text(48, 48, `Starting Name`, {fontSize: '24px'})
+        this.nameDisplay = this.scene.add.text(48, 48, `${Player.name}`, {fontSize: '24px'})
 
-        this.hpDisplay = this.scene.add.text(448, 48, `Health: ${new Array(maxHp).fill('♥').join(' ')}`, {fontSize: '24px'})
+        this.hpDisplay = this.scene.add.text(248, 48, `Health: ${new Array(maxHp).fill('♥').join(' ')}`, {fontSize: '24px'})
 
         this.goldDisplay = this.scene.add.text(748, 48, `Gold: ${gold} 🥇`, {fontSize: '24px'})
         

@@ -1,19 +1,19 @@
 import {EventBus} from "@/game/EventBus";
 import {PLAYER_EVENTS, UI_EVENTS} from "@/game/types/events"
 import {shopItemType} from "@/game/types/shopItems";
-export default class Player {
+class PlayerClass{
     public name: string;
     public hp: number;
     public gold: number;
     public maxHp: number;
     private upgrades: shopItemType[];
-    constructor(name: string, gold: number, maxHp: number) {
-        this.name = name;
-        this.hp = maxHp;
-        this.maxHp = maxHp;
-        this.gold = gold;
-        this.create();
+    constructor() {
+        this.name = 'Jan Eator';
+        this.hp = 5;
+        this.maxHp = 5;
+        this.gold = 5;
         this.upgrades = [];
+        this.create();
     }
     
     create () {
@@ -21,13 +21,19 @@ export default class Player {
             this.updateHp(this.hp+severity, this.maxHp)
         })
         EventBus.on(PLAYER_EVENTS.LOSE_HP, (severity: number) => {
-            this.updateHp(this.hp+severity, this.maxHp)
+            this.updateHp(this.hp-severity, this.maxHp)
         })
         EventBus.on(PLAYER_EVENTS.GAIN_GOLD, (severity: number) => {
             this.updateGold(severity)
         })
         EventBus.on(PLAYER_EVENTS.LOSE_GOLD, (severity: number) => {
-            this.updateGold(severity)
+            this.updateGold(-severity)
+        })
+        EventBus.on(PLAYER_EVENTS.GAIN_MAX_HP, (severity: number) => {
+            this.updateHp(this.hp+severity, this.maxHp+severity)
+        })
+        EventBus.on(PLAYER_EVENTS.LOSE_MAX_HP, (severity: number) => {
+            this.updateHp(this.hp-severity, this.maxHp-severity)
         })
         EventBus.on(PLAYER_EVENTS.GAIN_UPGRADE, (upgrade: shopItemType) => {
             this.updateUpgrades(upgrade, true)
@@ -82,3 +88,5 @@ export default class Player {
         EventBus.emit(UI_EVENTS.UPDATE_GOLD, goldToUpdate);
     }
 }
+
+export const Player = new PlayerClass();

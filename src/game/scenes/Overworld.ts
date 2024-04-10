@@ -4,7 +4,7 @@ import OverworldGrid from '../classes/OverworldGrid'
 import HudDisplay from "@/game/classes/HudDisplay";
 import {SCENES} from "@/game/types/scenes";
 import EventDisplay from "@/game/classes/EventDisplay";
-import Player from "@/game/classes/Player";
+import {Player} from "@/game/classes/Player";
 
 export class Overworld extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -13,7 +13,6 @@ export class Overworld extends Scene {
     private overworldGrid: OverworldGrid;
     public Hud: HudDisplay;
     public eventDisplay: EventDisplay;
-    public Player: Player;
     constructor ()
     {
         super(SCENES.Overworld);
@@ -36,7 +35,7 @@ export class Overworld extends Scene {
         const numTraps = 2;
 
         this.overworldGrid = new OverworldGrid(this, gridWidth, gridHeight, {numBosses, numFights, numShops, numBuffs, numTraps})
-        this.Player = new Player('New name', 5, 5);
+       
 
         EventBus.emit('current-scene-ready', this);
         

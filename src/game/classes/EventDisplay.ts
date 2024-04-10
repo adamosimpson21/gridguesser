@@ -18,11 +18,11 @@ export default class EventDisplay {
         EventBus.on(UI_EVENTS.DISPLAY_MESSAGE, this.handleDisplayMessage, this)
     }
     
-    handleDisplayMessage(event: {type: string, message: string}, fadeDelay: string){
+    handleDisplayMessage(event: {type: string, message: string}, fadeDelay?: string){
         const eventText = this.scene.add.text(450, 200, event.message)
         this.scene.add.tween({
             targets: eventText,
-            duration: fadeDelay,
+            duration: fadeDelay || 3000,
             alpha: 0,
         })
     }

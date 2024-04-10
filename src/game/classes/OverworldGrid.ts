@@ -321,13 +321,9 @@ export default class OverworldGrid
                 cell.value = type;
                 if(type===6 || type===5){
                     const rngCall = Math.floor(Phaser.Math.Between(0, 144));
-                    const posNeg = type===6 ? -1 : 1;
                     const severity = (rngCall % 3) + 1;
-                    if(rngCall > 72){
-                        cell.typeInfo = new Trap(this.scene,'MONEY', posNeg *severity);
-                    } else {
-                        cell.typeInfo = new Trap(this.scene,'HP', posNeg *severity);
-                    }
+                    const trapType = rngCall > 72 ? 'MONEY' : 'HP';
+                    cell.typeInfo = new Trap(this.scene,trapType, severity, type===6);                    
                 }
                 numCells--;
             }

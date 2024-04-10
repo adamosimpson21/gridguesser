@@ -3,7 +3,9 @@ import {SHOP_ITEMS, shopItemType} from "@/game/types/shopItems";
 import {random} from "nanoid";
 import ShopGrid from "@/game/classes/ShopGrid";
 import {EventBus} from "@/game/EventBus";
-import {PLAYER_EVENTS} from "@/game/types/events";
+import {PLAYER_EVENTS, UI_EVENTS} from "@/game/types/events";
+import {Player} from "@/game/classes/Player";
+import {Play} from "next/dist/compiled/@next/font/dist/google";
 
 export default class ShopItem{
     private scene: Phaser.Scene;
@@ -47,12 +49,36 @@ export default class ShopItem{
         return SHOP_ITEMS[randomKey];
     }
     
+    playerCanUseItemCheck(item: shopItemType):boolean{
+        const itemEffect = item.effect
+        if(itemEffect.heal >= 0 && Player.hp === Player.maxHp){
+            EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {type: UI_EVENTS.ILLEGAL_ACTION, message: "You're already at full life"}, 3000)
+            return false;
+        }
+        return true;
+    }
+    
     onClick() {
-        console.log("you are clicking on item")
-        if(this.type){
-
-            console.log("you are clicking on item 2", this.type, this.item);
-            EventBus.emit(PLAYER_EVENTS.GAIN_UPGRADE, this.item);
+        if(this.type && this.item){
+            if(this.item?.effect){
+                console.log("item cost:", this.item.cost, "player gold:", Player.gold);
+                // check if player has money to  buy item
+                if(this.item.cost > Player.gold){
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {type: UI_EVENTS.ILLEGAL_ACTION, message: " 💸 Not enough gold! 💸"}, 3000)
+                } else if(this.playerCanUseItemCheck(this.item)) {
+                    {
+                        // player has successfully bought item
+                        const effect = this.item.effect;
+                        if (effect.heal) {
+                            EventBus.emit(PLAYER_EVENTS.GAIN_HP, effect.heal);
+                        } else if (effect.maxHp) {
+                            EventBus.emit(PLAYER_EVENTS.GAIN_MAX_HP, effect.maxHp)
+                        }
+                        EventBus.emit(PLAYER_EVENTS.LOSE_GOLD, this.item.cost);
+                        EventBus.emit(PLAYER_EVENTS.GAIN_UPGRADE, this.item);
+                    }
+                }
+            }
         }
     }
 }
