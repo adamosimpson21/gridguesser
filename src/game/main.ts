@@ -6,6 +6,7 @@ import { AUTO, Game } from 'phaser';
 import { Preloader } from './scenes/Preloader';
 import {Overworld} from "@/game/scenes/Overworld";
 import {Hud} from "@/game/scenes/Hud";
+import {Shop} from "@/game/scenes/Shop";
 
 //  Find out more information about the Fight Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -32,8 +33,9 @@ const config: Phaser.Types.Core.GameConfig = {
         MainMenu,
         Overworld,
         GameOver,
+        Shop,
         Fight,
-        Hud
+        Hud,
         
     ]
 };

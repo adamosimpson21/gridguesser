@@ -76,8 +76,9 @@ export default class OverworldCell
         this.tile = grid.scene.make.text({
             x: grid.offset.x + (x * 48),
             y: grid.offset.y + (y * 48), 
-            text: '❓', style: {fontSize: '32px'}
-            })
+            text: '❓', 
+            style: {fontSize: '32px', padding: {y: 6}},
+        })
 
         grid.board.add(this.tile);
 
@@ -103,16 +104,23 @@ export default class OverworldCell
 
     onPointerDown (pointer:any)
     {
-        
-        if (!this.grid.populated)
-        {
-            this.grid.generate(this.index);
-        }
-
         if (!this.flagged && !this.query)
         {
             this.onClick();
         }
+    }
+    
+    setTileToVisited(delay:number){
+        const fadeTween = this.grid.scene.add.tween({
+            targets: this.tile,
+            duration: delay,
+            alpha: 0,
+        })
+        fadeTween.on('complete', (tween: any, targets: any) => {
+            this.value = -1;
+            targets[0].setText('🟢');
+            targets[0].setAlpha(1);
+        })
     }
 
     onClick () {
@@ -124,29 +132,25 @@ export default class OverworldCell
                     this.show();
                     break;
                 case 2:
-                    // this.grid.scene.scene.launch(SCENES.Fight);
-                    this.grid.scene.transitionScene(SCENES.Fight)
+                    this.grid.scene.transitionScene(SCENES.Fight);
+                    this.tile.setInteractive(false);
+                    this.setTileToVisited(1000);
                     this.show();
                     break;
-
                 case 5:
                 case 6:
                     this.show();
                     this.typeInfo.trigger();
-                    this.tile.setInteractive(false)
-                    const fadeTween = this.grid.scene.add.tween({
-                        targets: this.tile,
-                        duration: '3000',
-                        alpha: 0,
-                    })
-                    fadeTween.on('complete', (tween: any, targets: any) => {
-                        this.value = -1;
-                        targets[0].setText('🟢');
-                        targets[0].setAlpha(1);
-                    })
+                    this.tile.setInteractive(false);
+                    this.setTileToVisited(3000);
+                    break;
+                case 3:
+                    this.grid.scene.transitionScene(SCENES.Shop);
+                    this.tile.setInteractive(false);
+                    this.setTileToVisited(1000);
+                    this.show();
                     break;
                 case -1:
-                case 3:
                 case 4:
                     this.show();
                     break;

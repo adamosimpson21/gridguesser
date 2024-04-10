@@ -19,7 +19,6 @@ export default class Trap {
     }
     
     trigger(){
-        console.log('triggered trap', this.type, this.severity);
         switch(this.type){
             case 'HP':
                 if(this.severity > 0){

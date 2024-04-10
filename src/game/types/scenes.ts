@@ -8,5 +8,6 @@ export const SCENES = {
     MainGame: 'MainGame',
     GameOver: 'GameOver',
     Fight: 'Fight',
-    Hud: 'Hud'
+    Hud: 'Hud',
+    Shop: 'Shop'
 }

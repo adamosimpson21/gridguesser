@@ -1,16 +1,19 @@
 import {EventBus} from "@/game/EventBus";
 import {PLAYER_EVENTS, UI_EVENTS} from "@/game/types/events"
+import {shopItemType} from "@/game/types/shopItems";
 export default class Player {
     public name: string;
     public hp: number;
     public gold: number;
     public maxHp: number;
+    private upgrades: shopItemType[];
     constructor(name: string, gold: number, maxHp: number) {
         this.name = name;
         this.hp = maxHp;
         this.maxHp = maxHp;
         this.gold = gold;
         this.create();
+        this.upgrades = [];
     }
     
     create () {
@@ -26,6 +29,25 @@ export default class Player {
         EventBus.on(PLAYER_EVENTS.LOSE_GOLD, (severity: number) => {
             this.updateGold(severity)
         })
+        EventBus.on(PLAYER_EVENTS.GAIN_UPGRADE, (upgrade: shopItemType) => {
+            this.updateUpgrades(upgrade, true)
+        })
+        EventBus.on(PLAYER_EVENTS.LOSE_UPGRADE, (upgrade: shopItemType) => {
+            this.updateUpgrades(upgrade, false)
+        })
+    }
+    
+    updateUpgrades(upgrade:shopItemType, gained: boolean){
+        if(gained){
+            this.upgrades.push(upgrade);
+            EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, this.upgrades)
+        } else {
+            const index = this.upgrades.findIndex(item => item.id === upgrade.id);
+            if(index !== -1){
+                this.upgrades = this.upgrades.splice(index, 1);
+                EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, this.upgrades)
+            }
+        }
     }
 
     updateHp(hp ? : number, maxHp ? : number)

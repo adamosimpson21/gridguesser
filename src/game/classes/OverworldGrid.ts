@@ -46,6 +46,7 @@ export default class OverworldGrid
         this.height = height;
         this.size = width * height;
         this.offset = new Phaser.Math.Vector2(12, 55);
+
         
         this.numBosses = numBosses;
         this.numFights = numFights;
@@ -70,7 +71,7 @@ export default class OverworldGrid
 
         const x = Math.floor((scene.scale.width / 2) - (20 + (width * 48)) / 2);
         const y = Math.floor((scene.scale.height / 2) - (63 + (height * 48)) / 2);
-
+        
         this.board = scene.add.container(x, y);
 
         this.digit1;
@@ -82,9 +83,10 @@ export default class OverworldGrid
         this.time3;
 
         this.button;
-
+        
         this.createBackground();
         this.createCells();
+        this.generate();
     }
 
     createCells ()
@@ -172,7 +174,6 @@ export default class OverworldGrid
     
     generate ()
     {
-        console.log("you are in overworld grid generate");
         let qtyFights = this.numFights;
         
         //some loop
@@ -251,6 +252,7 @@ export default class OverworldGrid
         this.playing = true;
         this.populated = true;
         this.state = 1;
+        homeCell.show();
         
         this.debug();
     }

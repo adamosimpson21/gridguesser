@@ -40,6 +40,7 @@ export class Overworld extends Scene {
 
         EventBus.emit('current-scene-ready', this);
         
+        
         this.events.on(Phaser.Scenes.Events.RESUME, () => {
             this.camera.fadeIn(500, 0, 0, 0);
         }, this)
@@ -53,7 +54,7 @@ export class Overworld extends Scene {
     transitionScene(scene: string){
         this.camera.fadeOut(1000, 0, 0, 0);
         this.camera.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam: any) => {
-            this.scene.launch(SCENES.Fight);
+            this.scene.launch(scene);
             this.scene.pause(SCENES.Overworld);
         })
     }

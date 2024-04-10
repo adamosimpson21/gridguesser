@@ -1,6 +1,7 @@
 import {Scene} from "phaser";
 import {EventBus} from "@/game/EventBus";
 import {UI_EVENTS} from "@/game/types/events";
+import {shopItemType} from "@/game/types/shopItems";
 
 export default class HudDisplay {
     public scene: Phaser.Scene;
@@ -11,6 +12,7 @@ export default class HudDisplay {
     public nameDisplay: Phaser.GameObjects.Text;
     public hpDisplay: Phaser.GameObjects.Text;
     public goldDisplay: Phaser.GameObjects.Text;
+    public upgradeDisplay: Phaser.GameObjects.Text;
     
     constructor(scene: Scene, name:string, hp:number, gold:number, maxHp: number) {
         this.scene = scene;
@@ -20,11 +22,13 @@ export default class HudDisplay {
         this.gold = gold;
         this.create();
 
-        this.nameDisplay = this.scene.add.text(48, 48, `Starting Name`)
+        this.nameDisplay = this.scene.add.text(48, 48, `Starting Name`, {fontSize: '24px'})
 
-        this.hpDisplay = this.scene.add.text(448, 48, `Health: ${new Array(maxHp).fill('♥').join(' ')}`)
+        this.hpDisplay = this.scene.add.text(448, 48, `Health: ${new Array(maxHp).fill('♥').join(' ')}`, {fontSize: '24px'})
 
-        this.goldDisplay = this.scene.add.text(748, 48, `Gold: ${gold} 🥇`)
+        this.goldDisplay = this.scene.add.text(748, 48, `Gold: ${gold} 🥇`, {fontSize: '24px'})
+        
+        this.upgradeDisplay = this.scene.add.text(48, 108, '' , {fontSize: '24px'});        
     }
     
     create(){
@@ -35,6 +39,10 @@ export default class HudDisplay {
         EventBus.on(UI_EVENTS.UPDATE_HEALTH, (hp: number, maxHp: number) => {
             this.hpDisplay.setText(`Health: ${new Array(hp).fill('♥').concat(new Array(maxHp - hp).fill('💔')).join(' ')}`)
             EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {type: UI_EVENTS.UPDATE_HEALTH, message: `New HP amount ${hp}`}, '5000')
+        })
+        EventBus.on(UI_EVENTS.UPDATE_UPGRADES, (upgrades:shopItemType[]) => {
+            this.upgradeDisplay.setText(`${upgrades.map(obj => obj.icon).join(' ')}`)
+            EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {type: UI_EVENTS.UPDATE_UPGRADES, message: `New Upgrade`}, '5000')
         })
     }
 }
