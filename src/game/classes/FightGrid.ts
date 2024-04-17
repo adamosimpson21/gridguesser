@@ -222,25 +222,6 @@ export default class FightGrid
         this.scene.scene.stop('Game')
     }
 
-    gameOver ()
-    {
-        this.playing = false;
-        this.state = 3;
-        this.timer.paused = true;
-
-        this.button.setFrame(4);
-
-        let location = 0;
-
-        do {
-
-            this.getCell(location).reveal();
-
-            location++;
-
-        } while (location < this.size);
-    }
-
     gameWon ()
     {
         this.playing = false;

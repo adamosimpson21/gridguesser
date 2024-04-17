@@ -5,6 +5,8 @@ import HudDisplay from "@/game/classes/HudDisplay";
 import {SCENES} from "@/game/types/scenes";
 import EventDisplay from "@/game/classes/EventDisplay";
 import {Player} from "@/game/classes/Player";
+import {GAME_EVENTS} from "@/game/types/events";
+import { Mission } from '../classes/Mission';
 
 export class Overworld extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -39,11 +41,14 @@ export class Overworld extends Scene {
 
         EventBus.emit('current-scene-ready', this);
         
-        
+        EventBus.on(GAME_EVENTS.GAME_OVER, () => Mission.gameOver(this));
+                
         this.events.on(Phaser.Scenes.Events.RESUME, () => {
             this.camera.fadeIn(500, 0, 0, 0);
         }, this)
     }
+    
+    
 
     changeScene ()
     {

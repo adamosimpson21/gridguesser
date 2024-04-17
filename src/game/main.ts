@@ -7,6 +7,7 @@ import { Preloader } from './scenes/Preloader';
 import {Overworld} from "@/game/scenes/Overworld";
 import {Hud} from "@/game/scenes/Hud";
 import {Shop} from "@/game/scenes/Shop";
+import {NewGame} from "@/game/scenes/NewGame";
 
 //  Find out more information about the Fight Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -30,13 +31,13 @@ const config: Phaser.Types.Core.GameConfig = {
     scene: [
         Boot,
         Preloader,
-        MainMenu,
         Overworld,
         GameOver,
         Shop,
+        NewGame,
         Fight,
         Hud,
-        
+        MainMenu,
     ]
 };
 

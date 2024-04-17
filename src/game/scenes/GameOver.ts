@@ -1,5 +1,6 @@
 import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
+import {SCENES} from "@/game/types/scenes";
 
 export class GameOver extends Scene
 {
@@ -9,7 +10,7 @@ export class GameOver extends Scene
 
     constructor ()
     {
-        super('GameOver');
+        super(SCENES.GameOver);
     }
 
     create ()
@@ -20,17 +21,27 @@ export class GameOver extends Scene
         this.background = this.add.image(512, 384, 'background');
         this.background.setAlpha(0.5);
 
-        this.gameOverText = this.add.text(512, 384, 'Fight Over', {
+        this.gameOverText = this.add.text(512, 384, 'Game Over', {
             fontFamily: 'Arial Black', fontSize: 64, color: '#ffffff',
             stroke: '#000000', strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
+
+        this.gameOverText = this.add.text(512, 484, 'Go To Main Menu', {
+            fontFamily: 'Arial Black', fontSize: 32, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 8,
+            align: 'center'
+        }).setOrigin(0.5).setDepth(100);
+        this.gameOverText.setInteractive();
+        this.gameOverText.on('pointerdown', () => this.scene.switch(SCENES.MainMenu));
+        
+        
         
         EventBus.emit('current-scene-ready', this);
     }
 
     changeScene ()
     {
-        this.scene.start('MainMenu');
+        this.scene.start(SCENES.MainMenu);
     }
 }

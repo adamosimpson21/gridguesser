@@ -21,13 +21,13 @@ export class MainMenu extends Scene
     {
         this.background = this.add.image(512, 384, 'background');
 
-        this.title = this.add.text(512, 250, 'FightGrid Guesser', {
+        this.title = this.add.text(512, 250, 'Broom Sweeper', {
             fontFamily: 'Arial Black', fontSize: 56, color: '#ffffff',
             stroke: '#000000', strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
 
-        this.overworldButton = this.add.text(512, 460, 'Go to Overworld', {
+        this.overworldButton = this.add.text(512, 460, 'New Game', {
             fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
             stroke: '#000000', strokeThickness: 8,
             align: 'center'
@@ -35,7 +35,7 @@ export class MainMenu extends Scene
         this.overworldButton.setInteractive();
         this.overworldButton.on('pointerdown', () => this.scene.start(SCENES.Overworld))
 
-        this.fightSceneButton = this.add.text(512, 520, 'Go to Fight Page', {
+        this.fightSceneButton = this.add.text(512, 520, 'Go To Fight', {
             fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
             stroke: '#000000', strokeThickness: 8,
             align: 'center'

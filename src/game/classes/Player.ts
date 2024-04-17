@@ -1,7 +1,8 @@
 import {EventBus} from "@/game/EventBus";
-import {PLAYER_EVENTS, UI_EVENTS} from "@/game/types/events"
+import {GAME_EVENTS, PLAYER_EVENTS, UI_EVENTS} from "@/game/types/events"
 import {shopItemType} from "@/game/types/shopItems";
-class PlayerClass{
+import {Mission} from "@/game/classes/Mission";
+export class PlayerClass{
     public name: string;
     public hp: number;
     public gold: number;
@@ -41,6 +42,9 @@ class PlayerClass{
         EventBus.on(PLAYER_EVENTS.LOSE_UPGRADE, (upgrade: shopItemType) => {
             this.updateUpgrades(upgrade, false)
         })
+        EventBus.on(PLAYER_EVENTS.HIT_BOMB, (numBombs: number) => {
+            this.hitBomb(numBombs);
+        })
     }
     
     updateUpgrades(upgrade:shopItemType, gained: boolean){
@@ -55,6 +59,12 @@ class PlayerClass{
             }
         }
     }
+    
+    hitBomb(numBombs: number){
+        const bombDamage = Mission.bombIntensity * numBombs;
+        console.log("bomb damage:", bombDamage);
+        this.updateHp(this.hp - bombDamage, this.maxHp);
+    }
 
     updateHp(hp ? : number, maxHp ? : number)
     {
@@ -65,6 +75,8 @@ class PlayerClass{
             maxHpToUpdate = 1;
         }
         if(hpToUpdate <=0){
+            console.log("hp is less than 1")
+            EventBus.emit(GAME_EVENTS.GAME_OVER);
             hpToUpdate = 0;
         } else if (hpToUpdate >= maxHpToUpdate){
             hpToUpdate = maxHpToUpdate;
@@ -88,5 +100,3 @@ class PlayerClass{
         EventBus.emit(UI_EVENTS.UPDATE_GOLD, goldToUpdate);
     }
 }
-
-export const Player = new PlayerClass();

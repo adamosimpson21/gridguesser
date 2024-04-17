@@ -1,3 +1,6 @@
+import {PLAYER_EVENTS} from "@/game/types/events";
+import {EventBus} from "@/game/EventBus";
+
 export default class FightGridCell
 {
     private grid: any;
@@ -104,8 +107,9 @@ export default class FightGridCell
         if (this.bomb)
         {
             this.exploded = true;
-
-            this.grid.gameOver();
+            this.reveal();
+            this.grid.updateBombs(1);
+            EventBus.emit(PLAYER_EVENTS.HIT_BOMB, 1);
         }
         else
         {
