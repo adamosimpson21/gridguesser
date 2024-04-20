@@ -1,0 +1,15 @@
+export const GAME_CONSTANTS = {
+    startingHp: 5,
+    startingMaxHp: 5,
+    startingGold: 50,
+    startingLevel: 1,
+    startingBombIntensity: 3,
+    startingName: "Jan Eator",
+    startingBombNum: 4,
+    startingFightGridWidth: 8,
+    startingFightGridHeight: 8,
+    startingOverworldGridWidth: 5,
+    startingOverworldGridHeight: 5,
+    startingShopGridWidth: 3,
+    startingShopGridHeight: 4,
+}

@@ -4,32 +4,37 @@ import {PLAYER_EVENTS} from "@/game/types/events";
 import {EventBus} from "@/game/EventBus";
 import {Fight} from "@/game/scenes/Fight";
 import {SCENES} from "@/game/types/scenes";
+import {GameState} from "@/game/classes/GameState";
+import GameObject = Phaser.GameObjects.GameObject;
 
-export default class FightGrid
+export default class FightGrid extends GameObject
 {
-    private scene: Fight;
-    private width: number;
-    private height: number;
-    private size: number;
-    private offset: Phaser.Math.Vector2;
-    private timeCounter: number;
-    private bombQty: number;
-    private bombsCounter: number;
-    private playing: boolean;
-    private populated: boolean;
-    private timer: Phaser.Time.TimerEvent;
-    private state: number;
-    private data: any[];
-    private board: Phaser.GameObjects.Container;
-    private digit1: Phaser.GameObjects.Image;
-    private digit2: Phaser.GameObjects.Image;
-    private digit3: Phaser.GameObjects.Image;
-    private time1: Phaser.GameObjects.Image;
-    private time2: Phaser.GameObjects.Image;
-    private time3: Phaser.GameObjects.Image;
-    private button: any;
+    public scene: Fight;
+    public width: number;
+    public height: number;
+    public size: number;
+    public offset: Phaser.Math.Vector2;
+    public timeCounter: number;
+    public bombQty: number;
+    public bombsCounter: number;
+    public playing: boolean;
+    public populated: boolean;
+    public timer: Phaser.Time.TimerEvent;
+    public state: number;
+    public gridData: any[];
+    public board: Phaser.GameObjects.Container;
+    public digit1: Phaser.GameObjects.Image;
+    public digit2: Phaser.GameObjects.Image;
+    public digit3: Phaser.GameObjects.Image;
+    public time1: Phaser.GameObjects.Image;
+    public time2: Phaser.GameObjects.Image;
+    public time3: Phaser.GameObjects.Image;
+    public button: any;
+    
+   
     constructor (scene:Fight, width:number, height:number, bombs:number)
     {
+        super(scene, "fightGrid");
         this.scene = scene;
 
         this.width = width;
@@ -53,7 +58,7 @@ export default class FightGrid
         //  3 = game lost
         this.state = 0;
 
-        this.data = [];
+        this.gridData = [];
 
         const x = Math.floor((scene.scale.width / 2) - (20 + (width * 16)) / 2);
         const y = Math.floor((scene.scale.height / 2) - (63 + (height * 16)) / 2);
@@ -87,11 +92,11 @@ export default class FightGrid
 
         for (let x = 0; x < this.width; x++)
         {
-            this.data[x] = [];
+            this.gridData[x] = [];
 
             for (let y = 0; y < this.height; y++)
             {
-                this.data[x][y] = new FightGridCell(this, i, x, y);
+                this.gridData[x][y] = new FightGridCell(this, i, x, y);
 
                 i++;
             }
@@ -230,6 +235,7 @@ export default class FightGrid
 
         this.button.setFrame(3);
         EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, 5)
+        GameState.updateFieldBy("bombNum", 4);
         this.scene.time.addEvent({
             delay: 1000,
             loop: false,
@@ -338,7 +344,7 @@ export default class FightGrid
     {
         const pos = Phaser.Math.ToXY(index, this.width, this.height);
 
-        return this.data[pos.x][pos.y];
+        return this.gridData[pos.x][pos.y];
     }
 
     getCellXY (x:number, y:number)
@@ -348,7 +354,7 @@ export default class FightGrid
             return null;
         }
 
-        return this.data[x][y];
+        return this.gridData[x][y];
     }
 
     getAdjacentCells (cell: {x:number, y:number})
@@ -400,7 +406,7 @@ export default class FightGrid
 
             for (let x = 0; x < this.width; x++)
             {
-                let cell = this.data[x][y];
+                let cell = this.gridData[x][y];
 
                 if (x === 0)
                 {

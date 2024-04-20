@@ -22,5 +22,5 @@ export const UI_EVENTS = {
 export const GAME_EVENTS = {
     GAME_OVER: 'GAME_OVER',
     UNLOCK_ITEM: 'UNLOCK_ITEM',
-    
+    RESET: "RESET",
 }

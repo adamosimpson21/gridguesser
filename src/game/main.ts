@@ -34,9 +34,9 @@ const config: Phaser.Types.Core.GameConfig = {
         Overworld,
         GameOver,
         Shop,
-        NewGame,
         Fight,
         Hud,
+        NewGame,
         MainMenu,
     ]
 };

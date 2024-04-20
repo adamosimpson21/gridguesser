@@ -2,7 +2,7 @@ import {Scene} from "phaser";
 import {EventBus} from "@/game/EventBus";
 import {UI_EVENTS} from "@/game/types/events";
 import {shopItemType} from "@/game/types/shopItems";
-import {Player} from "@/game/classes/Player";
+import {GameState} from "@/game/classes/GameState";
 
 export default class HudDisplay {
     public scene: Phaser.Scene;
@@ -23,7 +23,7 @@ export default class HudDisplay {
         this.gold = gold;
         this.create();
 
-        this.nameDisplay = this.scene.add.text(48, 48, `${Player.name}`, {fontSize: '24px'})
+        this.nameDisplay = this.scene.add.text(48, 48, `${this.name}`, {fontSize: '24px'})
 
         this.hpDisplay = this.scene.add.text(248, 48, `Health: ${new Array(maxHp).fill('♥').join(' ')}`, {fontSize: '24px'})
 
@@ -33,17 +33,23 @@ export default class HudDisplay {
     }
     
     create(){
-        EventBus.on(UI_EVENTS.UPDATE_GOLD, (gold:number) => {
+        EventBus.on(UI_EVENTS.UPDATE_GOLD, (gold:number, silent?: boolean) => {
             this.goldDisplay.setText(`Gold: ${gold} 🥇`)
-            EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {type: UI_EVENTS.UPDATE_GOLD, message: `New gold amount ${gold} gold 🥇`},'5000')
+            if(!silent){
+                EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {type: UI_EVENTS.UPDATE_GOLD, message: `New gold amount ${gold} gold 🥇`},'5000')
+            }
         })
-        EventBus.on(UI_EVENTS.UPDATE_HEALTH, (hp: number, maxHp: number) => {
+        EventBus.on(UI_EVENTS.UPDATE_HEALTH, (hp: number, maxHp: number, silent?: boolean) => {
             this.hpDisplay.setText(`Health: ${new Array(hp).fill('♥').concat(new Array(maxHp - hp).fill('💔')).join(' ')}`)
-            EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {type: UI_EVENTS.UPDATE_HEALTH, message: `New HP amount ${hp}`}, '5000')
+            if(!silent){
+                EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {type: UI_EVENTS.UPDATE_HEALTH, message: `New HP amount ${hp}`}, '5000')
+            }
         })
-        EventBus.on(UI_EVENTS.UPDATE_UPGRADES, (upgrades:shopItemType[]) => {
+        EventBus.on(UI_EVENTS.UPDATE_UPGRADES, (upgrades:shopItemType[], silent?: boolean) => {
             this.upgradeDisplay.setText(`${upgrades.map(obj => obj.icon).join(' ')}`)
-            EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {type: UI_EVENTS.UPDATE_UPGRADES, message: `New Upgrade`}, '5000')
+            if(!silent){
+                EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {type: UI_EVENTS.UPDATE_UPGRADES, message: `New Upgrade`}, '5000')
+            }
         })
     }
 }

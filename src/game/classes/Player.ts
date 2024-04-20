@@ -1,7 +1,8 @@
 import {EventBus} from "@/game/EventBus";
 import {GAME_EVENTS, PLAYER_EVENTS, UI_EVENTS} from "@/game/types/events"
 import {shopItemType} from "@/game/types/shopItems";
-import {Mission} from "@/game/classes/Mission";
+import {GameState} from "@/game/classes/GameState";
+import {GAME_CONSTANTS} from "@/game/types/gameConstants";
 export class PlayerClass{
     public name: string;
     public hp: number;
@@ -9,64 +10,85 @@ export class PlayerClass{
     public maxHp: number;
     private upgrades: shopItemType[];
     constructor() {
-        this.name = 'Jan Eator';
-        this.hp = 5;
-        this.maxHp = 5;
-        this.gold = 5;
+        this.name = GAME_CONSTANTS.startingName;
+        this.hp = GAME_CONSTANTS.startingHp;
+        this.maxHp = GAME_CONSTANTS.startingMaxHp;
+        this.gold = GAME_CONSTANTS.startingGold;
         this.upgrades = [];
         this.create();
     }
     
     create () {
-        EventBus.on(PLAYER_EVENTS.GAIN_HP, (severity: number) => {
-            this.updateHp(this.hp+severity, this.maxHp)
+        EventBus.on(PLAYER_EVENTS.GAIN_HP, (severity: number, silent?: boolean) => {
+            this.updateHp(this.hp+severity, this.maxHp, silent)
         })
-        EventBus.on(PLAYER_EVENTS.LOSE_HP, (severity: number) => {
-            this.updateHp(this.hp-severity, this.maxHp)
+        EventBus.on(PLAYER_EVENTS.LOSE_HP, (severity: number, silent?: boolean) => {
+            console.log("you are in player lose hp 1")
+            this.upgrades.forEach(upgrade => {
+                if(upgrade.effect.damage_reduce > 0){
+                    console.log("you are in player lose hp 2")
+                    if(severity > upgrade.effect.damage_reduce){
+                        console.log("you are in player lose hp 3")
+                        severity -= upgrade.effect.damage_reduce;
+                    } else {
+                        console.log("you are in player lose hp 4")
+                        severity = 0;
+                        silent = true;
+                    }
+                }
+            })
+            console.log("this.severity:", severity);
+            
+            this.updateHp(this.hp-severity, this.maxHp, silent)
         })
-        EventBus.on(PLAYER_EVENTS.GAIN_GOLD, (severity: number) => {
-            this.updateGold(severity)
+        EventBus.on(PLAYER_EVENTS.GAIN_GOLD, (severity: number, silent?: boolean) => {
+            this.updateGold(severity, silent)
         })
-        EventBus.on(PLAYER_EVENTS.LOSE_GOLD, (severity: number) => {
-            this.updateGold(-severity)
+        EventBus.on(PLAYER_EVENTS.LOSE_GOLD, (severity: number, silent?: boolean) => {
+            this.updateGold(-severity, silent)
         })
-        EventBus.on(PLAYER_EVENTS.GAIN_MAX_HP, (severity: number) => {
-            this.updateHp(this.hp+severity, this.maxHp+severity)
+        EventBus.on(PLAYER_EVENTS.GAIN_MAX_HP, (severity: number, silent?: boolean) => {
+            this.updateHp(this.hp+severity, this.maxHp+severity, silent)
         })
-        EventBus.on(PLAYER_EVENTS.LOSE_MAX_HP, (severity: number) => {
-            this.updateHp(this.hp-severity, this.maxHp-severity)
+        EventBus.on(PLAYER_EVENTS.LOSE_MAX_HP, (severity: number, silent?: boolean) => {
+            this.updateHp(this.hp-severity, this.maxHp-severity, silent)
         })
-        EventBus.on(PLAYER_EVENTS.GAIN_UPGRADE, (upgrade: shopItemType) => {
-            this.updateUpgrades(upgrade, true)
+        EventBus.on(PLAYER_EVENTS.GAIN_UPGRADE, (upgrade: shopItemType, silent?: boolean) => {
+            this.updateUpgrades(upgrade, true, silent)
         })
-        EventBus.on(PLAYER_EVENTS.LOSE_UPGRADE, (upgrade: shopItemType) => {
-            this.updateUpgrades(upgrade, false)
+        EventBus.on(PLAYER_EVENTS.LOSE_UPGRADE, (upgrade: shopItemType, silent?: boolean) => {
+            this.updateUpgrades(upgrade, false, silent)
         })
-        EventBus.on(PLAYER_EVENTS.HIT_BOMB, (numBombs: number) => {
-            this.hitBomb(numBombs);
+        EventBus.on(PLAYER_EVENTS.HIT_BOMB, (numBombs: number, silent?: boolean) => {
+            this.hitBomb(numBombs, silent);
+        })
+        EventBus.emit(PLAYER_EVENTS.GAIN_HP, this.hp, this.maxHp, true)
+        EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, 0, true)
+        this.upgrades.map(upgrade => {
+            EventBus.emit(PLAYER_EVENTS.LOSE_UPGRADE, upgrade, true)
         })
     }
     
-    updateUpgrades(upgrade:shopItemType, gained: boolean){
+    updateUpgrades(upgrade:shopItemType, gained: boolean, silent?: boolean){
         if(gained){
             this.upgrades.push(upgrade);
-            EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, this.upgrades)
+            EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, this.upgrades, silent)
         } else {
             const index = this.upgrades.findIndex(item => item.id === upgrade.id);
             if(index !== -1){
                 this.upgrades = this.upgrades.splice(index, 1);
-                EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, this.upgrades)
+                EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, this.upgrades, silent)
             }
         }
     }
     
-    hitBomb(numBombs: number){
-        const bombDamage = Mission.bombIntensity * numBombs;
-        console.log("bomb damage:", bombDamage);
-        this.updateHp(this.hp - bombDamage, this.maxHp);
+    hitBomb(numBombs: number, silent?: boolean){
+        const bombDamage = GameState.bombIntensity * numBombs;
+        console.log("bomb intensity, numbombs:", GameState.bombIntensity, numBombs);
+        EventBus.emit(PLAYER_EVENTS.LOSE_HP, bombDamage);
     }
 
-    updateHp(hp ? : number, maxHp ? : number)
+    updateHp(hp ? : number, maxHp ? : number, silent?: boolean)
     {
         let hpToUpdate = hp || this.hp;
         let maxHpToUpdate = maxHp || this.maxHp;
@@ -75,7 +97,6 @@ export class PlayerClass{
             maxHpToUpdate = 1;
         }
         if(hpToUpdate <=0){
-            console.log("hp is less than 1")
             EventBus.emit(GAME_EVENTS.GAME_OVER);
             hpToUpdate = 0;
         } else if (hpToUpdate >= maxHpToUpdate){
@@ -84,10 +105,10 @@ export class PlayerClass{
         
         this.hp = hpToUpdate;
         this.maxHp = maxHpToUpdate;
-        EventBus.emit(UI_EVENTS.UPDATE_HEALTH, hpToUpdate, maxHpToUpdate);
+        EventBus.emit(UI_EVENTS.UPDATE_HEALTH, hpToUpdate, maxHpToUpdate, silent);
     }
     
-    updateGold(goldDifference:number){
+    updateGold(goldDifference:number, silent?: boolean){
         let goldToUpdate = goldDifference;
         if((goldDifference + this.gold) >= 0){
             goldToUpdate = this.gold + goldDifference;
@@ -97,6 +118,6 @@ export class PlayerClass{
 
         this.gold = goldToUpdate;
 
-        EventBus.emit(UI_EVENTS.UPDATE_GOLD, goldToUpdate);
+        EventBus.emit(UI_EVENTS.UPDATE_GOLD, goldToUpdate, silent);
     }
 }

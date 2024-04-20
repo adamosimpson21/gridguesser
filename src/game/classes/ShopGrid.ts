@@ -8,6 +8,7 @@ import {Shop} from "@/game/scenes/Shop";
 import OverworldCell from "@/game/classes/OverworldCell";
 import {CELL_TYPES} from "@/game/types/cells";
 import ShopItem from "@/game/classes/ShopItem";
+import {GameState} from "@/game/classes/GameState";
 
 export default class ShopGrid{
     public scene: Shop;
@@ -22,8 +23,8 @@ export default class ShopGrid{
     
     constructor(scene: Shop) {
         this.scene = scene;
-        this.width = 3;
-        this.height = 4;
+        this.width = GameState.shopGridWidth;
+        this.height = GameState.shopGridHeight;
         this.size = this.width * this.height;
 
         this.offset = new Phaser.Math.Vector2(12, 55);

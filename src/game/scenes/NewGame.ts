@@ -1,17 +1,18 @@
 import {Scene} from "phaser";
 import {SCENES} from "@/game/types/scenes";
 import {EventBus} from "@/game/EventBus";
+import {GameState} from "@/game/classes/GameState";
 
 export class NewGame extends Scene{
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
     gameText: Phaser.GameObjects.Text;
-    private submitButton: Phaser.GameObjects.Text;
+    submitButton: Phaser.GameObjects.Text;
     constructor() {
         super(SCENES.NewGame)
     }
     
-    create(){
+    init(){
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0x00000);
 
@@ -31,11 +32,12 @@ export class NewGame extends Scene{
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
         this.submitButton.setInteractive();
-        this.submitButton.on('pointerdown', this.submit)
+        this.submitButton.on('pointerdown', () => this.submit())
         
     }
     
     submit(){
-        
+        GameState.reset();
+        this.scene.launch(SCENES.Overworld).launch(SCENES.Hud);
     }
 }

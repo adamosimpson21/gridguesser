@@ -4,9 +4,8 @@ import OverworldGrid from '../classes/OverworldGrid'
 import HudDisplay from "@/game/classes/HudDisplay";
 import {SCENES} from "@/game/types/scenes";
 import EventDisplay from "@/game/classes/EventDisplay";
-import {Player} from "@/game/classes/Player";
 import {GAME_EVENTS} from "@/game/types/events";
-import { Mission } from '../classes/Mission';
+import { GameState } from '../classes/GameState';
 
 export class Overworld extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -28,8 +27,8 @@ export class Overworld extends Scene {
         this.background = this.add.image(512, 384, 'background');
         this.background.setAlpha(0.5);
 
-        const gridWidth = 5;
-        const gridHeight = 5;
+        const gridWidth = GameState.overworldGridWidth;
+        const gridHeight = GameState.overworldGridHeight;
         const numShops = 2;
         const numFights = 5;
         const numBosses = 1;
@@ -41,13 +40,13 @@ export class Overworld extends Scene {
 
         EventBus.emit('current-scene-ready', this);
         
-        EventBus.on(GAME_EVENTS.GAME_OVER, () => Mission.gameOver(this));
+        EventBus.on(GAME_EVENTS.GAME_OVER, () => GameState.gameOver(this));
                 
         this.events.on(Phaser.Scenes.Events.RESUME, () => {
             this.camera.fadeIn(500, 0, 0, 0);
         }, this)
+        
     }
-    
     
 
     changeScene ()

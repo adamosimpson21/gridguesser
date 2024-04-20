@@ -33,11 +33,19 @@ export class GameOver extends Scene
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
         this.gameOverText.setInteractive();
-        this.gameOverText.on('pointerdown', () => this.scene.switch(SCENES.MainMenu));
+        this.gameOverText.on('pointerdown', () => this.resetToMainMenu());
         
         
         
         EventBus.emit('current-scene-ready', this);
+    }
+    
+    resetToMainMenu(){
+        this.scene.stop(SCENES.Fight);
+        this.scene.stop(SCENES.Overworld);
+        this.scene.stop(SCENES.Shop);
+        this.scene.stop(SCENES.Hud);
+        this.scene.switch(SCENES.MainMenu)
     }
 
     changeScene ()

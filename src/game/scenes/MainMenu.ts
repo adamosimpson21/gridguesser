@@ -14,7 +14,7 @@ export class MainMenu extends Scene
 
     constructor ()
     {
-        super('MainMenu');
+        super(SCENES.MainMenu);
     }
 
     create ()
@@ -33,7 +33,7 @@ export class MainMenu extends Scene
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
         this.overworldButton.setInteractive();
-        this.overworldButton.on('pointerdown', () => this.scene.start(SCENES.Overworld))
+        this.overworldButton.on('pointerdown', () => this.scene.start(SCENES.NewGame))
 
         this.fightSceneButton = this.add.text(512, 520, 'Go To Fight', {
             fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',

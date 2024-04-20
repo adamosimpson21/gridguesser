@@ -4,8 +4,7 @@ import {random} from "nanoid";
 import ShopGrid from "@/game/classes/ShopGrid";
 import {EventBus} from "@/game/EventBus";
 import {PLAYER_EVENTS, UI_EVENTS} from "@/game/types/events";
-import {Player} from "@/game/classes/Player";
-import {Play} from "next/dist/compiled/@next/font/dist/google";
+import {GameState} from "@/game/classes/GameState";
 
 export default class ShopItem{
     private scene: Phaser.Scene;
@@ -51,7 +50,7 @@ export default class ShopItem{
     
     playerCanUseItemCheck(item: shopItemType):boolean{
         const itemEffect = item.effect
-        if(itemEffect.heal >= 0 && Player.hp === Player.maxHp){
+        if(itemEffect.heal >= 0 && GameState.player.hp === GameState.player.maxHp){
             EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {type: UI_EVENTS.ILLEGAL_ACTION, message: "You're already at full life"}, 3000)
             return false;
         }
@@ -61,9 +60,9 @@ export default class ShopItem{
     onClick() {
         if(this.type && this.item){
             if(this.item?.effect){
-                console.log("item cost:", this.item.cost, "player gold:", Player.gold);
+                console.log("item cost:", this.item.cost, "player gold:", GameState.player.gold);
                 // check if player has money to  buy item
-                if(this.item.cost > Player.gold){
+                if(this.item.cost > GameState.player.gold){
                     EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {type: UI_EVENTS.ILLEGAL_ACTION, message: " 💸 Not enough gold! 💸"}, 3000)
                 } else if(this.playerCanUseItemCheck(this.item)) {
                     {

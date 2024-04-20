@@ -108,6 +108,7 @@ export default class FightGridCell
         {
             this.exploded = true;
             this.reveal();
+            this.tile.setInteractive(false)
             this.grid.updateBombs(1);
             EventBus.emit(PLAYER_EVENTS.HIT_BOMB, 1);
         }

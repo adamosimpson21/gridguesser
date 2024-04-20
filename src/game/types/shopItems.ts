@@ -22,7 +22,7 @@ export const SHOP_ITEMS: { [key: string]: shopItemType } = {
     },
     REDUCE_DAMAGE_TWO: {
         id: '2 Damage Reduction',
-        name: 'Full Heal',
+        name: '2 Damage Reduction',
         cost: 8,
         effect: {damage_reduce: 2},
         icon: '🛡'
