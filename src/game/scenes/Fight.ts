@@ -15,14 +15,12 @@ export class Fight extends Scene
 
     constructor ()
     {
-        console.log("you are creating fight scene 1")
         super(SCENES.Fight);
     }
 
     
     create ()
     {
-        console.log("you are creating fight scene 2")
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0x00000);
 
@@ -38,15 +36,8 @@ export class Fight extends Scene
         this.camera.fadeIn(500, 0, 0, 0)
 
         EventBus.emit('current-scene-ready', this);
-
-        console.log("active scenes:", this.scene.manager.scenes);
-        // EventBus.on(GAME_EVENTS.RESET, () => this.gameOver())
     }
     
-    // gameOver(){
-    //     this.scene.stop();
-    // }
-
     changeScene ()
     {
         this.scene.start(SCENES.GameOver);

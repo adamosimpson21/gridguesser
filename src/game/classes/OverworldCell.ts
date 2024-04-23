@@ -150,10 +150,13 @@ export default class OverworldCell
                     this.setTileToVisited(1000);
                     this.show();
                     break;
-                case -1:
                 case 4:
+                    this.tile.setInteractive(false);
+                    this.setTileToVisited(1000);
+                    this.grid.scene.transitionScene(SCENES.BossFight);
                     this.show();
                     break;
+                case -1:
                 default:
                     this.show();
                     break;

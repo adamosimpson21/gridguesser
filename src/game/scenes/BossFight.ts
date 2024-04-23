@@ -2,39 +2,47 @@ import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
 import FightGrid from '../classes/FightGrid'
 import {SCENES} from "@/game/types/scenes";
-import ShopGrid from "@/game/classes/ShopGrid";
+import {GameState} from "@/game/classes/GameState";
+import {GAME_EVENTS} from "@/game/types/events";
+import BossFightGrid from "@/game/classes/BossFightGrid";
 
-export class Shop extends Scene
+export class BossFight extends Scene
 {
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
-    private shop: ShopGrid;
-    private returnButton: Phaser.GameObjects.Text;
+    mine: Phaser.GameObjects.Image;
+    gameText: Phaser.GameObjects.Text;
+    grid: FightGrid;
 
     constructor ()
     {
-        super(SCENES.Shop);
+        super(SCENES.BossFight);
     }
-    
-    create(){
+
+
+    create ()
+    {
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0x00000);
-        //
+
         this.background = this.add.image(512, 384, 'background');
         this.background.setAlpha(0.5);
-        
-        this.shop = new ShopGrid(this);
 
-        this.camera.fadeIn(500, 0, 0, 0);
-        
+        const gridWidth = GameState.fightGridWidth*1.5;
+        const gridHeight = GameState.fightGridHeight*1.5;
+        const numBombs = GameState.bombNum*4;
+        this.grid = new BossFightGrid(this, gridWidth, gridHeight, numBombs)
+
+
+        this.camera.fadeIn(500, 0, 0, 0)
+
         EventBus.emit('current-scene-ready', this);
     }
 
     changeScene ()
     {
-        this.scene.start(SCENES.GameOver);
+        this.scene.start(SCENES.GameWon);
     }
-    
 
     transitionScene(scene: string){
         this.camera.fadeOut(1000, 0, 0, 0);
@@ -42,5 +50,4 @@ export class Shop extends Scene
             this.scene.start(scene)
         })
     }
-
 }

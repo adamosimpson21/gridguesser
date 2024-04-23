@@ -267,6 +267,9 @@ export default class FightGrid extends GameObject
                 open++;
                 correct++;
             }
+            if(cell.bomb && cell.open){
+                open++;
+            }
 
             location++;
 
@@ -276,8 +279,21 @@ export default class FightGrid extends GameObject
 
         if ((correct === this.bombQty && open === this.size) || (open + (this.bombQty-correct) >= this.size))
         {
+            this.flagAllBombs()
             this.gameWon();
         }
+    }
+    
+    flagAllBombs(){
+        let location = 0;
+        do {
+            const cell = this.getCell(location);
+            if(cell && cell.bomb){
+                cell.flagged = true;
+                cell.tile.setFrame(2);
+            }
+            location++
+        } while(location <this.size)
     }
 
     generate (startIndex:number)
@@ -375,6 +391,19 @@ export default class FightGrid extends GameObject
             this.getCellXY(cell.x + 1, cell.y + 1)
         ];
     }
+    
+    getAdjacentCellFlaggedAndBombedNumber (cell: {x:number, y:number}){
+        const adjacentCells = this.getAdjacentCells(cell);
+        let numFlagAndBombed = 0;
+        adjacentCells.forEach(cell => {
+            if(cell && cell.flagged){
+                numFlagAndBombed++
+            } else if(cell && cell.bomb && cell.exploded){
+                numFlagAndBombed++
+            }
+        })
+        return numFlagAndBombed;
+    }
 
     floodFill (x:number, y:number)
     {
@@ -395,6 +424,25 @@ export default class FightGrid extends GameObject
                 this.floodFill(x-1, y-1);
                 this.floodFill(x+1, y-1);                
             }
+        }
+    }
+    
+    chordFill(x:number, y:number){
+        const cell = this.getCellXY(x, y)
+        if(cell && cell.open && !cell.bomb){
+            this.getAdjacentCells({x, y}).forEach(adjacentCell => {
+                if(adjacentCell && !adjacentCell.flagged){
+                    if(adjacentCell.bomb){
+                        if(!adjacentCell.exploded){
+                            adjacentCell.onClick();
+                        }
+                    } else if(adjacentCell.value === 0){
+                        this.floodFill(adjacentCell.x, adjacentCell.y)
+                    } else {
+                        adjacentCell.show();
+                    }
+                }
+            })
         }
     }
 

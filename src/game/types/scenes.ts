@@ -11,4 +11,6 @@ export const SCENES = {
     Hud: 'Hud',
     Shop: 'Shop',
     NewGame: 'NewGame',
+    BossFight: 'BossFight',
+    GameWon: 'Game Won',
 }

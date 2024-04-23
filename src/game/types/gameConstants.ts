@@ -12,4 +12,5 @@ export const GAME_CONSTANTS = {
     startingOverworldGridHeight: 5,
     startingShopGridWidth: 3,
     startingShopGridHeight: 4,
+    endLevel: 8,
 }

@@ -13,11 +13,13 @@ export default class ShopItem{
     private x: number;
     private y: number;
     private tile: Phaser.GameObjects.Text;
+    private available: boolean;
     constructor(grid: ShopGrid, type: string | undefined, x: number, y: number) {
         this.type = type;
         this.item = undefined;
         this.x = x;
         this.y = y;
+        this.available = true;
         
 
         this.tile = grid.scene.make.text({
@@ -58,7 +60,7 @@ export default class ShopItem{
     }
     
     onClick() {
-        if(this.type && this.item){
+        if(this.type && this.item && this.available){
             if(this.item?.effect){
                 console.log("item cost:", this.item.cost, "player gold:", GameState.player.gold);
                 // check if player has money to  buy item
@@ -68,6 +70,8 @@ export default class ShopItem{
                     {
                         // player has successfully bought item
                         const effect = this.item.effect;
+                        this.available = false;
+                        this.tile.setText('✅')
                         if (effect.heal) {
                             EventBus.emit(PLAYER_EVENTS.GAIN_HP, effect.heal);
                         } else if (effect.maxHp) {

@@ -68,8 +68,16 @@ export default class FightGridCell
         {
             this.grid.generate(this.index);
         }
+        
+        // chording
+        if(this.open && this.value > 0){
+            const numFlagged = this.grid.getAdjacentCellFlaggedAndBombedNumber(this);
+            if(this.value === numFlagged){
+                this.grid.chordFill(this.x, this.y);
+            }
+        }
 
-        if (this.open || !this.grid.playing)
+        if (!this.grid.playing)
         {
             return;
         }
@@ -88,7 +96,7 @@ export default class FightGridCell
                 this.grid.updateBombs(-1);
                 this.tile.setFrame(3);
             }
-            else if (!this.flagged)
+            else if (!this.flagged && !this.open)
             {
                 this.flagged = true;
                 this.tile.setFrame(2);
