@@ -39,6 +39,7 @@ export class Fight extends Scene
 
         EventBus.emit('current-scene-ready', this);
 
+        console.log("active scenes:", this.scene.manager.scenes);
         // EventBus.on(GAME_EVENTS.RESET, () => this.gameOver())
     }
     
