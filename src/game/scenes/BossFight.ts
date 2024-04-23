@@ -30,7 +30,7 @@ export class BossFight extends Scene
 
         const gridWidth = GameState.fightGridWidth*1.5;
         const gridHeight = GameState.fightGridHeight*1.5;
-        const numBombs = GameState.bombNum*4;
+        const numBombs = GameState.bombNum*2;
         this.grid = new BossFightGrid(this, gridWidth, gridHeight, numBombs)
 
 

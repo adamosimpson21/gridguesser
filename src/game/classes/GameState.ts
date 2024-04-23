@@ -19,12 +19,18 @@ class GameStateClass{
     public shopGridHeight: number;
     public shopGridWidth: number;
     public fightGridHeight: number;
+    public overworldShops: number;
+    public overworldFights: number;
+    public overworldBuffs: number;
+    public overworldTraps: number;
     
     constructor() {
         this.isPlaying = true;
         this.player = new PlayerClass();
         this.initializeNewGameConstants();
         this.create();
+        
+        EventBus.on(GAME_EVENTS.INCREMENT_LEVEL, () => this.incrementLevel());
     }
     
     create(){
@@ -56,6 +62,10 @@ class GameStateClass{
         this.fightGridHeight = GAME_CONSTANTS.startingFightGridHeight;
         this.shopGridWidth = GAME_CONSTANTS.startingShopGridWidth;
         this.shopGridHeight = GAME_CONSTANTS.startingShopGridHeight;
+        this.overworldShops=GAME_CONSTANTS.startingOverworldShops
+        this.overworldFights=GAME_CONSTANTS.startingOverworldFights
+        this.overworldBuffs=GAME_CONSTANTS.startingOverworldBuffs
+        this.overworldTraps=GAME_CONSTANTS.startingOverworldTraps
     }
     
     setLevel(level: number){
@@ -64,6 +74,15 @@ class GameStateClass{
     
     incrementLevel(){
         this.level += 1;
+        this.bombIntensity++;
+        this.bombNum+=4;
+        this.overworldGridWidth++;
+        this.overworldGridHeight++;
+        this.fightGridWidth+=2;
+        this.fightGridHeight+=2;
+        this.overworldFights+=3;
+        this.overworldBuffs++;
+        this.overworldTraps++;
     }
     
     setBombIntensity(intensity: number){

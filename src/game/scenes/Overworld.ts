@@ -29,11 +29,11 @@ export class Overworld extends Scene {
 
         const gridWidth = GameState.overworldGridWidth;
         const gridHeight = GameState.overworldGridHeight;
-        const numShops = 2;
-        const numFights = 5;
+        const numShops = GameState.overworldShops;
+        const numFights = GameState.overworldFights;
+        const numBuffs = GameState.overworldBuffs;
+        const numTraps = GameState.overworldTraps;
         const numBosses = 1;
-        const numBuffs = 2;
-        const numTraps = 2;
 
         this.overworldGrid = new OverworldGrid(this, gridWidth, gridHeight, {numBosses, numFights, numShops, numBuffs, numTraps})
        
