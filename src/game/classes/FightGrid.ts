@@ -6,6 +6,7 @@ import {Fight} from "@/game/scenes/Fight";
 import {SCENES} from "@/game/types/scenes";
 import {GameState} from "@/game/classes/GameState";
 import GameObject = Phaser.GameObjects.GameObject;
+import {FIGHT_CONSTANTS} from "@/game/types/fightConstants";
 
 export default class FightGrid extends GameObject
 {
@@ -22,7 +23,7 @@ export default class FightGrid extends GameObject
     public state: number;
     public gridData: any[];
     public board: Phaser.GameObjects.Container;
-    private bombsCounterText: Phaser.GameObjects.Text;
+    public bombsCounterText: Phaser.GameObjects.Text;
     
    
     constructor (scene:Fight, width:number, height:number, bombs:number)
@@ -33,7 +34,7 @@ export default class FightGrid extends GameObject
         this.width = width;
         this.height = height;
         this.size = width * height;
-        this.offset = new Phaser.Math.Vector2(12, 55);
+        this.offset = new Phaser.Math.Vector2(Math.floor(FIGHT_CONSTANTS.TILE_WIDTH/2), FIGHT_CONSTANTS.TILE_HEIGHT*2);
 
         this.timeCounter = 0;
         if(bombs <=0){
@@ -53,8 +54,8 @@ export default class FightGrid extends GameObject
 
         this.gridData = [];
 
-        const x = Math.floor((scene.scale.width / 2) - (20 + (width * 16)) / 2);
-        const y = Math.floor((scene.scale.height / 2) - (63 + (height * 16)) / 2);
+        const x = Math.floor((scene.scale.width / 2) - ((width/2) * FIGHT_CONSTANTS.TILE_WIDTH));
+        const y = Math.floor((scene.scale.height / 2) - ((height/2) * FIGHT_CONSTANTS.TILE_HEIGHT));
 
         this.board = scene.add.container(x, y);
 
@@ -142,7 +143,6 @@ export default class FightGrid extends GameObject
         this.playing = false;
         this.bombsCounter = this.bombQty;
         this.state = 0;
-        this.timeCounter = -1;
 
         let location = 0;
 
@@ -190,12 +190,12 @@ export default class FightGrid extends GameObject
                 open++;
             }
 
-            if (cell.bomb && cell.flagged)
+            if (cell.bombNum > 0 && cell.flagNum > 0)
             {
                 open++;
                 correct++;
             }
-            if(cell.bomb && cell.open){
+            if(cell.bombNum > 0 && cell.open){
                 open++;
             }
 
@@ -216,9 +216,9 @@ export default class FightGrid extends GameObject
         let location = 0;
         do {
             const cell = this.getCell(location);
-            if(cell && cell.bomb){
-                cell.flagged = true;
-                cell.tile.setFrame(2);
+            if(cell && cell.bombNum > 0){
+                cell.flagNum = cell.bombNum;
+                cell.setMultiFlagText(cell.bombNum);
             }
             location++
         } while(location <this.size)
@@ -235,9 +235,9 @@ export default class FightGrid extends GameObject
 
             const cell = this.getCell(location);
 
-            if (!cell.bomb && cell.index !== startIndex)
+            if (!(cell.bombNum > 0) && cell.index !== startIndex)
             {
-                cell.bomb = true;
+                cell.bombNum++;
 
                 qty--;
 
@@ -305,15 +305,17 @@ export default class FightGrid extends GameObject
     }
     
     getAdjacentCellFlaggedAndBombedNumber (cell: {x:number, y:number}){
+        console.log("you are in flag & bomb")
         const adjacentCells = this.getAdjacentCells(cell);
         let numFlagAndBombed = 0;
         adjacentCells.forEach(cell => {
-            if(cell && cell.flagged){
-                numFlagAndBombed++
-            } else if(cell && cell.bomb && cell.exploded){
-                numFlagAndBombed++
+            if(cell && cell.flagNum > 0){
+                numFlagAndBombed+=cell.flagNum
+            } else if(cell && cell.bombNum > 0 && cell.exploded){
+                numFlagAndBombed+=cell.bombNum
             }
         })
+        console.log("return flag and bomb:", numFlagAndBombed);
         return numFlagAndBombed;
     }
 
@@ -321,7 +323,7 @@ export default class FightGrid extends GameObject
     {
         const cell = this.getCellXY(x, y);
 
-        if (cell && !cell.open && !cell.bomb)
+        if (cell && !cell.open && !(cell.bombNum > 0))
         {
             cell.show();
 
@@ -341,10 +343,10 @@ export default class FightGrid extends GameObject
     
     chordFill(x:number, y:number){
         const cell = this.getCellXY(x, y)
-        if(cell && cell.open && !cell.bomb){
+        if(cell && cell.open && !(cell.bombNum > 0)){
             this.getAdjacentCells({x, y}).forEach(adjacentCell => {
-                if(adjacentCell && !adjacentCell.flagged){
-                    if(adjacentCell.bomb){
+                if(adjacentCell && !(adjacentCell.flagNum > 0)){
+                    if(adjacentCell.bombNum > 0){
                         if(!adjacentCell.exploded){
                             adjacentCell.onClick();
                         }
