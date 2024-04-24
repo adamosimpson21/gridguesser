@@ -23,22 +23,15 @@ export class PlayerClass{
             this.updateHp(this.hp+severity, this.maxHp, silent)
         })
         EventBus.on(PLAYER_EVENTS.LOSE_HP, (severity: number, silent?: boolean) => {
-            console.log("you are in player lose hp 1")
-            this.upgrades.forEach(upgrade => {
-                if(upgrade.effect.damage_reduce > 0){
-                    console.log("you are in player lose hp 2")
-                    if(severity > upgrade.effect.damage_reduce){
-                        console.log("you are in player lose hp 3")
-                        severity -= upgrade.effect.damage_reduce;
-                    } else {
-                        console.log("you are in player lose hp 4")
-                        severity = 0;
-                        silent = true;
-                    }
-                }
-            })
-            console.log("this.severity:", severity);
-            
+            let damageAfterReduction = severity - GameState.playerDamageReduction;
+            if(damageAfterReduction <=0){
+                console.log("dealing 0 damage", severity, damageAfterReduction);
+                severity = 0;
+                silent = true;
+            } else {
+                console.log("dealing some damage:", severity, damageAfterReduction)
+                severity = damageAfterReduction;
+            }            
             this.updateHp(this.hp-severity, this.maxHp, silent)
         })
         EventBus.on(PLAYER_EVENTS.GAIN_GOLD, (severity: number, silent?: boolean) => {

@@ -19,7 +19,7 @@ export default class EventDisplay {
     }
     
     handleDisplayMessage(event: {type: string, message: string}, fadeDelay?: string){
-        const eventText = this.scene.add.text(450, 200, event.message)
+        const eventText = this.scene.add.text(450, 130, event.message)
         this.scene.add.tween({
             targets: eventText,
             duration: fadeDelay || 3000,

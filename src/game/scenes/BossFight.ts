@@ -28,9 +28,9 @@ export class BossFight extends Scene
         this.background = this.add.image(512, 384, 'background');
         this.background.setAlpha(0.5);
 
-        const gridWidth = GameState.fightGridWidth*1.5;
-        const gridHeight = GameState.fightGridHeight*1.5;
-        const numBombs = GameState.bombNum*2;
+        const gridWidth = Math.floor(GameState.fightGridWidth*1.5);
+        const gridHeight = Math.floor(GameState.fightGridHeight*1.5);
+        const numBombs = Math.floor(GameState.bombNum*2);
         this.grid = new BossFightGrid(this, gridWidth, gridHeight, numBombs)
 
 

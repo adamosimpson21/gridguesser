@@ -35,7 +35,16 @@ export class MainMenu extends Scene
         this.overworldButton.setInteractive();
         this.overworldButton.on('pointerdown', () => this.scene.start(SCENES.NewGame))
 
-        this.fightSceneButton = this.add.text(512, 520, 'Go To Fight', {
+        this.overworldButton = this.add.text(512, 520, 'Minesweeper Tutorial', {
+            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 8,
+            align: 'center'
+        }).setOrigin(0.5).setDepth(100);
+        this.overworldButton.setInteractive();
+        this.overworldButton.on('pointerdown', () => window.location.href = "https://minesweepergame.com/strategy/how-to-play-minesweeper.php")
+
+
+        this.fightSceneButton = this.add.text(512, 580, 'Go To Fight', {
             fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
             stroke: '#000000', strokeThickness: 8,
             align: 'center'

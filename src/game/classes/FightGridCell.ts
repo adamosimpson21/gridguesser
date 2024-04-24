@@ -131,17 +131,13 @@ export default class FightGridCell
                 this.show();
             }
 
-            this.grid.button.setFrame(2);
             this.grid.checkWinState();
         }
     }
 
     onPointerUp ()
     {
-        if (this.grid.button.frame.name === 2)
-        {
-            this.grid.button.setFrame(0);
-        }
+     
     }
 
     reveal ()

@@ -167,10 +167,7 @@ export default class OverworldCell
 
     onPointerUp ()
     {
-        if (this.grid.button.frame.name === 2)
-        {
-            this.grid.button.setFrame(0);
-        }
+      
     }
 
     reveal ()

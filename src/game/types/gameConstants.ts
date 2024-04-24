@@ -1,6 +1,6 @@
 export const GAME_CONSTANTS = {
-    startingHp: 50,
-    startingMaxHp: 50,
+    startingHp: 5,
+    startingMaxHp: 5,
     startingGold: 50,
     startingLevel: 1,
     startingBombIntensity: 3,
@@ -16,5 +16,8 @@ export const GAME_CONSTANTS = {
     startingOverworldTraps: 2,
     startingShopGridWidth: 3,
     startingShopGridHeight: 4,
+    startingShopItemNumber: 5,
+    startingFightGoldReward: 5,
     endLevel: 8,
+    
 }

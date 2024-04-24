@@ -29,8 +29,8 @@ export default class ShopGrid{
 
         this.offset = new Phaser.Math.Vector2(12, 55);
 
-        const x = Math.floor((scene.scale.width / 2) - (20 + (this.width * 48)) / 2);
-        const y = Math.floor((scene.scale.height / 2) - (63 + (this.height * 48)) / 2);
+        const x = Math.floor((scene.scale.width / 2) - ((this.width * 64) + 100) / 2);
+        const y = Math.floor((scene.scale.height / 2) - ((this.height * 48)+200) / 2);
         
         this.data = [];
         this.board = scene.add.container(x, y)
@@ -40,9 +40,9 @@ export default class ShopGrid{
         this.generateShop();
 
         this.returnButton = this.scene.make.text({
-            x: -50,
+            x: -60,
             y: 0,
-            text: "👋 Exit Shop 👋",
+            text: "👋 Exit Vending Machine 👋",
             style: {
                 fontSize: '32px',
                 padding: {y: 6}
@@ -76,11 +76,13 @@ export default class ShopGrid{
     }
     
     generateShop(){
-        let qtyItems = 3;
+        let qtyItems = GameState.shopItemNumber;
+        if(qtyItems > this.size){
+            qtyItems = this.size;
+        }
         do{
             const location = Phaser.Math.Between(0, this.size-1);
             const cell = this.getCell(location);
-            console.log("location", location);
             if(cell.type ===undefined){
                 cell.generateItem();
                 qtyItems--;

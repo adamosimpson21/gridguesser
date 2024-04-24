@@ -19,17 +19,10 @@ export default class FightGrid extends GameObject
     public bombsCounter: number;
     public playing: boolean;
     public populated: boolean;
-    public timer: Phaser.Time.TimerEvent;
     public state: number;
     public gridData: any[];
     public board: Phaser.GameObjects.Container;
-    public digit1: Phaser.GameObjects.Image;
-    public digit2: Phaser.GameObjects.Image;
-    public digit3: Phaser.GameObjects.Image;
-    public time1: Phaser.GameObjects.Image;
-    public time2: Phaser.GameObjects.Image;
-    public time3: Phaser.GameObjects.Image;
-    public button: any;
+    private bombsCounterText: Phaser.GameObjects.Text;
     
    
     constructor (scene:Fight, width:number, height:number, bombs:number)
@@ -43,14 +36,14 @@ export default class FightGrid extends GameObject
         this.offset = new Phaser.Math.Vector2(12, 55);
 
         this.timeCounter = 0;
+        if(bombs <=0){
+            bombs = 1;
+        }
         this.bombQty = bombs;
         this.bombsCounter = bombs;
 
         this.playing = false;
         this.populated = false;
-
-        this.timer = scene.time.addEvent(new Phaser.Time.TimerEvent({}));
-        
 
         //  0 = waiting to create the grid
         //  1 = playing
@@ -65,24 +58,14 @@ export default class FightGrid extends GameObject
 
         this.board = scene.add.container(x, y);
 
-        this.digit1;
-        this.digit2;
-        this.digit3;
-
-        this.time1;
-        this.time2;
-        this.time3;
-
-        this.button;
-
         this.createBackground();
         this.createCells();
-        this.updateDigits();
-
-        this.button.setInteractive();
-
-        this.button.on('pointerdown', this.onButtonDown, this);
-        this.button.on('pointerup', this.onButtonUp, this);
+        
+        this.bombsCounterText = this.scene.make.text({
+            x: 12, y: 10, text: `${this.bombsCounter}💣`, style: {fontSize:'32px'}
+        })
+        
+        this.board.add(this.bombsCounterText)
     }
     
     
@@ -117,89 +100,42 @@ export default class FightGrid extends GameObject
 
         //  Top
 
-        board.add(factory.image(0, 0, 'topLeft').setOrigin(0));
+        // board.add(factory.image(0, 0, 'topLeft').setOrigin(0));
+        //
+        // const topBgWidth = (width + 20) - 60 - 56;
+        //
+        // board.add(factory.tileSprite(60, 0, topBgWidth, 55, 'topBg').setOrigin(0));
+        //
+        // board.add(factory.image(width + 20, 0, 'topRight').setOrigin(1, 0));
+        //
+        // //  Sides
+        //
+        // const sideHeight = (height + 63) - 55 - 8;
+        //
+        // board.add(factory.tileSprite(0, 55, 12, sideHeight, 'left').setOrigin(0));
+        // board.add(factory.tileSprite(width + 20, 55, 8, sideHeight, 'right').setOrigin(1, 0));
+        //
+        // //  Bottom
+        //
+        // board.add(factory.image(0, height + 63, 'botLeft').setOrigin(0, 1));
+        //
+        // const botBgWidth = (width + 20) - 12 - 8;
+        //
+        // board.add(factory.tileSprite(12, height + 63, botBgWidth, 8, 'botBg').setOrigin(0, 1));
+        //
+        // board.add(factory.image(width + 20, height + 63, 'botRight').setOrigin(1, 1));
+        //
+        // const x = (width + 20) - 54;
 
-        const topBgWidth = (width + 20) - 60 - 56;
-
-        board.add(factory.tileSprite(60, 0, topBgWidth, 55, 'topBg').setOrigin(0));
-
-        board.add(factory.image(width + 20, 0, 'topRight').setOrigin(1, 0));
-
-        //  Sides
-
-        const sideHeight = (height + 63) - 55 - 8;
-
-        board.add(factory.tileSprite(0, 55, 12, sideHeight, 'left').setOrigin(0));
-        board.add(factory.tileSprite(width + 20, 55, 8, sideHeight, 'right').setOrigin(1, 0));
-
-        //  Bottom
-
-        board.add(factory.image(0, height + 63, 'botLeft').setOrigin(0, 1));
-
-        const botBgWidth = (width + 20) - 12 - 8;
-
-        board.add(factory.tileSprite(12, height + 63, botBgWidth, 8, 'botBg').setOrigin(0, 1));
-
-        board.add(factory.image(width + 20, height + 63, 'botRight').setOrigin(1, 1));
-
-        //  Bombs Digits
-
-        this.digit1 = factory.image(17, 16, 'digits', 0).setOrigin(0);
-        this.digit2 = factory.image(17 + 13, 16, 'digits', 0).setOrigin(0);
-        this.digit3 = factory.image(17 + 26, 16, 'digits', 0).setOrigin(0);
-
-        board.add([ this.digit1, this.digit2, this.digit3 ]);
-
-        //  Timer Digits
-
-        const x = (width + 20) - 54;
-
-        this.time1 = factory.image(x, 16, 'digits', 0).setOrigin(0);
-        this.time2 = factory.image(x + 13, 16, 'digits', 0).setOrigin(0);
-        this.time3 = factory.image(x + 26, 16, 'digits', 0).setOrigin(0);
-
-        board.add([ this.time1, this.time2, this.time3 ]);
-
-        //  Button
-
-        const buttonX = Math.floor(((width + 20) / 2) - 13);
-
-        this.button = factory.image(buttonX, 15, 'buttons', 0).setOrigin(0);
-
-        board.add(this.button);
     }
 
     updateBombs (diff:number)
     {
         this.bombsCounter -= diff;
-
-        this.updateDigits();
+        this.bombsCounterText.setText(`${this.bombsCounter.toString()}💣`)
     }
 
-    updateDigits ()
-    {
-        const count = Phaser.Utils.String.Pad(this.bombsCounter.toString(), 3, '0', 1);
-
-        this.digit1.setFrame(parseInt(count[0]));
-        this.digit2.setFrame(parseInt(count[1]));
-        this.digit3.setFrame(parseInt(count[2]));
-    }
-
-    onButtonDown ()
-    {
-        this.button.setFrame(1);
-    }
-
-    onButtonUp ()
-    {
-        if (this.state > 0)
-        {
-            this.button.setFrame(0);
-
-            this.restart();
-        }
-    }
-
+    
     restart ()
     {
         this.populated = false;
@@ -207,7 +143,6 @@ export default class FightGrid extends GameObject
         this.bombsCounter = this.bombQty;
         this.state = 0;
         this.timeCounter = -1;
-        this.timer.paused = true;
 
         let location = 0;
 
@@ -218,22 +153,15 @@ export default class FightGrid extends GameObject
             location++;
 
         } while (location < this.size);
-
-        this.updateDigits();
-
-        this.time1.setFrame(0);
-        this.time2.setFrame(0);
-        this.time3.setFrame(0);
-        this.scene.scene.stop('Game')
+        
+        this.scene.scene.stop(SCENES.Fight)
     }
 
     gameWon ()
     {
         this.playing = false;
         this.state = 2;
-        this.timer.paused = true;
 
-        this.button.setFrame(3);
         EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, 5)
         GameState.updateFieldBy("bombNum", 4);
         this.scene.time.addEvent({
@@ -336,24 +264,8 @@ export default class FightGrid extends GameObject
         this.playing = true;
         this.populated = true;
         this.state = 1;
-
-        this.timer.reset({ delay: 1000, callback: this.onTimer, callbackScope: this, loop: true });
-
+        
         this.debug();
-    }
-
-    onTimer ()
-    {
-        this.timeCounter++;
-
-        if (this.timeCounter < 1000)
-        {
-            const count = Phaser.Utils.String.Pad(this.timeCounter.toString(), 3, '0', 1);
-
-            this.time1.setFrame(parseInt(count[0]));
-            this.time2.setFrame(parseInt(count[1]));
-            this.time3.setFrame(parseInt(count[2]));
-        }
     }
 
     getCell (index:number)

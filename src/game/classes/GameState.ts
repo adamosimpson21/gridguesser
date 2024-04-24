@@ -23,23 +23,24 @@ class GameStateClass{
     public overworldFights: number;
     public overworldBuffs: number;
     public overworldTraps: number;
+    public shopItemNumber: number;
+    public playerDamageReduction: number;
+    public fightGoldReward: number;
     
     constructor() {
         this.isPlaying = true;
         this.player = new PlayerClass();
-        this.initializeNewGameConstants();
         this.create();
         
         EventBus.on(GAME_EVENTS.INCREMENT_LEVEL, () => this.incrementLevel());
     }
     
     create(){
-       
+        this.initializeNewGameConstants();
     }
     
     gameOver(scene: Scene){
         this.isPlaying = false;
-        console.log("you are in mission game over");
         scene.scene.stop(SCENES.Fight);
         scene.scene.start(SCENES.GameOver);
     }
@@ -62,10 +63,13 @@ class GameStateClass{
         this.fightGridHeight = GAME_CONSTANTS.startingFightGridHeight;
         this.shopGridWidth = GAME_CONSTANTS.startingShopGridWidth;
         this.shopGridHeight = GAME_CONSTANTS.startingShopGridHeight;
-        this.overworldShops=GAME_CONSTANTS.startingOverworldShops
-        this.overworldFights=GAME_CONSTANTS.startingOverworldFights
-        this.overworldBuffs=GAME_CONSTANTS.startingOverworldBuffs
-        this.overworldTraps=GAME_CONSTANTS.startingOverworldTraps
+        this.overworldShops=GAME_CONSTANTS.startingOverworldShops;
+        this.overworldFights=GAME_CONSTANTS.startingOverworldFights;
+        this.overworldBuffs=GAME_CONSTANTS.startingOverworldBuffs;
+        this.overworldTraps=GAME_CONSTANTS.startingOverworldTraps;
+        this.shopItemNumber = GAME_CONSTANTS.startingShopItemNumber;
+        this.fightGoldReward = GAME_CONSTANTS.startingFightGoldReward;
+        this.playerDamageReduction = 0;
     }
     
     setLevel(level: number){
@@ -83,6 +87,7 @@ class GameStateClass{
         this.overworldFights+=3;
         this.overworldBuffs++;
         this.overworldTraps++;
+        this.fightGoldReward +=2;
     }
     
     setBombIntensity(intensity: number){

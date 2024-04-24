@@ -24,13 +24,6 @@ export default class OverworldGrid
     private state: number;
     private data: any[];
     private board: Phaser.GameObjects.Container;
-    private digit1: Phaser.GameObjects.Image;
-    private digit2: Phaser.GameObjects.Image;
-    private digit3: Phaser.GameObjects.Image;
-    private time1: Phaser.GameObjects.Image;
-    private time2: Phaser.GameObjects.Image;
-    private time3: Phaser.GameObjects.Image;
-    private button: any;
     private numBosses: number;
     private numFights: number;
     private numShops: number;
@@ -59,8 +52,6 @@ export default class OverworldGrid
         this.playing = false;
         this.populated = false;
 
-        this.timer = scene.time.addEvent(new Phaser.Time.TimerEvent({}));
-
         //  0 = waiting to create the grid
         //  1 = playing
         //  2 = game won
@@ -73,16 +64,6 @@ export default class OverworldGrid
         const y = Math.floor((scene.scale.height / 2) - (63 + (height * 48)) / 2);
         
         this.board = scene.add.container(x, y);
-
-        this.digit1;
-        this.digit2;
-        this.digit3;
-
-        this.time1;
-        this.time2;
-        this.time3;
-
-        this.button;
         
         this.createBackground();
         this.createCells();
@@ -117,59 +98,6 @@ export default class OverworldGrid
 
         const width = this.width * 48;
         const height = this.height * 48;
-
-        //  Top
-
-        // board.add(factory.image(0, 0, 'topLeft').setOrigin(0));
-
-        // const topBgWidth = (width + 20) - 60 - 56;
-
-        // board.add(factory.tileSprite(60, 0, topBgWidth, 55, 'topBg').setOrigin(0));
-        //
-        // board.add(factory.image(width + 20, 0, 'topRight').setOrigin(1, 0));
-
-        //  Sides
-
-        // const sideHeight = (height + 63) - 55 - 8;
-
-        // board.add(factory.tileSprite(0, 55, 12, sideHeight, 'left').setOrigin(0));
-        // board.add(factory.tileSprite(width + 20, 55, 8, sideHeight, 'right').setOrigin(1, 0));
-        //
-        // //  Bottom
-        //
-        // board.add(factory.image(0, height + 63, 'botLeft').setOrigin(0, 1));
-        //
-        // const botBgWidth = (width + 20) - 12 - 8;
-        //
-        // board.add(factory.tileSprite(12, height + 63, botBgWidth, 8, 'botBg').setOrigin(0, 1));
-        //
-        // board.add(factory.image(width + 20, height + 63, 'botRight').setOrigin(1, 1));
-        //
-        // //  Bombs Digits
-        //
-        // this.digit1 = factory.image(17, 16, 'digits', 0).setOrigin(0);
-        // this.digit2 = factory.image(17 + 13, 16, 'digits', 0).setOrigin(0);
-        // this.digit3 = factory.image(17 + 26, 16, 'digits', 0).setOrigin(0);
-        //
-        // board.add([ this.digit1, this.digit2, this.digit3 ]);
-        //
-        // //  Timer Digits
-        //
-        // const x = (width + 20) - 54;
-        //
-        // this.time1 = factory.image(x, 16, 'digits', 0).setOrigin(0);
-        // this.time2 = factory.image(x + 13, 16, 'digits', 0).setOrigin(0);
-        // this.time3 = factory.image(x + 26, 16, 'digits', 0).setOrigin(0);
-        //
-        // board.add([ this.time1, this.time2, this.time3 ]);
-
-        //  Button
-
-        const buttonX = Math.floor(((width + 20) / 2) - 13);
-
-        this.button = factory.image(buttonX, 15, 'buttons', 0).setOrigin(0);
-
-        board.add(this.button);
     }
     
     generate ()

@@ -37,8 +37,8 @@ export class NewGame extends Scene{
     }
     
     submit(){
-        this.scene.start(SCENES.Overworld);
-        this.scene.start(SCENES.Hud);
+        // TODO: some error with restarting game
+        this.scene.start(SCENES.Overworld).launch(SCENES.Hud);
         GameState.reset();
     }
 }
