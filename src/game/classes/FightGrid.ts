@@ -235,12 +235,13 @@ export default class FightGrid extends GameObject
 
             const cell = this.getCell(location);
 
-            if (!(cell.bombNum > 0) && cell.index !== startIndex)
+            if (cell.index !== startIndex && (cell.bombNum === 0 || GameState.fightCanHaveMultiBombTiles))
+            // if (!(cell.bombNum > 0) && cell.index !== startIndex)
             {
                 cell.bombNum++;
 
                 qty--;
-
+                
                 bombs.push(cell);
             }
 
@@ -305,7 +306,6 @@ export default class FightGrid extends GameObject
     }
     
     getAdjacentCellFlaggedAndBombedNumber (cell: {x:number, y:number}){
-        console.log("you are in flag & bomb")
         const adjacentCells = this.getAdjacentCells(cell);
         let numFlagAndBombed = 0;
         adjacentCells.forEach(cell => {
@@ -315,7 +315,6 @@ export default class FightGrid extends GameObject
                 numFlagAndBombed+=cell.bombNum
             }
         })
-        console.log("return flag and bomb:", numFlagAndBombed);
         return numFlagAndBombed;
     }
 
@@ -343,7 +342,7 @@ export default class FightGrid extends GameObject
     
     chordFill(x:number, y:number){
         const cell = this.getCellXY(x, y)
-        if(cell && cell.open && !(cell.bombNum > 0)){
+        if(cell && cell.open && cell.bombNum <= 0){
             this.getAdjacentCells({x, y}).forEach(adjacentCell => {
                 if(adjacentCell && !(adjacentCell.flagNum > 0)){
                     if(adjacentCell.bombNum > 0){

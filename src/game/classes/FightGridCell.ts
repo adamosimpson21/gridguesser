@@ -76,7 +76,6 @@ export default class FightGridCell
         // chording
         if(this.open && this.value > 0){
             const numFlagged = this.grid.getAdjacentCellFlaggedAndBombedNumber(this);
-            console.log("value, numflag", this.value, numFlagged);
             if(this.value === numFlagged){
                 this.grid.chordFill(this.x, this.y);
             }
@@ -132,8 +131,8 @@ export default class FightGridCell
             this.exploded = true;
             this.reveal();
             this.tile.setInteractive(false)
-            this.grid.updateBombs(1);
-            EventBus.emit(PLAYER_EVENTS.HIT_BOMB, 1);
+            this.grid.updateBombs(this.bombNum);
+            EventBus.emit(PLAYER_EVENTS.HIT_BOMB, this.bombNum);
         }
         else
         {
@@ -159,7 +158,9 @@ export default class FightGridCell
     {
         if (this.exploded)
         {
-            this.tile.setText("💥");
+            this.flagOverlay.setText(`${Array.from(new Array(this.bombNum).fill('💥')).join('')}`)
+            this.flagOverlay.setFontSize(`${Math.floor((FIGHT_CONSTANTS.TILE_WIDTH-16)/this.bombNum)}px`)
+            this.tile.setText("🟧");
         }
         else if (!(this.bombNum > 0) && (this.flagNum > 0))
         {
@@ -177,24 +178,29 @@ export default class FightGridCell
 
     show ()
     {
-        const values = [ '⬜️', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣' ];
+        const values = [ '⬜️', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣','9️⃣', '🔟' ];
 
-        this.tile.setText(values[this.value]);
+        if(values[this.value]){
+            this.tile.setText(values[this.value].toString());
+        } else {
+            this.tile.setText(this.value.toString());
+        }
 
         this.open = true;
     }
 
     debug ()
     {
-        const values = [ '⬜️', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣' ];
-
-        if (this.bombNum > 0)
-        {
-            return '💣';
-        }
-        else
-        {
-            return values[this.value];
+        const values = [ '⬜️', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣','9️⃣', '🔟' ];
+        
+        if (this.bombNum > 0){
+            return `${this.bombNum}💣`;
+        }else{
+            if(values[this.value]){
+               return values[this.value];
+            } else {
+                return this.value;
+            }
         }
     }
 }

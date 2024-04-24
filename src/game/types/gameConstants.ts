@@ -5,7 +5,7 @@ export const GAME_CONSTANTS = {
     startingLevel: 1,
     startingBombIntensity: 3,
     startingName: "Jan Eator",
-    startingBombNum: 4,
+    startingBombNum: 12,
     startingFightGridWidth: 8,
     startingFightGridHeight: 8,
     startingOverworldGridWidth: 5,

@@ -5,6 +5,7 @@ import {Scene} from "phaser";
 import {SCENES} from "@/game/types/scenes";
 import {PlayerClass} from "@/game/classes/Player";
 import {GAME_CONSTANTS} from "@/game/types/gameConstants";
+import {FIGHT_CONSTANTS} from "@/game/types/fightConstants";
 
 class GameStateClass{
     // stores information about current run
@@ -26,6 +27,9 @@ class GameStateClass{
     public shopItemNumber: number;
     public playerDamageReduction: number;
     public fightGoldReward: number;
+    public fightCanHaveTrashTiles: boolean;
+    public fightCanHaveLyingTiles: boolean;
+    public fightCanHaveMultiBombTiles: boolean;
     
     constructor() {
         this.isPlaying = true;
@@ -69,6 +73,9 @@ class GameStateClass{
         this.overworldTraps=GAME_CONSTANTS.startingOverworldTraps;
         this.shopItemNumber = GAME_CONSTANTS.startingShopItemNumber;
         this.fightGoldReward = GAME_CONSTANTS.startingFightGoldReward;
+        this.fightCanHaveTrashTiles = FIGHT_CONSTANTS.CAN_HAVE_TRASH_TILES;
+        this.fightCanHaveLyingTiles = FIGHT_CONSTANTS.CAN_HAVE_LYING_TILES;
+        this.fightCanHaveMultiBombTiles = FIGHT_CONSTANTS.CAN_HAVE_MULTI_BOMB_TILES;
         this.playerDamageReduction = 0;
     }
     
