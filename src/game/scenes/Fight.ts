@@ -32,6 +32,8 @@ export class Fight extends Scene
         const numBombs = GameState.bombNum;   
         this.grid = new FightGrid(this, gridWidth, gridHeight, numBombs)
 
+        console.log("current scenes in fight:", this.scene.manager.getScenes())
+
 
         this.camera.fadeIn(500, 0, 0, 0)
 

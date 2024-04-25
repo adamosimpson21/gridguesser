@@ -30,23 +30,36 @@ class GameStateClass{
     public fightCanHaveTrashTiles: boolean;
     public fightCanHaveLyingTiles: boolean;
     public fightCanHaveMultiBombTiles: boolean;
+    public GameOverBtn: Phaser.GameObjects.Text;
     
     constructor() {
         this.isPlaying = true;
-        this.player = new PlayerClass();
         this.create();
         
         EventBus.on(GAME_EVENTS.INCREMENT_LEVEL, () => this.incrementLevel());
     }
     
     create(){
-        this.initializeNewGameConstants();
+        this.reset();
     }
     
     gameOver(scene: Scene){
+
+        console.log("about to game over 3");
         this.isPlaying = false;
-        scene.scene.stop(SCENES.Fight);
-        scene.scene.start(SCENES.GameOver);
+        // adds this button to current active scene
+        const currentScene = scene.scene.systems.game.scene.getScenes(true)[0]
+        this.GameOverBtn = currentScene.add.text(512, 200, 'Oh no! Game Over 😭😭😭 👆🖱', {
+            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 8,
+            align: 'center'
+        }).setOrigin(0.5).setDepth(100);
+        this.GameOverBtn.setInteractive();
+        this.GameOverBtn.on('pointerdown', () => {
+            scene.scene.stop(currentScene);
+            scene.scene.start(SCENES.GameOver);
+        })
+
     }
     
     reset(){

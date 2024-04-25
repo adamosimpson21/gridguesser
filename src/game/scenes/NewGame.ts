@@ -38,6 +38,7 @@ export class NewGame extends Scene{
     
     submit(){
         // TODO: some error with restarting game
+        console.log("current scenes:", this.scene.manager.getScenes())
         this.scene.start(SCENES.Overworld).launch(SCENES.Hud);
         GameState.reset();
     }

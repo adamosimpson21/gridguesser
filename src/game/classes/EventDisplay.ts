@@ -4,10 +4,11 @@ import {UI_EVENTS} from "@/game/types/events";
 import { EventBus } from "../EventBus";
 
 export default class EventDisplay {
-
+    camera: Phaser.Cameras.Scene2D.Camera;
     private scene: Phaser.Scene;
     private event: { type: string; message: string };
     private fadeDelay: string;
+    private cameras: any;
     
     constructor(scene: Scene) {
         this.scene = scene;

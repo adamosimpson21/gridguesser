@@ -52,7 +52,7 @@ export default class FightGridCell
         this.tile.setInteractive();
 
         this.tile.on('pointerdown', this.onPointerDown, this);
-        this.tile.on('pointerup', this.onPointerUp, this);
+        // this.tile.on('pointerup', this.onPointerUp, this);
     }
 
     reset ()
@@ -69,12 +69,13 @@ export default class FightGridCell
     }
 
     onPointerDown (pointer:any){
+        console.log("on pointer down");
         if (!this.grid.populated){
             this.grid.generate(this.index);
         }
         
         // chording
-        if(this.open && this.value > 0){
+        if(!this.grid.playing && this.open && this.value > 0){
             const numFlagged = this.grid.getAdjacentCellFlaggedAndBombedNumber(this);
             if(this.value === numFlagged){
                 this.grid.chordFill(this.x, this.y);
@@ -83,8 +84,7 @@ export default class FightGridCell
 
         if (!this.grid.playing){
             return;
-        }
-        if (pointer.rightButtonDown() && !this.open){
+        } else if (pointer.rightButtonDown() && !this.open){
             //do nothing on right click for exploded bombs
             if(this.exploded){
                 return;
@@ -126,33 +126,28 @@ export default class FightGridCell
 
     onClick ()
     {
-        if (this.bombNum > 0)
-        {
+        console.log("clicking this")
+        if (this.bombNum > 0){
             this.exploded = true;
             this.reveal();
             this.tile.setInteractive(false)
             this.grid.updateBombs(this.bombNum);
+            console.log("emitting hit bomb event")
             EventBus.emit(PLAYER_EVENTS.HIT_BOMB, this.bombNum);
-        }
-        else
-        {
-            if (this.value === 0)
-            {
+        }else{
+            if (this.value === 0){
                 this.grid.floodFill(this.x, this.y);
-            }
-            else
-            {
+            }else{
                 this.show();
             }
-
             this.grid.checkWinState();
         }
     }
 
-    onPointerUp ()
-    {
-     
-    }
+    // onPointerUp ()
+    // {
+    // 
+    // }
 
     reveal ()
     {
@@ -172,6 +167,7 @@ export default class FightGridCell
         }
         else
         {
+            console.log("show this?")
             this.show();
         }
     }

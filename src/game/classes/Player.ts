@@ -15,6 +15,7 @@ export class PlayerClass{
         this.maxHp = GAME_CONSTANTS.startingMaxHp;
         this.gold = GAME_CONSTANTS.startingGold;
         this.upgrades = [];
+        console.log("creating player 1");
         this.create();
     }
     
@@ -25,13 +26,12 @@ export class PlayerClass{
         EventBus.on(PLAYER_EVENTS.LOSE_HP, (severity: number, silent?: boolean) => {
             let damageAfterReduction = severity - GameState.playerDamageReduction;
             if(damageAfterReduction <=0){
-                console.log("dealing 0 damage", severity, damageAfterReduction);
                 severity = 0;
                 silent = true;
             } else {
-                console.log("dealing some damage:", severity, damageAfterReduction)
                 severity = damageAfterReduction;
-            }            
+            }
+            console.log("about to lose HP 1", severity);
             this.updateHp(this.hp-severity, this.maxHp, silent)
         })
         EventBus.on(PLAYER_EVENTS.GAIN_GOLD, (severity: number, silent?: boolean) => {
@@ -77,7 +77,8 @@ export class PlayerClass{
     
     hitBomb(numBombs: number, silent?: boolean){
         const bombDamage = GameState.bombIntensity * numBombs;
-        console.log("bomb intensity, numbombs:", GameState.bombIntensity, numBombs);
+
+        console.log("emitting lose hp event:", bombDamage);
         EventBus.emit(PLAYER_EVENTS.LOSE_HP, bombDamage);
     }
 
@@ -85,11 +86,13 @@ export class PlayerClass{
     {
         let hpToUpdate = hp || this.hp;
         let maxHpToUpdate = maxHp || this.maxHp;
-       
+
+        console.log("about to lose HP 2", hpToUpdate);
         if(maxHpToUpdate <=0){
             maxHpToUpdate = 1;
         }
         if(hpToUpdate <=0){
+            console.log("you are in game over")
             EventBus.emit(GAME_EVENTS.GAME_OVER);
             hpToUpdate = 0;
         } else if (hpToUpdate >= maxHpToUpdate){

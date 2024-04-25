@@ -9,8 +9,8 @@ import {GAME_CONSTANTS} from "@/game/types/gameConstants";
 export class Hud extends Scene {
 
     camera: Phaser.Cameras.Scene2D.Camera;
-    public eventDisplay: EventDisplay;
-    public HudDisplay: HudDisplay;
+    public eventDisplay: EventDisplay | undefined;
+    public HudDisplay: HudDisplay | undefined;
 
     constructor ()
     {
@@ -18,7 +18,11 @@ export class Hud extends Scene {
     }
     
     create(){
+        this.cameras.resetAll();
+        this.camera = this.cameras.main;
+        this.HudDisplay = undefined;
         this.HudDisplay = new HudDisplay(this, GAME_CONSTANTS.startingName, GAME_CONSTANTS.startingHp, GAME_CONSTANTS.startingGold, GAME_CONSTANTS.startingMaxHp);
+        this.eventDisplay = undefined;
         this.eventDisplay = new EventDisplay(this);
         EventBus.emit('current-scene-ready', this);
     }

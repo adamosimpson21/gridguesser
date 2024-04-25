@@ -164,49 +164,62 @@ export default class FightGrid extends GameObject
 
         EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, 5)
         GameState.updateFieldBy("bombNum", 4);
-        this.scene.time.addEvent({
-            delay: 1000,
-            loop: false,
-            callback: () => {
-                this.scene.scene.stop(SCENES.Fight);
-                this.scene.scene.resume(SCENES.Overworld);
-            },
-            callbackScope: this
+        
+        const returnButton = this.scene.make.text({
+            x: (this.scene.scale.width/2)-100,
+            y: 200,
+            text: "Room Cleaned! Back to the office 👆"
+        })
+        
+        returnButton.setInteractive();
+        returnButton.on('pointerdown', () => {
+            this.scene.time.addEvent({
+                delay: 1000,
+                loop: false,
+                callback: () => {
+                    this.scene.scene.stop(SCENES.Fight);
+                    this.scene.scene.resume(SCENES.Overworld);
+                },
+                callbackScope: this
+            })
         })
     }
 
     checkWinState ()
     {
-        let correct = 0;
+        let correctBombs = 0;
         let location = 0;
-        let open = 0;
+        let revealedCells = 0;
 
         do {
 
             const cell = this.getCell(location);
 
-            if (cell.open)
-            {
-                open++;
+            if (cell.open){
+                if(cell.exploded){
+                    console.log("calculating exploded bombs");
+                    correctBombs += cell.bombNum;
+                }
+                revealedCells++;
+            } else if (cell.bombNum > 0 && cell.flagNum > 0 && cell.bombNum === cell.flagNum){
+                revealedCells++;
+                correctBombs+=cell.bombNum;
             }
-
-            if (cell.bombNum > 0 && cell.flagNum > 0)
-            {
-                open++;
-                correct++;
-            }
-            if(cell.bombNum > 0 && cell.open){
-                open++;
-            }
+            // if(cell.bombNum > 0 && cell.open){
+            //     open++;
+            // }
 
             location++;
 
         } while (location < this.size);
 
-        // console.log('Check', correct, 'out of', this.bombQty, 'open', open, 'of', this.size);
-
-        if ((correct === this.bombQty && open === this.size) || (open + (this.bombQty-correct) >= this.size))
-        {
+        console.log("correct bombs", correctBombs);
+        console.log("this.bombQty", this.bombQty);
+        console.log("revealedCells", revealedCells);
+        
+        // if ((correctBombs === this.bombQty && revealedCells === this.size))
+        if ((correctBombs === this.bombQty && revealedCells === this.size) || ((revealedCells + this.bombQty-correctBombs) >= this.size)){
+            console.log("revealedCells + this.bombQrt - correctBombs:", (revealedCells + this.bombQty-correctBombs))
             this.flagAllBombs()
             this.gameWon();
         }
@@ -324,7 +337,9 @@ export default class FightGrid extends GameObject
 
         if (cell && !cell.open && !(cell.bombNum > 0))
         {
-            cell.show();
+            if(cell.flagNum <= 0){
+                cell.show();
+            }
 
             if (cell.value === 0)
             {
