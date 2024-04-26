@@ -19,5 +19,4 @@ export const GAME_CONSTANTS = {
     startingShopItemNumber: 5,
     startingFightGoldReward: 5,
     endLevel: 8,
-    
-}
+};

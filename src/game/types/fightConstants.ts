@@ -4,5 +4,4 @@ export const FIGHT_CONSTANTS = {
     CAN_HAVE_TRASH_TILES: false,
     CAN_HAVE_LYING_TILES: false,
     CAN_HAVE_MULTI_BOMB_TILES: true,
-    
-}
+};
