@@ -8,7 +8,6 @@ export default class EventDisplay {
     private scene: Phaser.Scene;
     private event: { type: string; message: string };
     private fadeDelay: string;
-    private cameras: any;
     
     constructor(scene: Scene) {
         this.scene = scene;

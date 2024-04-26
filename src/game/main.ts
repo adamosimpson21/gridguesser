@@ -11,7 +11,7 @@ import {NewGame} from "@/game/scenes/NewGame";
 import {BossFight} from "@/game/scenes/BossFight";
 import {GameWon} from "@/game/scenes/GameWon";
 
-//  Find out more information about the Fight Config at:
+//  Find out more information about the Game Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
 const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,

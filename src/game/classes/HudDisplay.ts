@@ -40,6 +40,7 @@ export default class HudDisplay {
             }
         })
         EventBus.on(UI_EVENTS.UPDATE_HEALTH, (hp: number, maxHp: number, silent?: boolean) => {
+            console.log("this.hpDisplay", this.hpDisplay);
             this.hpDisplay.setText(`Health: ${new Array(hp).fill('♥').concat(new Array(maxHp - hp).fill('💔')).join(' ')}`)
             if(!silent){
                 EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {type: UI_EVENTS.UPDATE_HEALTH, message: `New HP amount ${hp}`}, '5000')
