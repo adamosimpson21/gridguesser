@@ -66,7 +66,6 @@ export default class HudDisplay {
         EventBus.on(
             UI_EVENTS.UPDATE_HEALTH,
             (hp: number, maxHp: number, silent?: boolean) => {
-                console.log("this.hpDisplay", this.hpDisplay);
                 this.hpDisplay.setText(
                     `Health: ${new Array(hp)
                         .fill("♥")

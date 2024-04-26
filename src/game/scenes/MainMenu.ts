@@ -81,8 +81,4 @@ export class MainMenu extends Scene {
 
         EventBus.emit("current-scene-ready", this);
     }
-
-    changeScene() {
-        this.scene.start(SCENES.Overworld);
-    }
 }

@@ -1,6 +1,6 @@
 export const GAME_CONSTANTS = {
-    startingHp: 5,
-    startingMaxHp: 5,
+    startingHp: 12,
+    startingMaxHp: 12,
     startingGold: 15,
     startingLevel: 1,
     startingBombIntensity: 3,

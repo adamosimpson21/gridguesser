@@ -6,6 +6,7 @@ export class GameOver extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
     gameOverText: Phaser.GameObjects.Text;
+    restartGameText: Phaser.GameObjects.Text;
 
     constructor() {
         super(SCENES.GameOver);
@@ -30,7 +31,7 @@ export class GameOver extends Scene {
             .setOrigin(0.5)
             .setDepth(100);
 
-        this.gameOverText = this.add
+        this.restartGameText = this.add
             .text(512, 484, "Go To Main Menu", {
                 fontFamily: "Arial Black",
                 fontSize: 32,
@@ -41,20 +42,12 @@ export class GameOver extends Scene {
             })
             .setOrigin(0.5)
             .setDepth(100);
-        this.gameOverText.setInteractive();
-        this.gameOverText.on("pointerdown", () => this.resetToMainMenu());
+        this.restartGameText.setInteractive();
+        this.restartGameText.on("pointerdown", () => this.resetToMainMenu());
 
         EventBus.emit("current-scene-ready", this);
     }
     resetToMainMenu() {
-        this.scene.stop(SCENES.Fight);
-        this.scene.stop(SCENES.Overworld);
-        this.scene.stop(SCENES.Shop);
-        this.scene.stop(SCENES.Hud);
-        this.scene.switch(SCENES.MainMenu);
-    }
-
-    changeScene() {
-        this.scene.start(SCENES.MainMenu);
+        this.scene.switch(SCENES.NewGame);
     }
 }

@@ -15,9 +15,7 @@ export class Hud extends Scene {
     }
 
     create() {
-        this.cameras.resetAll();
         this.camera = this.cameras.main;
-        this.HudDisplay = undefined;
         this.HudDisplay = new HudDisplay(
             this,
             GAME_CONSTANTS.startingName,
@@ -25,7 +23,7 @@ export class Hud extends Scene {
             GAME_CONSTANTS.startingGold,
             GAME_CONSTANTS.startingMaxHp,
         );
-        this.eventDisplay = undefined;
+
         this.eventDisplay = new EventDisplay(this);
         EventBus.emit("current-scene-ready", this);
     }

@@ -28,24 +28,18 @@ export class Fight extends Scene {
         const numBombs = GameState.bombNum;
         this.grid = new FightGrid(this, gridWidth, gridHeight, numBombs);
 
-        console.log("current scenes in fight:", this.scene.manager.getScenes());
-
         this.camera.fadeIn(500, 0, 0, 0);
 
         EventBus.emit("current-scene-ready", this);
     }
 
-    changeScene() {
-        this.scene.start(SCENES.GameOver);
-    }
-
-    transitionScene(scene: string) {
-        this.camera.fadeOut(1000, 0, 0, 0);
-        this.camera.once(
-            Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
-            (cam: any) => {
-                this.scene.start(scene);
-            },
-        );
-    }
+    // transitionScene(scene: string) {
+    //     this.camera.fadeOut(1000, 0, 0, 0);
+    //     this.camera.once(
+    //         Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+    //         (cam: any) => {
+    //             this.scene.start(scene);
+    //         },
+    //     );
+    // }
 }

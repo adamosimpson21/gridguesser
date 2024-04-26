@@ -10,12 +10,7 @@ export class PlayerClass {
     public maxHp: number;
     private upgrades: shopItemType[];
     constructor() {
-        this.name = GAME_CONSTANTS.startingName;
-        this.hp = GAME_CONSTANTS.startingHp;
-        this.maxHp = GAME_CONSTANTS.startingMaxHp;
-        this.gold = GAME_CONSTANTS.startingGold;
-        this.upgrades = [];
-        console.log("creating player 1");
+        this.initializeOrReset();
         this.create();
     }
 
@@ -37,7 +32,6 @@ export class PlayerClass {
                 } else {
                     severity = damageAfterReduction;
                 }
-                console.log("about to lose HP 1", severity);
                 this.updateHp(this.hp - severity, this.maxHp, silent);
             },
         );
@@ -91,11 +85,26 @@ export class PlayerClass {
                 this.hitBomb(numBombs, silent);
             },
         );
+
+        EventBus.on(GAME_EVENTS.RESET, () => {
+            this.initializeOrReset();
+        });
         EventBus.emit(PLAYER_EVENTS.GAIN_HP, this.hp, this.maxHp, true);
         EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, 0, true);
         this.upgrades.map((upgrade) => {
             EventBus.emit(PLAYER_EVENTS.LOSE_UPGRADE, upgrade, true);
         });
+    }
+
+    initializeOrReset() {
+        this.name = GAME_CONSTANTS.startingName;
+        this.hp = GAME_CONSTANTS.startingHp;
+        this.maxHp = GAME_CONSTANTS.startingMaxHp;
+        this.gold = GAME_CONSTANTS.startingGold;
+        this.upgrades = [];
+        EventBus.emit(UI_EVENTS.UPDATE_HEALTH, this.hp, this.maxHp, true);
+        EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, true);
+        EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, this.upgrades, true);
     }
 
     updateUpgrades(upgrade: shopItemType, gained: boolean, silent?: boolean) {
@@ -115,22 +124,25 @@ export class PlayerClass {
 
     hitBomb(numBombs: number, silent?: boolean) {
         const bombDamage = GameState.bombIntensity * numBombs;
-
-        console.log("emitting lose hp event:", bombDamage);
-        EventBus.emit(PLAYER_EVENTS.LOSE_HP, bombDamage);
+        EventBus.emit(PLAYER_EVENTS.LOSE_HP, bombDamage, silent);
     }
 
     updateHp(hp?: number, maxHp?: number, silent?: boolean) {
+        // console.log("hp, maxhp, silent", hp, maxHp, silent);
         let hpToUpdate = hp || this.hp;
-        let maxHpToUpdate = maxHp || this.maxHp;
-        console.log("about to lose HP 2", hpToUpdate);
+        if (hp === 0) {
+            hpToUpdate = hp;
+        }
+        let maxHpToUpdate = maxHp || this.hp;
+        if (maxHp === 0) {
+            maxHpToUpdate = maxHp;
+        }
         if (maxHpToUpdate <= 0) {
             maxHpToUpdate = 1;
         }
         if (hpToUpdate <= 0) {
-            console.log("you are in game over");
             EventBus.emit(GAME_EVENTS.GAME_OVER);
-            hpToUpdate = 0;
+            // hpToUpdate = 0;
         } else if (hpToUpdate >= maxHpToUpdate) {
             hpToUpdate = maxHpToUpdate;
         }

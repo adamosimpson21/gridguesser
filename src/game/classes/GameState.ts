@@ -34,9 +34,11 @@ class GameStateClass {
 
     constructor() {
         this.isPlaying = true;
+        this.player = new PlayerClass();
         this.create();
 
         EventBus.on(GAME_EVENTS.INCREMENT_LEVEL, () => this.incrementLevel());
+        EventBus.on(GAME_EVENTS.RESET, () => this.reset(), this);
     }
 
     create() {
@@ -44,11 +46,10 @@ class GameStateClass {
     }
 
     gameOver(scene: Scene) {
-        console.log("about to game over 3");
         this.isPlaying = false;
         // adds this button to current active scene
-        const currentScene = scene.scene.systems.game.scene.getScenes(true)[0];
-        this.GameOverBtn = currentScene.add
+        const currentScenes = scene.scene.systems.game.scene.getScenes(true);
+        this.GameOverBtn = currentScenes[0].add
             .text(512, 200, "Oh no! Game Over 😭😭😭 👆🖱", {
                 fontFamily: "Arial Black",
                 fontSize: 38,
@@ -61,7 +62,7 @@ class GameStateClass {
             .setDepth(100);
         this.GameOverBtn.setInteractive();
         this.GameOverBtn.on("pointerdown", () => {
-            scene.scene.stop(currentScene);
+            scene.scene.stop(SCENES.Fight);
             scene.scene.start(SCENES.GameOver);
         });
     }
@@ -69,9 +70,6 @@ class GameStateClass {
     reset() {
         this.initializeNewGameConstants();
         this.isPlaying = true;
-        this.player = undefined;
-        this.player = new PlayerClass();
-        EventBus.emit(GAME_EVENTS.RESET);
     }
 
     initializeNewGameConstants() {

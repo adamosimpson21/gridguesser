@@ -2,6 +2,7 @@ import { Scene } from "phaser";
 import { SCENES } from "@/game/types/scenes";
 import { EventBus } from "@/game/EventBus";
 import { GameState } from "@/game/classes/GameState";
+import { GAME_EVENTS } from "@/game/types/events";
 
 export class NewGame extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -44,9 +45,7 @@ export class NewGame extends Scene {
         this.submitButton.on("pointerdown", () => this.submit());
     }
     submit() {
-        // TODO: some error with restarting game
-        console.log("current scenes:", this.scene.manager.getScenes());
-        this.scene.start(SCENES.Overworld).launch(SCENES.Hud);
-        GameState.reset();
+        EventBus.emit(GAME_EVENTS.RESET);
+        this.scene.start(SCENES.Overworld);
     }
 }
