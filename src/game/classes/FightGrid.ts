@@ -190,44 +190,58 @@ export default class FightGrid extends GameObject {
         let correctBombs = 0;
         let location = 0;
         let revealedCells = 0;
+        let correctBombCells = 0;
 
         do {
             const cell = this.getCell(location);
 
-            if (cell.open) {
-                if (cell.exploded) {
-                    console.log("calculating exploded bombs");
-                    correctBombs += cell.bombNum;
-                }
-                revealedCells++;
-            } else if (
-                cell.bombNum > 0 &&
-                cell.flagNum > 0 &&
-                cell.bombNum === cell.flagNum
-            ) {
-                revealedCells++;
-                correctBombs += cell.bombNum;
-            }
-            // if(cell.bombNum > 0 && cell.open){
-            //     open++;
+            // if (cell.open) {
+            //     // exploded bomb
+            //     if (cell.exploded) {
+            //         console.log("calculating exploded bombs");
+            //         correctBombs += cell.bombNum;
+            //         correctBombCells++;
+            //     }
+            //
+            //     // exploded or normal reveal
+            //     revealedCells++;
+            // } else if (
+            //     cell.bombNum > 0 &&
+            //     cell.flagNum > 0 &&
+            //     cell.bombNum === cell.flagNum
+            // ) {
+            //     // flag number matches bomb number
+            //     correctBombs += cell.bombNum;
+            //     correctBombCells++;
             // }
+            // // if(cell.bombNum > 0 && cell.open){
+            // //     open++;
+            // // }
+            if (cell.open) {
+                revealedCells++;
+            } else if (cell.bombNum > 0) {
+                revealedCells++;
+            }
 
             location++;
         } while (location < this.size);
 
-        console.log("correct bombs", correctBombs);
-        console.log("this.bombQty", this.bombQty);
-        console.log("revealedCells", revealedCells);
+        // console.log("correct bombs", correctBombs);
+        // console.log("this.bombQty", this.bombQty);
+        // console.log("revealedCells", revealedCells);
 
         // if ((correctBombs === this.bombQty && revealedCells === this.size))
-        if (
-            (correctBombs === this.bombQty && revealedCells === this.size) ||
-            revealedCells + this.bombQty - correctBombs >= this.size
-        ) {
-            console.log(
-                "revealedCells + this.bombQrt - correctBombs:",
-                revealedCells + this.bombQty - correctBombs,
-            );
+        // if (
+        //     (correctBombs === this.bombQty && revealedCells === this.size) ||
+        //     revealedCells + this.bombQty - correctBombs >= this.size
+        // ) {
+
+        // unsure if something is wrong here
+        if (revealedCells >= this.size) {
+            // console.log(
+            //     "revealedCells + this.bombQrt - correctBombs:",
+            //     revealedCells + this.bombQty - correctBombs,
+            // );
             this.flagAllBombs();
             this.gameWon();
         }

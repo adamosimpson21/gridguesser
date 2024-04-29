@@ -7,7 +7,7 @@ export const GAME_CONSTANTS = {
     startingLevel: 1,
     startingBombIntensity: 3,
     startingName: "Jan Eator",
-    startingBombNum: 4,
+    startingBombNum: 5,
     startingFightGridWidth: 8,
     startingFightGridHeight: 8,
     startingOverworldGridWidth: 5,
@@ -30,7 +30,8 @@ export const GAME_CONSTANTS = {
         FIGHT_INPUT_TYPES.REMOVE_LIES,
     ],
     startingRemoveTrashNum: 1,
-    startingRemoveBombNum: 1,
+    startingRemoveBombNum: 2,
+    startingRemoveLyingNum: 3,
     startingTrashTileNum: 2,
     startingLyingTileNum: 0,
 };

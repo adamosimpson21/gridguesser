@@ -1,21 +1,25 @@
 import { GameState } from "@/game/classes/GameState";
 import { GameObjects, Scene } from "phaser";
-import { FIGHT_CONSTANTS } from "@/game/types/fightConstants";
+import {
+    FIGHT_CONSTANTS,
+    FIGHT_INPUT_TYPES,
+} from "@/game/types/fightConstants";
+import { Fight } from "@/game/scenes/Fight";
 
 export default class FightInputMenu {
     public availableInputs: string[];
     public currentInput: string;
-    private scene: Phaser.Scene;
+    private scene: Fight;
     private inputBoard: any;
     private previousCurrentInput: string;
-    constructor(scene: Scene) {
+    constructor(scene: Fight) {
         this.scene = scene;
         this.availableInputs = GameState.fightInputTypes;
         this.currentInput = GameState.currentFightInputType;
         this.previousCurrentInput = this.currentInput;
 
         const x = Math.floor(
-            scene.scale.width - FIGHT_CONSTANTS.TILE_WIDTH * 3,
+            scene.scale.width - FIGHT_CONSTANTS.TILE_WIDTH * 7,
         );
         const y = Math.floor(scene.scale.height / 2 + 100);
 
@@ -45,6 +49,21 @@ export default class FightInputMenu {
 
             this.previousCurrentInput = this.currentInput;
         }
+        this.inputBoard.list.forEach((inputText: Phaser.GameObjects.Text) => {
+            if (inputText.name === this.currentInput + "_NUM") {
+                if (this.currentInput === FIGHT_INPUT_TYPES.REMOVE_TRASH) {
+                    inputText.setText(`${this.scene.removeTrashUses}`);
+                } else if (
+                    this.currentInput === FIGHT_INPUT_TYPES.REMOVE_BOMB
+                ) {
+                    inputText.setText(`${this.scene.removeBombUses}`);
+                } else if (
+                    this.currentInput === FIGHT_INPUT_TYPES.REMOVE_LIES
+                ) {
+                    inputText.setText(`${this.scene.removeLyingUses}`);
+                }
+            }
+        });
     }
 
     populateInputBoard() {
@@ -67,6 +86,30 @@ export default class FightInputMenu {
                 GameState.currentFightInputType = input;
             });
             this.inputBoard.add(inputIcon);
+
+            let usesAvailable = -1;
+            if (input === FIGHT_INPUT_TYPES.REMOVE_TRASH) {
+                usesAvailable = GameState.removeTrashNum;
+            } else if (input === FIGHT_INPUT_TYPES.REMOVE_BOMB) {
+                usesAvailable = GameState.removeBombNum;
+            } else if (input === FIGHT_INPUT_TYPES.REMOVE_LIES) {
+                usesAvailable = GameState.removeLyingNum;
+            }
+            if (usesAvailable > -1) {
+                const inputNumIcon = this.scene.make.text({
+                    x: 120,
+                    y: index * 32,
+                    text: `${usesAvailable}`,
+                    style: {
+                        backgroundColor: "darkgray",
+                        color: "white",
+                        fontSize: "16px",
+                    },
+                });
+
+                inputNumIcon.name = input + "_NUM";
+                this.inputBoard.add(inputNumIcon);
+            }
         });
     }
 }

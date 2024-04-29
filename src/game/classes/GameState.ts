@@ -40,6 +40,7 @@ class GameStateClass {
     public removeBombNum: number;
     public trashTileNum: number;
     public lyingTileNum: number;
+    public removeLyingNum: number;
 
     constructor() {
         this.isPlaying = true;
@@ -106,6 +107,7 @@ class GameStateClass {
         this.currentFightInputType = FIGHT_INPUT_TYPES.REVEAL;
         this.removeTrashNum = GAME_CONSTANTS.startingRemoveTrashNum;
         this.removeBombNum = GAME_CONSTANTS.startingRemoveBombNum;
+        this.removeLyingNum = GAME_CONSTANTS.startingRemoveLyingNum;
         this.trashTileNum = GAME_CONSTANTS.startingTrashTileNum;
         this.lyingTileNum = GAME_CONSTANTS.startingLyingTileNum;
     }

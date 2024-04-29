@@ -13,6 +13,9 @@ export class Fight extends Scene {
     gameText: Phaser.GameObjects.Text;
     grid: FightGrid;
     inputMenu: FightInputMenu;
+    public removeTrashUses: number;
+    public removeBombUses: number;
+    public removeLyingUses: number;
 
     constructor() {
         super(SCENES.Fight);
@@ -30,6 +33,9 @@ export class Fight extends Scene {
         const numBombs = GameState.bombNum;
         this.grid = new FightGrid(this, gridWidth, gridHeight, numBombs);
         this.inputMenu = new FightInputMenu(this);
+        this.removeTrashUses = GameState.removeTrashNum;
+        this.removeBombUses = GameState.removeBombNum;
+        this.removeLyingUses = GameState.removeLyingNum;
 
         this.camera.fadeIn(500, 0, 0, 0);
 

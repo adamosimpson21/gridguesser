@@ -100,7 +100,7 @@ export default class FightGridCell {
         const inputType = GameState.currentFightInputType;
         if (inputType === FIGHT_INPUT_TYPES.REVEAL) {
             // chording
-            if (this.open && this.value > 0) {
+            if (this.open && this.value > 0 && !this.trash) {
                 const numFlagged =
                     this.grid.getAdjacentCellFlaggedAndBombedNumber(this);
                 if (this.value === numFlagged) {
@@ -134,6 +134,10 @@ export default class FightGridCell {
             this.toggleQuery();
         } else if (inputType === FIGHT_INPUT_TYPES.REMOVE_BOMB) {
             this.removeBomb();
+        } else if (inputType === FIGHT_INPUT_TYPES.REMOVE_TRASH) {
+            this.removeTrash();
+        } else if (inputType === FIGHT_INPUT_TYPES.REMOVE_LIES) {
+            this.removeLies();
         }
     }
 
@@ -166,6 +170,15 @@ export default class FightGridCell {
     }
 
     removeBomb() {}
+
+    removeLies() {}
+    removeTrash() {
+        if (this.trash && this.grid.scene.removeTrashUses > 0) {
+            this.trash = false;
+            this.grid.scene.removeTrashUses--;
+            this.show();
+        }
+    }
 
     setMultiFlagText(flagNumber: number) {
         if (flagNumber === 0) {
