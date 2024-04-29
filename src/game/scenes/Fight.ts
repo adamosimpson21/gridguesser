@@ -4,6 +4,7 @@ import FightGrid from "../classes/FightGrid";
 import { SCENES } from "@/game/types/scenes";
 import { GameState } from "@/game/classes/GameState";
 import { GAME_EVENTS } from "@/game/types/events";
+import FightInputMenu from "@/game/classes/FightInputMenu";
 
 export class Fight extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -11,6 +12,7 @@ export class Fight extends Scene {
     mine: Phaser.GameObjects.Image;
     gameText: Phaser.GameObjects.Text;
     grid: FightGrid;
+    inputMenu: FightInputMenu;
 
     constructor() {
         super(SCENES.Fight);
@@ -27,10 +29,15 @@ export class Fight extends Scene {
         const gridHeight = GameState.fightGridHeight;
         const numBombs = GameState.bombNum;
         this.grid = new FightGrid(this, gridWidth, gridHeight, numBombs);
+        this.inputMenu = new FightInputMenu(this);
 
         this.camera.fadeIn(500, 0, 0, 0);
 
         EventBus.emit("current-scene-ready", this);
+    }
+
+    update() {
+        this.inputMenu.update();
     }
 
     // transitionScene(scene: string) {

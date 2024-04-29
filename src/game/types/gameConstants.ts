@@ -1,3 +1,5 @@
+import { FIGHT_INPUT_TYPES } from "@/game/types/fightConstants";
+
 export const GAME_CONSTANTS = {
     startingHp: 12,
     startingMaxHp: 12,
@@ -19,4 +21,16 @@ export const GAME_CONSTANTS = {
     startingShopItemNumber: 5,
     startingFightGoldReward: 5,
     endLevel: 8,
+    startingFightInputTypes: [
+        FIGHT_INPUT_TYPES.REVEAL,
+        FIGHT_INPUT_TYPES.FLAG,
+        FIGHT_INPUT_TYPES.QUERY,
+        FIGHT_INPUT_TYPES.REMOVE_TRASH,
+        FIGHT_INPUT_TYPES.REMOVE_BOMB,
+        FIGHT_INPUT_TYPES.REMOVE_LIES,
+    ],
+    startingRemoveTrashNum: 1,
+    startingRemoveBombNum: 1,
+    startingTrashTileNum: 2,
+    startingLyingTileNum: 0,
 };

@@ -31,7 +31,8 @@ export class Preloader extends Scene {
         //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
         //  For example, you can define global animations here, so we can use them in other scenes.
 
-        this.scene.start(SCENES.MainMenu).launch(SCENES.Hud);
-        // this.scene.launch(SCENES.Fight).launch(SCENES.Hud).remove();
+        //  this one works, don't delete it or mess with it plz
+        // this.scene.start(SCENES.MainMenu).launch(SCENES.Hud);
+        this.scene.launch(SCENES.Fight).launch(SCENES.Hud).remove();
     }
 }

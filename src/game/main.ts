@@ -30,9 +30,9 @@ const config: Phaser.Types.Core.GameConfig = {
         pixelArt: true,
     },
     autoFocus: true,
-    callbacks: {
-        preBoot: console.trace,
-    },
+    // callbacks: {
+    //     preBoot: console.trace,
+    // },
     scene: [
         Boot,
         Preloader,

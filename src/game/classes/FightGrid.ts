@@ -6,7 +6,10 @@ import { Fight } from "@/game/scenes/Fight";
 import { SCENES } from "@/game/types/scenes";
 import { GameState } from "@/game/classes/GameState";
 import GameObject = Phaser.GameObjects.GameObject;
-import { FIGHT_CONSTANTS } from "@/game/types/fightConstants";
+import {
+    FIGHT_CONSTANTS,
+    FIGHT_INPUT_TYPES,
+} from "@/game/types/fightConstants";
 
 export default class FightGrid extends GameObject {
     public scene: Fight;
@@ -23,6 +26,7 @@ export default class FightGrid extends GameObject {
     public gridData: any[];
     public board: Phaser.GameObjects.Container;
     public bombsCounterText: Phaser.GameObjects.Text;
+    private emergencyGeneratorCutoffNumber: number;
 
     constructor(scene: Fight, width: number, height: number, bombs: number) {
         super(scene, "fightGrid");
@@ -35,6 +39,8 @@ export default class FightGrid extends GameObject {
             Math.floor(FIGHT_CONSTANTS.TILE_WIDTH / 2),
             FIGHT_CONSTANTS.TILE_HEIGHT * 2,
         );
+
+        this.emergencyGeneratorCutoffNumber = 0;
 
         this.timeCounter = 0;
         if (bombs <= 0) {
@@ -245,6 +251,7 @@ export default class FightGrid extends GameObject {
         const bombs = [];
 
         do {
+            this.emergencyGeneratorCutoffNumber++;
             const location = Phaser.Math.Between(0, this.size - 1);
 
             const cell = this.getCell(location);
@@ -260,7 +267,11 @@ export default class FightGrid extends GameObject {
 
                 bombs.push(cell);
             }
-        } while (qty > 0);
+        } while (
+            qty > 0 &&
+            this.emergencyGeneratorCutoffNumber <
+                FIGHT_CONSTANTS.EMERGENCY_GENERATOR_CUTOFF_NUMBER
+        );
 
         bombs.forEach((cell) => {
             //  Update the 8 cells.ts around this bomb cell
@@ -273,6 +284,31 @@ export default class FightGrid extends GameObject {
                 }
             });
         });
+
+        let trashQuantity = GameState.trashTileNum;
+
+        if (GameState.fightCanHaveTrashTiles) {
+            do {
+                this.emergencyGeneratorCutoffNumber++;
+                const location = Phaser.Math.Between(0, this.size - 1);
+
+                const cell = this.getCell(location);
+                // trash tiles must have a value before becoming trash
+                if (
+                    cell.index !== startIndex &&
+                    cell.bombNum <= 0 &&
+                    cell.value >= 1 &&
+                    !cell.trash
+                ) {
+                    cell.trash = true;
+                    trashQuantity--;
+                }
+            } while (
+                trashQuantity > 0 &&
+                this.emergencyGeneratorCutoffNumber <
+                    FIGHT_CONSTANTS.EMERGENCY_GENERATOR_CUTOFF_NUMBER
+            );
+        }
 
         this.playing = true;
         this.populated = true;
@@ -329,7 +365,7 @@ export default class FightGrid extends GameObject {
     floodFill(x: number, y: number) {
         const cell = this.getCellXY(x, y);
 
-        if (cell && !cell.open && !(cell.bombNum > 0)) {
+        if (cell && !cell.open && !(cell.bombNum > 0 && !cell.trash)) {
             if (cell.flagNum <= 0) {
                 cell.show();
             }

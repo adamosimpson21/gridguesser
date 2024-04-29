@@ -1,6 +1,11 @@
 import { PLAYER_EVENTS } from "@/game/types/events";
 import { EventBus } from "@/game/EventBus";
-import { FIGHT_CONSTANTS } from "@/game/types/fightConstants";
+import {
+    FIGHT_CONSTANTS,
+    FIGHT_INPUT_TYPES,
+} from "@/game/types/fightConstants";
+import { GameState } from "@/game/classes/GameState";
+import { Simulate } from "react-dom/test-utils";
 
 export default class FightGridCell {
     private grid: any;
@@ -14,6 +19,9 @@ export default class FightGridCell {
     private value: number;
     private tile: any;
     private flagOverlay: any;
+    private query: boolean;
+    private trash: boolean;
+    private lying: boolean;
     constructor(grid: any, index: number, x: number, y: number) {
         this.grid = grid;
 
@@ -26,6 +34,10 @@ export default class FightGridCell {
 
         this.flagNum = 0;
         this.exploded = false;
+
+        this.query = false;
+        this.trash = false;
+        this.lying = false;
 
         //  0 = empty, 1,2,3,4,5,6,7,8 = number of adjacent bombs
         this.value = 0;
@@ -66,28 +78,68 @@ export default class FightGridCell {
     }
 
     onPointerDown(pointer: any) {
-        console.log("on pointer down");
         if (!this.grid.populated) {
             this.grid.generate(this.index);
         }
 
-        // chording
-        if (!this.grid.playing && this.open && this.value > 0) {
-            const numFlagged =
-                this.grid.getAdjacentCellFlaggedAndBombedNumber(this);
-            if (this.value === numFlagged) {
-                this.grid.chordFill(this.x, this.y);
-            }
-        }
-
         if (!this.grid.playing) {
             return;
-        } else if (pointer.rightButtonDown() && !this.open) {
-            //do nothing on right click for exploded bombs
-            if (this.exploded) {
-                return;
-            }
+        } else if (this.exploded) {
+            return;
+        }
+        if (pointer.rightButtonDown() && !this.open) {
             // add first flag
+            this.addFlag();
+        } else {
+            // regular click
+            this.onClick();
+        }
+    }
+
+    onClick() {
+        const inputType = GameState.currentFightInputType;
+        if (inputType === FIGHT_INPUT_TYPES.REVEAL) {
+            // chording
+            if (this.open && this.value > 0) {
+                const numFlagged =
+                    this.grid.getAdjacentCellFlaggedAndBombedNumber(this);
+                if (this.value === numFlagged) {
+                    this.grid.chordFill(this.x, this.y);
+                }
+            }
+            if (this.query) {
+                this.toggleQuery();
+            } else if (this.flagNum > 0) {
+                //remove 1 flag with left click
+                this.flagNum--;
+                this.setMultiFlagText(this.flagNum);
+                this.grid.updateBombs(-1);
+            } else if (this.bombNum > 0) {
+                this.exploded = true;
+                this.reveal();
+                this.tile.setInteractive(false);
+                this.grid.updateBombs(this.bombNum);
+                EventBus.emit(PLAYER_EVENTS.HIT_BOMB, this.bombNum);
+            } else {
+                if (this.value === 0) {
+                    this.grid.floodFill(this.x, this.y);
+                } else {
+                    this.show();
+                }
+                this.grid.checkWinState();
+            }
+        } else if (inputType === FIGHT_INPUT_TYPES.FLAG) {
+            this.addFlag();
+        } else if (inputType === FIGHT_INPUT_TYPES.QUERY) {
+            this.toggleQuery();
+        } else if (inputType === FIGHT_INPUT_TYPES.REMOVE_BOMB) {
+            this.removeBomb();
+        }
+    }
+
+    addFlag() {
+        this.query = false;
+        if (!this.open) {
             if (this.flagNum === 0) {
                 this.flagNum = 1;
                 this.grid.updateBombs(1);
@@ -98,16 +150,22 @@ export default class FightGridCell {
                 this.setMultiFlagText(this.flagNum);
                 this.grid.updateBombs(1);
             }
-        } else if (this.flagNum === 0) {
-            // regular click
-            this.onClick();
-        } else if (this.flagNum > 0) {
-            //remove 1 flag with left click
-            this.flagNum--;
-            this.setMultiFlagText(this.flagNum);
-            this.grid.updateBombs(-1);
         }
     }
+
+    toggleQuery() {
+        if (!this.open) {
+            if (this.query) {
+                this.query = false;
+                this.flagOverlay.setText("");
+            } else {
+                this.query = true;
+                this.flagOverlay.setText("❔");
+            }
+        }
+    }
+
+    removeBomb() {}
 
     setMultiFlagText(flagNumber: number) {
         if (flagNumber === 0) {
@@ -128,25 +186,6 @@ export default class FightGridCell {
         }
     }
 
-    onClick() {
-        console.log("clicking this");
-        if (this.bombNum > 0) {
-            this.exploded = true;
-            this.reveal();
-            this.tile.setInteractive(false);
-            this.grid.updateBombs(this.bombNum);
-            console.log("emitting hit bomb event");
-            EventBus.emit(PLAYER_EVENTS.HIT_BOMB, this.bombNum);
-        } else {
-            if (this.value === 0) {
-                this.grid.floodFill(this.x, this.y);
-            } else {
-                this.show();
-            }
-            this.grid.checkWinState();
-        }
-    }
-
     // onPointerUp ()
     // {
     //
@@ -155,7 +194,7 @@ export default class FightGridCell {
     reveal() {
         if (this.exploded) {
             this.flagOverlay.setText(
-                `${Array.from(new Array(this.bombNum).fill("💥")).join("")}`,
+                `${Array.from(new Array(this.bombNum).fill("👹")).join("")}`,
             );
             this.flagOverlay.setFontSize(
                 `${Math.floor((FIGHT_CONSTANTS.TILE_WIDTH - 16) / this.bombNum)}px`,
@@ -166,7 +205,6 @@ export default class FightGridCell {
         } else if (this.bombNum > 0) {
             this.tile.setText("🐼");
         } else {
-            console.log("show this?");
             this.show();
         }
     }
@@ -186,10 +224,14 @@ export default class FightGridCell {
             "🔟",
         ];
 
-        if (values[this.value]) {
-            this.tile.setText(values[this.value].toString());
+        if (this.trash) {
+            this.tile.setText("🚮");
         } else {
-            this.tile.setText(this.value.toString());
+            if (values[this.value]) {
+                this.tile.setText(values[this.value].toString());
+            } else {
+                this.tile.setText(this.value.toString());
+            }
         }
 
         this.open = true;

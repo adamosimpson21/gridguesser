@@ -5,7 +5,10 @@ import { Scene } from "phaser";
 import { SCENES } from "@/game/types/scenes";
 import { PlayerClass } from "@/game/classes/Player";
 import { GAME_CONSTANTS } from "@/game/types/gameConstants";
-import { FIGHT_CONSTANTS } from "@/game/types/fightConstants";
+import {
+    FIGHT_CONSTANTS,
+    FIGHT_INPUT_TYPES,
+} from "@/game/types/fightConstants";
 
 class GameStateClass {
     // stores information about current run
@@ -31,6 +34,12 @@ class GameStateClass {
     public fightCanHaveLyingTiles: boolean;
     public fightCanHaveMultiBombTiles: boolean;
     public GameOverBtn: Phaser.GameObjects.Text;
+    public fightInputTypes: string[];
+    public currentFightInputType: string;
+    public removeTrashNum: number;
+    public removeBombNum: number;
+    public trashTileNum: number;
+    public lyingTileNum: number;
 
     constructor() {
         this.isPlaying = true;
@@ -93,6 +102,12 @@ class GameStateClass {
         this.fightCanHaveMultiBombTiles =
             FIGHT_CONSTANTS.CAN_HAVE_MULTI_BOMB_TILES;
         this.playerDamageReduction = 0;
+        this.fightInputTypes = GAME_CONSTANTS.startingFightInputTypes;
+        this.currentFightInputType = FIGHT_INPUT_TYPES.REVEAL;
+        this.removeTrashNum = GAME_CONSTANTS.startingRemoveTrashNum;
+        this.removeBombNum = GAME_CONSTANTS.startingRemoveBombNum;
+        this.trashTileNum = GAME_CONSTANTS.startingTrashTileNum;
+        this.lyingTileNum = GAME_CONSTANTS.startingLyingTileNum;
     }
 
     setLevel(level: number) {
