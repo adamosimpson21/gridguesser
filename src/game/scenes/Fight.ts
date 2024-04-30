@@ -40,6 +40,18 @@ export class Fight extends Scene {
         this.camera.fadeIn(500, 0, 0, 0);
 
         EventBus.emit("current-scene-ready", this);
+
+        this.input.setDefaultCursor(
+            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' height='24' width='24'><text y='16' font-size='16'>🔍</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+        );
+
+        this.events.on(
+            Phaser.Scenes.Events.SHUTDOWN,
+            () => {
+                this.input.setDefaultCursor("default");
+            },
+            this,
+        );
     }
 
     update() {

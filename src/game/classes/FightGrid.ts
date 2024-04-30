@@ -1,6 +1,6 @@
 import { Scene } from "phaser";
 import FightGridCell from "./FightGridCell";
-import { PLAYER_EVENTS } from "@/game/types/events";
+import { GAME_EVENTS, PLAYER_EVENTS } from "@/game/types/events";
 import { EventBus } from "@/game/EventBus";
 import { Fight } from "@/game/scenes/Fight";
 import { SCENES } from "@/game/types/scenes";
@@ -80,6 +80,8 @@ export default class FightGrid extends GameObject {
         });
 
         this.board.add(this.bombsCounterText);
+
+        EventBus.on(GAME_EVENTS.GAME_OVER, () => (this.playing = false));
     }
 
     createCells() {

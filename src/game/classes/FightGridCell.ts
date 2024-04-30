@@ -174,14 +174,21 @@ export default class FightGridCell {
             this.grid.scene.removeBombUses--;
             if (this.bombNum > 0) {
                 this.bombNum--;
+                // update grid
+                this.grid.bombQty--;
+                this.grid.updateBombs(1);
+
+                //update adjacent cells
                 const adjacentCells = this.grid.getAdjacentCells({
                     x: this.x,
                     y: this.y,
                 });
                 adjacentCells.forEach((cell: any) => {
-                    cell.value--;
-                    if (cell.open) {
-                        cell.show();
+                    if (cell) {
+                        cell.value--;
+                        if (cell.open) {
+                            cell.show();
+                        }
                     }
                 });
                 if (this.bombNum === 0) {

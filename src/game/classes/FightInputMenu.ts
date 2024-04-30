@@ -5,6 +5,8 @@ import {
     FIGHT_INPUT_TYPES,
 } from "@/game/types/fightConstants";
 import { Fight } from "@/game/scenes/Fight";
+import { EventBus } from "@/game/EventBus";
+import { FIGHT_EVENTS, GAME_EVENTS } from "@/game/types/events";
 
 export default class FightInputMenu {
     public availableInputs: string[];
@@ -26,44 +28,69 @@ export default class FightInputMenu {
         this.inputBoard = scene.add.container(x, y);
 
         this.populateInputBoard();
+
+        EventBus.on(GAME_EVENTS.GAME_OVER, () => {
+            this.inputBoard.list.forEach((input: Phaser.GameObjects.Text) => {
+                input.removeInteractive();
+            });
+        });
+        EventBus.on(FIGHT_EVENTS.USE_LIMITED_INPUT, () => {
+            if (this.scene.grid.playing) {
+                this.inputBoard.list.forEach(
+                    (inputText: Phaser.GameObjects.Text) => {
+                        if (inputText.name === this.currentInput + "_NUM") {
+                            if (
+                                this.currentInput ===
+                                FIGHT_INPUT_TYPES.REMOVE_TRASH
+                            ) {
+                                inputText.setText(
+                                    `${this.scene.removeTrashUses}`,
+                                );
+                            } else if (
+                                this.currentInput ===
+                                FIGHT_INPUT_TYPES.REMOVE_BOMB
+                            ) {
+                                inputText.setText(
+                                    `${this.scene.removeBombUses}`,
+                                );
+                            } else if (
+                                this.currentInput ===
+                                FIGHT_INPUT_TYPES.REMOVE_LIES
+                            ) {
+                                inputText.setText(
+                                    `${this.scene.removeLyingUses}`,
+                                );
+                            }
+                        }
+                    },
+                );
+            }
+        });
     }
 
     update() {
-        if (this.previousCurrentInput !== this.currentInput) {
-            //update background
-            this.inputBoard.list.forEach(
-                (inputText: Phaser.GameObjects.Text) => {
-                    if (inputText.name === this.currentInput) {
-                        inputText.setStyle({
-                            backgroundColor: "white",
-                            color: "black",
-                        });
-                    } else {
-                        inputText.setStyle({
-                            backgroundColor: "darkgray",
-                            color: "white",
-                        });
-                    }
-                },
-            );
+        if (this.scene.grid.playing) {
+            if (this.previousCurrentInput !== this.currentInput) {
+                //update background
+                this.inputBoard.list.forEach(
+                    (inputText: Phaser.GameObjects.Text) => {
+                        if (inputText.name === this.currentInput) {
+                            inputText.setStyle({
+                                backgroundColor: "white",
+                                color: "black",
+                            });
+                        } else {
+                            inputText.setStyle({
+                                backgroundColor: "darkgray",
+                                color: "white",
+                            });
+                        }
+                    },
+                );
 
-            this.previousCurrentInput = this.currentInput;
-        }
-        this.inputBoard.list.forEach((inputText: Phaser.GameObjects.Text) => {
-            if (inputText.name === this.currentInput + "_NUM") {
-                if (this.currentInput === FIGHT_INPUT_TYPES.REMOVE_TRASH) {
-                    inputText.setText(`${this.scene.removeTrashUses}`);
-                } else if (
-                    this.currentInput === FIGHT_INPUT_TYPES.REMOVE_BOMB
-                ) {
-                    inputText.setText(`${this.scene.removeBombUses}`);
-                } else if (
-                    this.currentInput === FIGHT_INPUT_TYPES.REMOVE_LIES
-                ) {
-                    inputText.setText(`${this.scene.removeLyingUses}`);
-                }
+                this.previousCurrentInput = this.currentInput;
             }
-        });
+        }
     }
 
     populateInputBoard() {
@@ -84,6 +111,45 @@ export default class FightInputMenu {
             inputIcon.on("pointerdown", () => {
                 this.currentInput = input;
                 GameState.currentFightInputType = input;
+                switch (input) {
+                    case FIGHT_INPUT_TYPES.REVEAL:
+                        this.scene.input.setDefaultCursor(
+                            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' height='24' width='24'><text y='16' font-size='16'>🔍</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                        );
+                        break;
+
+                    case FIGHT_INPUT_TYPES.FLAG:
+                        this.scene.input.setDefaultCursor(
+                            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' height='24' width='24'><text y='16' font-size='16'>🚩</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                        );
+                        break;
+
+                    case FIGHT_INPUT_TYPES.QUERY:
+                        this.scene.input.setDefaultCursor(
+                            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' height='24' width='24'><text y='16' font-size='16'>❓</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                        );
+                        break;
+
+                    case FIGHT_INPUT_TYPES.REMOVE_BOMB:
+                        this.scene.input.setDefaultCursor(
+                            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' height='24' width='48'><text y='16' font-size='16'>❌👹</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                        );
+                        break;
+
+                    case FIGHT_INPUT_TYPES.REMOVE_TRASH:
+                        this.scene.input.setDefaultCursor(
+                            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' height='24' width='24'><text y='16' font-size='16'>🚯</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                        );
+                        break;
+
+                    case FIGHT_INPUT_TYPES.REMOVE_LIES:
+                        this.scene.input.setDefaultCursor(
+                            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' height='24' width='24'><text y='16' font-size='16'>🤥</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                        );
+                        break;
+                    default:
+                        break;
+                }
             });
             this.inputBoard.add(inputIcon);
 

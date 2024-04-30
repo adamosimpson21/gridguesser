@@ -15,6 +15,10 @@ export class PlayerClass {
     }
 
     create() {
+        EventBus.on(PLAYER_EVENTS.CHANGE_NAME, (name: string) => {
+            this.name = name;
+            EventBus.emit(UI_EVENTS.UPDATE_NAME, name);
+        });
         EventBus.on(
             PLAYER_EVENTS.GAIN_HP,
             (severity: number, silent?: boolean) => {

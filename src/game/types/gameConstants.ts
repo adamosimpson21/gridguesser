@@ -7,7 +7,7 @@ export const GAME_CONSTANTS = {
     startingLevel: 1,
     startingBombIntensity: 3,
     startingName: "Jan Eator",
-    startingBombNum: 5,
+    startingBombNum: 2,
     startingFightGridWidth: 8,
     startingFightGridHeight: 8,
     startingOverworldGridWidth: 5,
@@ -26,12 +26,20 @@ export const GAME_CONSTANTS = {
         FIGHT_INPUT_TYPES.FLAG,
         FIGHT_INPUT_TYPES.QUERY,
         // FIGHT_INPUT_TYPES.REMOVE_TRASH,
-        // FIGHT_INPUT_TYPES.REMOVE_BOMB,
+        FIGHT_INPUT_TYPES.REMOVE_BOMB,
         // FIGHT_INPUT_TYPES.REMOVE_LIES,
     ],
     startingRemoveTrashNum: 1,
-    startingRemoveBombNum: 2,
-    startingRemoveLyingNum: 3,
+    startingRemoveBombNum: 10,
+    startingRemoveLyingNum: 1,
     startingTrashTileNum: 2,
-    startingLyingTileNum: 0,
+    startingLyingTileNum: 1,
 };
+
+export const NAME_CHOICES = [
+    "Jan Eator",
+    "Cousteau Dian",
+    "Han Demon",
+    "May Tenance",
+    "Dustin Buster",
+];

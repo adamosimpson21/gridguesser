@@ -50,6 +50,9 @@ export default class HudDisplay {
     }
 
     create() {
+        EventBus.on(UI_EVENTS.UPDATE_NAME, (name: string) => {
+            this.nameDisplay.setText(name);
+        });
         EventBus.on(UI_EVENTS.UPDATE_GOLD, (gold: number, silent?: boolean) => {
             this.goldDisplay.setText(`Gold: ${gold} 🥇`);
             if (!silent) {
