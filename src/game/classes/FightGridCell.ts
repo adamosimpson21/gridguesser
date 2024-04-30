@@ -8,20 +8,20 @@ import { GameState } from "@/game/classes/GameState";
 import { Simulate } from "react-dom/test-utils";
 
 export default class FightGridCell {
-    private grid: any;
-    private index: number;
-    private x: number;
-    private y: number;
-    private open: boolean;
-    private bombNum: number;
-    private flagNum: number;
-    private exploded: boolean;
-    private value: number;
-    private tile: any;
-    private flagOverlay: any;
-    private query: boolean;
-    private trash: boolean;
-    private lying: boolean;
+    public grid: any;
+    public index: number;
+    public x: number;
+    public y: number;
+    public open: boolean;
+    public bombNum: number;
+    public flagNum: number;
+    public exploded: boolean;
+    public value: number;
+    public tile: any;
+    public flagOverlay: any;
+    public query: boolean;
+    public trash: boolean;
+    public lying: boolean;
     constructor(grid: any, index: number, x: number, y: number) {
         this.grid = grid;
 
@@ -169,7 +169,27 @@ export default class FightGridCell {
         }
     }
 
-    removeBomb() {}
+    removeBomb() {
+        if (this.grid.scene.removeBombUses > 0 && !this.open) {
+            this.grid.scene.removeBombUses--;
+            if (this.bombNum > 0) {
+                this.bombNum--;
+                const adjacentCells = this.grid.getAdjacentCells({
+                    x: this.x,
+                    y: this.y,
+                });
+                adjacentCells.forEach((cell: any) => {
+                    cell.value--;
+                    if (cell.open) {
+                        cell.show();
+                    }
+                });
+                if (this.bombNum === 0) {
+                    this.show();
+                }
+            }
+        }
+    }
 
     removeLies() {}
     removeTrash() {
