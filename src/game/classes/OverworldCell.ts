@@ -1,21 +1,29 @@
 import { Scene } from "phaser";
 import { CELL_TYPES } from "@/game/types/cells";
 import { SCENES } from "@/game/types/scenes";
+import { OVERWORLD_CONSTANTS } from "@/game/types/overworldConstants";
 
 export default class OverworldCell {
-    private grid: any;
-    private index: number;
-    private x: number;
-    private y: number;
-    private open: boolean;
-    private bomb: boolean;
-    private flagged: boolean;
-    private query: boolean;
-    private exploded: boolean;
-    private value: number;
-    private tile: any;
-    private typeInfo: any;
-    private hasTriggered: boolean;
+    public grid: any;
+    public index: number;
+    public x: number;
+    public y: number;
+    public open: boolean;
+    public bomb: boolean;
+    public flagged: boolean;
+    public query: boolean;
+    public exploded: boolean;
+    public value: number;
+    public tile: any;
+    public typeInfo: any;
+    public hasTriggered: boolean;
+    public topBorder: Phaser.GameObjects.Triangle;
+    public borderRect: Phaser.GameObjects.Image;
+    public borderSize: number;
+    public borderTop: Phaser.GameObjects.Image;
+    public borderLeft: Phaser.GameObjects.Image;
+    public borderRight: Phaser.GameObjects.Image;
+    public borderBottom: Phaser.GameObjects.Image;
     constructor(
         grid: any,
         index: number,
@@ -38,6 +46,8 @@ export default class OverworldCell {
         this.query = false;
         this.exploded = false;
         this.typeInfo = typeInfo;
+
+        this.borderSize = 4;
 
         this.value = 0;
         switch (type) {
@@ -71,20 +81,69 @@ export default class OverworldCell {
                 break;
         }
 
-        // this.tile = grid.scene.make.image({
-        //     key: 'tiles',
-        //     frame: 0,
-        //     x: grid.offset.x + (x * 48),
-        //     y: grid.offset.y + (y * 48),
-        //     origin: 0
-        // });
-        this.tile = grid.scene.make.text({
-            x: grid.offset.x + x * 48,
-            y: grid.offset.y + y * 48,
-            text: "❓",
-            style: { fontSize: "32px", padding: { y: 6 } },
-        });
+        this.tile = grid.scene.add
+            .text(
+                (x - 0.5) * OVERWORLD_CONSTANTS.TILE_WIDTH,
+                (y - 0.5) * OVERWORLD_CONSTANTS.TILE_HEIGHT,
+                "❔",
+                {
+                    fontSize: `${Math.floor(OVERWORLD_CONSTANTS.TILE_WIDTH * 0.7)}px`,
+                    // border: "2px solid black",
+                    padding: {
+                        top: 14,
+                        left: 6,
+                    },
+                },
+            )
+            .setDepth(5);
 
+        this.borderRect = grid.scene.add.image(
+            x * OVERWORLD_CONSTANTS.TILE_WIDTH,
+            y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
+            "overworld_floor",
+        );
+
+        // this.borderTop = grid.scene.add.image(
+        //     x * OVERWORLD_CONSTANTS.TILE_WIDTH,
+        //     y * OVERWORLD_CONSTANTS.TILE_HEIGHT +
+        //         this.borderSize / 2 -
+        //         OVERWORLD_CONSTANTS.TILE_HEIGHT / 2,
+        //     "red_border",
+        // );
+
+        // this.borderBottom = grid.scene.add.image(
+        //     x * OVERWORLD_CONSTANTS.TILE_WIDTH,
+        //     y * OVERWORLD_CONSTANTS.TILE_HEIGHT -
+        //         this.borderSize / 2 +
+        //         OVERWORLD_CONSTANTS.TILE_HEIGHT / 2,
+        //     "orange_border",
+        // );
+
+        // this.borderLeft = grid.scene.add
+        //     .image(
+        //         x * OVERWORLD_CONSTANTS.TILE_WIDTH +
+        //             this.borderSize / 2 -
+        //             OVERWORLD_CONSTANTS.TILE_WIDTH / 2,
+        //         y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
+        //         "green_border",
+        //     )
+        //     .setAngle(90);
+
+        // this.borderRight = grid.scene.add
+        //     .image(
+        //         x * OVERWORLD_CONSTANTS.TILE_WIDTH -
+        //             this.borderSize / 2 +
+        //             OVERWORLD_CONSTANTS.TILE_WIDTH / 2,
+        //         y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
+        //         "white_border",
+        //     )
+        //     .setAngle(90);
+
+        grid.board.add(this.borderRect);
+        // grid.board.add(this.borderTop);
+        // grid.board.add(this.borderLeft);
+        // grid.board.add(this.borderBottom);
+        // grid.board.add(this.borderRight);
         grid.board.add(this.tile);
 
         this.tile.setInteractive();
@@ -170,6 +229,41 @@ export default class OverworldCell {
     onPointerUp() {}
 
     reveal() {
+        const orthogonalCells = this.grid.getOrthogonalCells(this);
+        // add unknown or remove known borders
+        // above cell
+        if (orthogonalCells[0]) {
+            if (orthogonalCells[0].open) {
+                orthogonalCells[0].borderBottom.setAlpha(0);
+            } else {
+                this.borderTop && this.borderTop.setAlpha(1);
+            }
+        }
+        // left cell
+        if (orthogonalCells[1]) {
+            if (orthogonalCells[1].open) {
+                orthogonalCells[1].borderRight.setAlpha(0);
+            } else {
+                this.borderLeft && this.borderLeft.setAlpha(1);
+            }
+        }
+        //right cell
+        if (orthogonalCells[2]) {
+            if (orthogonalCells[2].open) {
+                orthogonalCells[2].borderLeft.setAlpha(0);
+            } else {
+                this.borderRight && this.borderRight.setAlpha(1);
+            }
+        }
+        //below cell
+        if (orthogonalCells[3]) {
+            if (orthogonalCells[3].open) {
+                orthogonalCells[3].borderTop.setAlpha(0);
+            } else {
+                this.borderBottom && this.borderBottom.setAlpha(1);
+            }
+        }
+
         switch (this.value) {
             case -1:
                 this.tile.setText("🟢");
@@ -206,6 +300,31 @@ export default class OverworldCell {
 
     show() {
         const values = [1, 8, 9, 10, 11, 12, 13, 14, 15];
+
+        // show borders
+        // this.borderTop && this.borderTop.setAlpha(1);
+        // this.borderBottom && this.borderBottom.setAlpha(1);
+        // this.borderLeft && this.borderLeft.setAlpha(1);
+        // this.borderRight && this.borderRight.setAlpha(1);
+        //
+        // //remove known borders
+        // const orthogonalCells = this.grid.getOrthogonalCells(this);
+        // // above cell
+        // if (orthogonalCells[0] && orthogonalCells[0].open) {
+        //     orthogonalCells[0].borderBottom.setAlpha(0);
+        // }
+        // // left cell
+        // if (orthogonalCells[1] && orthogonalCells[1].open) {
+        //     orthogonalCells[1].borderRight.setAlpha(0);
+        // }
+        // //right cell
+        // if (orthogonalCells[2] && orthogonalCells[2].open) {
+        //     orthogonalCells[2].borderLeft.setAlpha(0);
+        // }
+        // //below cell
+        // if (orthogonalCells[3] && orthogonalCells[3].open) {
+        //     orthogonalCells[3].borderTop.setAlpha(0);
+        // }
 
         // this.tile.setFrame(values[this.value]);
         this.reveal();

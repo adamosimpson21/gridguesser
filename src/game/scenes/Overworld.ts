@@ -18,6 +18,14 @@ export class Overworld extends Scene {
         super(SCENES.Overworld);
     }
 
+    preload() {
+        this.load.image("overworld_floor", "assets/overworld/officeCarpet.png");
+        this.load.image("red_border", "assets/overworld/redBorder.png");
+        this.load.image("green_border", "assets/overworld/greenBorder.png");
+        this.load.image("white_border", "assets/overworld/whiteBorder.png");
+        this.load.image("orange_border", "assets/overworld/orangeBorder.png");
+    }
+
     create() {
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0x00000);
