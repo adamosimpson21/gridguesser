@@ -1,13 +1,13 @@
 import { FIGHT_INPUT_TYPES } from "@/game/types/fightConstants";
 
 export const GAME_CONSTANTS = {
-    startingHp: 12,
-    startingMaxHp: 12,
-    startingGold: 15,
+    startingHp: 5,
+    startingMaxHp: 5,
+    startingGold: 5,
     startingLevel: 1,
-    startingBombIntensity: 3,
+    startingBombIntensity: 2,
     startingName: "Jan Eator",
-    startingBombNum: 2,
+    startingBombNum: 4,
     startingFightGridWidth: 8,
     startingFightGridHeight: 8,
     startingOverworldGridWidth: 5,
@@ -26,7 +26,7 @@ export const GAME_CONSTANTS = {
         FIGHT_INPUT_TYPES.FLAG,
         FIGHT_INPUT_TYPES.QUERY,
         // FIGHT_INPUT_TYPES.REMOVE_TRASH,
-        FIGHT_INPUT_TYPES.REMOVE_BOMB,
+        // FIGHT_INPUT_TYPES.REMOVE_BOMB,
         // FIGHT_INPUT_TYPES.REMOVE_LIES,
     ],
     startingRemoveTrashNum: 1,

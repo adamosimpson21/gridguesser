@@ -119,7 +119,7 @@ class GameStateClass {
     incrementLevel() {
         this.level += 1;
         this.bombIntensity++;
-        this.bombNum += 4;
+        this.bombNum += 3;
         this.overworldGridWidth++;
         this.overworldGridHeight++;
         this.fightGridWidth += 2;

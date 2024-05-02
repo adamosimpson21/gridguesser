@@ -165,8 +165,8 @@ export default class FightGrid extends GameObject {
         this.playing = false;
         this.state = 2;
 
-        EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, 5);
-        GameState.updateFieldBy("bombNum", 4);
+        EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, GameState.fightGoldReward);
+        GameState.updateFieldBy("bombNum", FIGHT_CONSTANTS.BOMB_NUM_INCREMENT);
 
         const returnButton = this.scene.make.text({
             x: this.scene.scale.width / 2 - 100,
