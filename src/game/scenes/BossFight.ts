@@ -27,9 +27,6 @@ export class BossFight extends Scene {
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0x00000);
 
-        this.background = this.add.image(512, 384, "background");
-        this.background.setAlpha(0.5);
-
         const gridWidth = Math.floor(GameState.fightGridWidth * 1.5);
         const gridHeight = Math.floor(GameState.fightGridHeight * 1.5);
         const numBombs = Math.floor(GameState.bombNum * 2);

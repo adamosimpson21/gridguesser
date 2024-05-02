@@ -23,9 +23,6 @@ export class NewGame extends Scene {
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0x00000);
 
-        this.background = this.add.image(512, 384, "background");
-        this.background.setAlpha(0.5);
-
         EventBus.emit("current-scene-ready", this);
 
         this.events.on(

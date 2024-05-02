@@ -25,9 +25,6 @@ export class Fight extends Scene {
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0x00000);
 
-        this.background = this.add.image(512, 384, "background");
-        this.background.setAlpha(0.5);
-
         const gridWidth = GameState.fightGridWidth;
         const gridHeight = GameState.fightGridHeight;
         const numBombs = GameState.bombNum;
