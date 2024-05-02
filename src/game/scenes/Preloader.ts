@@ -33,7 +33,7 @@ export class Preloader extends Scene {
 
         //  this one works, don't delete it or mess with it plz
         this.scene.start(SCENES.MainMenu).launch(SCENES.Hud);
-
+        //
         // this.scene.launch(SCENES.Overworld).launch(SCENES.Hud).remove();
     }
 }

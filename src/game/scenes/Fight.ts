@@ -67,4 +67,14 @@ export class Fight extends Scene {
     //         },
     //     );
     // }
+
+    transitionScene(scene: string) {
+        this.camera.fadeOut(1000, 0, 0, 0);
+        this.camera.once(
+            Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+            (cam: any) => {
+                this.scene.start(scene);
+            },
+        );
+    }
 }
