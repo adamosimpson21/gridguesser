@@ -8,16 +8,19 @@ import BossFightGrid from "@/game/classes/BossFightGrid";
 import FightInputMenu from "@/game/classes/FightInputMenu";
 import { Fight } from "@/game/scenes/Fight";
 
-export class BossFight extends Fight {
+export class BossFight extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
     mine: Phaser.GameObjects.Image;
     gameText: Phaser.GameObjects.Text;
     grid: FightGrid;
-    fightInputMenu: FightInputMenu;
+    inputMenu: FightInputMenu;
+    public removeTrashUses: number;
+    public removeBombUses: number;
+    public removeLyingUses: number;
 
     constructor() {
-        super();
+        super(SCENES.BossFight);
     }
 
     create() {
@@ -30,12 +33,16 @@ export class BossFight extends Fight {
         const gridWidth = Math.floor(GameState.fightGridWidth * 1.5);
         const gridHeight = Math.floor(GameState.fightGridHeight * 1.5);
         const numBombs = Math.floor(GameState.bombNum * 2);
-        this.fightInputMenu = new FightInputMenu(this);
+        this.inputMenu = new FightInputMenu(this);
         this.grid = new BossFightGrid(this, gridWidth, gridHeight, numBombs);
 
         this.camera.fadeIn(500, 0, 0, 0);
 
         EventBus.emit("current-scene-ready", this);
+    }
+
+    update() {
+        this.inputMenu.update();
     }
 
     transitionScene(scene: string) {

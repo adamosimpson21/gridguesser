@@ -7,11 +7,12 @@ import {
 import { Fight } from "@/game/scenes/Fight";
 import { EventBus } from "@/game/EventBus";
 import { FIGHT_EVENTS, GAME_EVENTS } from "@/game/types/events";
+import { BossFight } from "@/game/scenes/BossFight";
 
 export default class FightInputMenu {
     public availableInputs: string[];
     public currentInput: string;
-    private scene: Fight;
+    private scene: Fight | BossFight;
     private inputBoard: any;
     private previousCurrentInput: string;
     constructor(scene: Fight) {
