@@ -98,13 +98,13 @@ export default class FightInputMenu {
         this.availableInputs.forEach((input, index) => {
             const inputIcon = this.scene.make.text({
                 x: 0,
-                y: index * 32,
+                y: index * 48,
                 text: `${input}`,
                 style: {
                     backgroundColor:
                         this.currentInput === input ? "white" : "darkgray",
                     color: this.currentInput === input ? "black" : "white",
-                    fontSize: "16px",
+                    fontSize: "40px",
                 },
             });
             inputIcon.name = input;
@@ -170,7 +170,7 @@ export default class FightInputMenu {
                     style: {
                         backgroundColor: "darkgray",
                         color: "white",
-                        fontSize: "16px",
+                        fontSize: "40px",
                     },
                 });
 
