@@ -15,6 +15,13 @@ export class Shop extends Scene {
         super(SCENES.Shop);
     }
 
+    preload() {
+        this.load.image(
+            "vending_machine",
+            "/assets/shop/vendingMachineBlack.png",
+        );
+    }
+
     create() {
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0x00000);

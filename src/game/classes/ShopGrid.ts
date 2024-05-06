@@ -18,7 +18,9 @@ export default class ShopGrid {
     public data: any[];
     public board: Phaser.GameObjects.Container;
     public offset: Phaser.Math.Vector2;
-    private returnButton: any;
+    public returnButton: any;
+    public vendingMachine: Phaser.GameObjects.Image;
+    public numPadBoard: Phaser.GameObjects.Container;
 
     constructor(scene: Shop) {
         this.scene = scene;
@@ -26,40 +28,50 @@ export default class ShopGrid {
         this.height = GameState.shopGridHeight;
         this.size = this.width * this.height;
 
-        this.offset = new Phaser.Math.Vector2(12, 55);
+        this.offset = new Phaser.Math.Vector2(64, 12);
 
-        const x = Math.floor(
-            scene.scale.width / 2 - (this.width * 64 + 100) / 2,
-        );
+        const x = Math.floor((scene.scale.width - 1600) / 2);
         const y = Math.floor(
-            scene.scale.height / 2 - (this.height * 48 + 200) / 2,
+            scene.scale.height / 2 - (this.height * 48 + 400) / 2,
         );
 
         this.data = [];
         this.board = scene.add.container(x, y);
+        this.numPadBoard = scene.add.container(
+            1250,
+            (scene.scale.height - 100) / 2,
+        );
 
         this.createBackground();
-        this.createCells();
-        this.generateShop();
 
         this.returnButton = this.scene.make.text({
-            x: -60,
-            y: 0,
+            x: 600,
+            y: 100,
             text: "👋 Exit Vending Machine 👋",
             style: {
                 fontSize: "32px",
                 padding: { y: 6 },
+                color: "black",
             },
         });
         this.returnButton.setInteractive();
         this.returnButton.on("pointerdown", this.handleReturnButton, this);
+        this.vendingMachine = this.scene.add
+            .image(0, 0, "vending_machine")
+            .setOrigin(0, 0)
+            .setScale(2.5, 1)
+            .setDepth(0);
 
-        this.board.add(this.returnButton);
+        this.board.add(this.vendingMachine);
+
+        this.createCells();
+        this.generateShop();
     }
     handleReturnButton() {
         this.scene.scene.stop(SCENES.Shop);
         this.scene.scene.resume(SCENES.Overworld);
     }
+
     createCells() {
         let i = 0;
 

@@ -1,5 +1,9 @@
 import { Scene } from "phaser";
-import { SHOP_ITEMS, shopItemType } from "@/game/types/shopItems";
+import {
+    SHOP_CONSTANTS,
+    SHOP_ITEMS,
+    shopItemType,
+} from "@/game/types/shopItems";
 import { random } from "nanoid";
 import ShopGrid from "@/game/classes/ShopGrid";
 import { EventBus } from "@/game/EventBus";
@@ -17,6 +21,7 @@ export default class ShopItem {
     private available: boolean;
     private description: Phaser.GameObjects.Text;
     private cost: Phaser.GameObjects.Text;
+    private numPadImage: Phaser.GameObjects.Text;
     constructor(
         grid: ShopGrid,
         type: string | undefined,
@@ -30,34 +35,78 @@ export default class ShopItem {
         this.available = true;
 
         this.tile = grid.scene.make.text({
-            x: grid.offset.x + x * 128,
-            y: grid.offset.y + y * 128,
+            x: grid.offset.x + x * SHOP_CONSTANTS.SHOP_TILE_WIDTH,
+            y: grid.offset.y + y * SHOP_CONSTANTS.SHOP_TILE_HEIGHT,
             text: "⬜",
-            style: { fontSize: "32px", padding: { y: 10 } },
+            style: {
+                fontSize: SHOP_CONSTANTS.SHOP_TILE_FONT_SIZE * 2,
+                padding: { y: 10 },
+            },
         });
         this.name = grid.scene.make.text({
-            x: grid.offset.x + x * 128,
-            y: grid.offset.y + y * 128 + 40,
+            x:
+                grid.offset.x +
+                SHOP_CONSTANTS.SHOP_TILE_OFFSET_X +
+                x * SHOP_CONSTANTS.SHOP_TILE_WIDTH,
+            y:
+                grid.offset.y +
+                y * SHOP_CONSTANTS.SHOP_TILE_HEIGHT +
+                SHOP_CONSTANTS.SHOP_TILE_NAME_OFFSET_Y,
             text: "",
-            style: { fontSize: "16px", padding: { y: 10 } },
+            style: {
+                fontSize: SHOP_CONSTANTS.SHOP_TILE_FONT_SIZE,
+                padding: { y: 10 },
+            },
         });
         this.cost = grid.scene.make.text({
-            x: grid.offset.x + x * 128,
-            y: grid.offset.y + y * 128 + 60,
+            x:
+                grid.offset.x +
+                SHOP_CONSTANTS.SHOP_TILE_OFFSET_X +
+                x * SHOP_CONSTANTS.SHOP_TILE_WIDTH,
+            y:
+                grid.offset.y +
+                y * SHOP_CONSTANTS.SHOP_TILE_HEIGHT +
+                SHOP_CONSTANTS.SHOP_TILE_NAME_OFFSET_Y +
+                SHOP_CONSTANTS.SHOP_TILE_COST_OFFSET_Y,
             text: "",
-            style: { fontSize: "16px", padding: { y: 10 } },
+            style: {
+                fontSize: SHOP_CONSTANTS.SHOP_TILE_FONT_SIZE,
+                padding: { y: 10 },
+            },
         });
         this.description = grid.scene.make.text({
-            x: grid.offset.x + x * 128,
-            y: grid.offset.y + y * 128 + 80,
+            x:
+                grid.offset.x +
+                SHOP_CONSTANTS.SHOP_TILE_OFFSET_X +
+                x * SHOP_CONSTANTS.SHOP_TILE_WIDTH,
+            y:
+                grid.offset.y +
+                y * SHOP_CONSTANTS.SHOP_TILE_HEIGHT +
+                SHOP_CONSTANTS.SHOP_TILE_NAME_OFFSET_Y +
+                SHOP_CONSTANTS.SHOP_TILE_COST_OFFSET_Y +
+                SHOP_CONSTANTS.SHOP_TILE_DESC_OFFSET_Y,
             text: "",
-            style: { fontSize: "16px", padding: { y: 10 } },
+            style: {
+                fontSize: Math.floor(SHOP_CONSTANTS.SHOP_TILE_FONT_SIZE * 0.75),
+                padding: { y: 10 },
+            },
+        });
+        this.numPadImage = grid.scene.make.text({
+            x: x * SHOP_CONSTANTS.NUM_PAD_TILE_WIDTH,
+            y: y * SHOP_CONSTANTS.NUM_PAD_TILE_HEIGHT,
+            text: "⬜",
+            style: {
+                fontSize: SHOP_CONSTANTS.SHOP_TILE_FONT_SIZE * 2,
+                padding: { y: 10 },
+            },
         });
 
         grid.board.add(this.tile);
         grid.board.add(this.name);
         grid.board.add(this.description);
         grid.board.add(this.cost);
+
+        grid.numPadBoard.add(this.numPadImage);
     }
 
     generateItem() {
@@ -67,7 +116,10 @@ export default class ShopItem {
         this.tile.setText(itemToAssign.icon);
         this.name.setText(itemToAssign.name);
         this.description.setText(itemToAssign.description);
-        this.cost.setText(`Cost: ${itemToAssign.cost}🥇`);
+        this.cost.setText(`$${itemToAssign.cost}`);
+        this.numPadImage.setText(itemToAssign.icon);
+        this.numPadImage.setInteractive();
+        this.numPadImage.on("pointerdown", this.onClick, this);
         this.tile.setInteractive();
         this.tile.on("pointerdown", this.onClick, this);
     }
@@ -170,6 +222,7 @@ export default class ShopItem {
                         // player has successfully bought item
                         this.available = false;
                         this.tile.setText("✅");
+                        this.numPadImage.setText("✅");
                         // logic for using item
                         this.useItem(this.item);
                         EventBus.emit(PLAYER_EVENTS.LOSE_GOLD, this.item.cost);
