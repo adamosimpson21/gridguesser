@@ -41,6 +41,7 @@ class GameStateClass {
     public trashTileNum: number;
     public lyingTileNum: number;
     public removeLyingNum: number;
+    public luck: number;
 
     constructor() {
         this.isPlaying = true;

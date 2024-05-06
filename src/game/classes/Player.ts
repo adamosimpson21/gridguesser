@@ -8,6 +8,7 @@ export class PlayerClass {
     public hp: number;
     public gold: number;
     public maxHp: number;
+    public luck: number;
     private upgrades: shopItemType[];
     constructor() {
         this.initializeOrReset();
@@ -53,12 +54,8 @@ export class PlayerClass {
         );
         EventBus.on(
             PLAYER_EVENTS.GAIN_MAX_HP,
-            (severity: number, silent?: boolean) => {
-                this.updateHp(
-                    this.hp + severity,
-                    this.maxHp + severity,
-                    silent,
-                );
+            (severity: number, addHp: number, silent?: boolean) => {
+                this.updateHp(this.hp + addHp, this.maxHp + severity, silent);
             },
         );
         EventBus.on(
@@ -105,6 +102,7 @@ export class PlayerClass {
         this.hp = GAME_CONSTANTS.startingHp;
         this.maxHp = GAME_CONSTANTS.startingMaxHp;
         this.gold = GAME_CONSTANTS.startingGold;
+        this.luck = GAME_CONSTANTS.startingLuck;
         this.upgrades = [];
         EventBus.emit(UI_EVENTS.UPDATE_HEALTH, this.hp, this.maxHp, true);
         EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, true);

@@ -29,6 +29,17 @@ export const SHOP_ITEMS: { [key: string]: shopItemType } = {
         permanent: false,
         singleton: false,
     },
+    MOVE_BOMB_ONE: {
+        id: "MOVE_BOMB_ONE",
+        name: "Scary Face",
+        description:
+            "The first time you reveal a monster, it runs to a different spot",
+        cost: 6,
+        effect: { bombMove: 1 },
+        icon: "💀",
+        permanent: true,
+        singleton: true,
+    },
     MAX_HP_TWO: {
         id: "MAX_HP_TWO",
         name: "Hearty Snackbar",
@@ -129,12 +140,12 @@ export const SHOP_ITEMS: { [key: string]: shopItemType } = {
         permanent: true,
         singleton: false,
     },
-    SHOP_ITEMS_3: {
-        id: "SHOP_ITEMS_3",
+    SHOP_ITEMS_ADD_3: {
+        id: "SHOP_ITEMS_ADD_3",
         name: "Bigger Vending Machine",
         description: "Adds 3 more items to future vending machines",
         cost: 4,
-        effect: { shopItems: 3 },
+        effect: { shopItemsAdd: 3 },
         icon: "🥤",
         permanent: true,
         singleton: true,

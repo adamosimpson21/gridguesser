@@ -168,8 +168,47 @@ export default class ShopItem {
                 case "heal":
                     EventBus.emit(PLAYER_EVENTS.GAIN_HP, itemEffect.heal);
                     break;
+                case "healEqualToHp":
+                    EventBus.emit(PLAYER_EVENTS.GAIN_HP, GameState.player.hp);
+                    break;
                 case "maxHp":
-                    EventBus.emit(PLAYER_EVENTS.GAIN_MAX_HP, itemEffect.maxHp);
+                    EventBus.emit(
+                        PLAYER_EVENTS.GAIN_MAX_HP,
+                        itemEffect.maxHp,
+                        itemEffect.maxHp,
+                    );
+                    break;
+                case "maxHpPercent":
+                    const severity = Math.ceil(
+                        GameState.player.maxHp *
+                            (itemEffect.maxHpPercent / 100),
+                    );
+                    EventBus.emit(
+                        PLAYER_EVENTS.GAIN_MAX_HP,
+                        severity,
+                        severity,
+                    );
+                    break;
+                case "maxHpDouble":
+                    EventBus.emit(
+                        PLAYER_EVENTS.GAIN_MAX_HP,
+                        GameState.player.maxHp,
+                        0,
+                    );
+                    break;
+                case "trashTileRemove":
+                    GameState.removeTrashNum += itemEffect.trashTileRemove;
+                    EventBus.emit(
+                        UI_EVENTS.DISPLAY_MESSAGE,
+                        `Added ${itemEffect.trashTileRemove} more trash tile removal`,
+                    );
+                    break;
+                case "shopItemsAdd":
+                    GameState.shopItemNumber += itemEffect.shopItemsAdd;
+                    EventBus.emit(
+                        UI_EVENTS.DISPLAY_MESSAGE,
+                        `Added ${itemEffect.trashTileRemove} items to future Vending Machines`,
+                    );
                     break;
                 case "damage_reduce":
                     GameState.playerDamageReduction += itemEffect.damage_reduce;
