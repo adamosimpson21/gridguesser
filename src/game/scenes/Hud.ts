@@ -14,6 +14,10 @@ export class Hud extends Scene {
         super(SCENES.Hud);
     }
 
+    preload() {
+        this.load.image("clipboard", "assets/hud/longClipboard.png");
+    }
+
     create() {
         this.camera = this.cameras.main;
         this.HudDisplay = new HudDisplay(

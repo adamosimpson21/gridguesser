@@ -61,10 +61,14 @@ export default class FightGrid extends GameObject {
         this.gridData = [];
 
         const x = Math.floor(
-            scene.scale.width / 2 - (width / 2) * FIGHT_CONSTANTS.TILE_WIDTH,
+            scene.scale.width / 2 -
+                (width / 2) * FIGHT_CONSTANTS.TILE_WIDTH -
+                200,
         );
         const y = Math.floor(
-            scene.scale.height / 2 - (height / 2) * FIGHT_CONSTANTS.TILE_HEIGHT,
+            scene.scale.height / 2 -
+                (height / 2) * FIGHT_CONSTANTS.TILE_HEIGHT -
+                100,
         );
 
         this.board = scene.add.container(x, y);
@@ -75,8 +79,8 @@ export default class FightGrid extends GameObject {
         this.bombsCounterText = this.scene.make.text({
             x: 12,
             y: 10,
-            text: `${this.bombsCounter}💣`,
-            style: { fontSize: "32px" },
+            text: `${this.bombsCounter}👹`,
+            style: { fontSize: "64px", padding: { top: 8 } },
         });
 
         this.board.add(this.bombsCounterText);
@@ -141,7 +145,7 @@ export default class FightGrid extends GameObject {
 
     updateBombs(diff: number) {
         this.bombsCounter -= diff;
-        this.bombsCounterText.setText(`${this.bombsCounter.toString()}💣`);
+        this.bombsCounterText.setText(`${this.bombsCounter.toString()}👹`);
     }
 
     restart() {
@@ -169,9 +173,12 @@ export default class FightGrid extends GameObject {
         GameState.updateFieldBy("bombNum", FIGHT_CONSTANTS.BOMB_NUM_INCREMENT);
 
         const returnButton = this.scene.make.text({
-            x: this.scene.scale.width / 2 - 100,
-            y: 200,
+            x: this.scene.scale.width / 2 - 500,
+            y: 130,
             text: "Room Cleaned! Back to the office 👆",
+            style: {
+                fontSize: 42,
+            },
         });
 
         returnButton.setInteractive();

@@ -15,8 +15,8 @@ import { GameWon } from "@/game/scenes/GameWon";
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
 const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
-    width: 1024,
-    height: 768,
+    width: 1920,
+    height: 1080,
     parent: "game-container",
     backgroundColor: "#028af8",
     physics: {

@@ -22,7 +22,14 @@ export default class EventDisplay {
         event: { type: string; message: string },
         fadeDelay?: string,
     ) {
-        const eventText = this.scene.add.text(450, 130, event.message);
+        const eventText = this.scene.add.text(
+            50,
+            this.scene.scale.height / 2 + (Math.random() * 500 - 350),
+            event.message,
+            {
+                fontSize: 32,
+            },
+        );
         this.scene.add.tween({
             targets: eventText,
             duration: fadeDelay || 3000,

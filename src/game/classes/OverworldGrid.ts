@@ -30,6 +30,7 @@ export default class OverworldGrid {
     private numTraps: number;
     public Hud: Hud;
     public eventDisplay: EventDisplay;
+    public playerImage: Phaser.GameObjects.Image;
     constructor(
         scene: Scene,
         width: number,
@@ -86,11 +87,37 @@ export default class OverworldGrid {
                 (height * OVERWORLD_CONSTANTS.TILE_HEIGHT) / 2,
         );
 
+        this.playerImage = this.scene.add
+            .image(
+                Math.floor(this.width / 2) * OVERWORLD_CONSTANTS.TILE_WIDTH,
+                Math.floor(this.height / 2) * OVERWORLD_CONSTANTS.TILE_HEIGHT,
+                "player",
+            )
+            .setDepth(10)
+            .setDisplaySize(
+                OVERWORLD_CONSTANTS.TILE_WIDTH,
+                OVERWORLD_CONSTANTS.TILE_HEIGHT,
+            );
+
+        this.scene.tweens.chain({
+            targets: this.playerImage,
+            loop: -1,
+            tweens: [
+                { scaleX: 1.5, duration: 1500, flipX: true },
+                {
+                    scaleX: -1.5,
+                    duration: 1500,
+                    flipX: true,
+                },
+            ],
+        });
+
         this.board = scene.add.container(x, y);
 
         this.createBackground();
         this.createCells();
         this.generate();
+        this.board.add(this.playerImage);
     }
 
     createCells() {
@@ -139,20 +166,20 @@ export default class OverworldGrid {
 
         // Boss
         const bossWall = Phaser.Math.Between(0, 1);
-        const bossX = Phaser.Math.Between(0, this.width - 1);
-        const bossY = Phaser.Math.Between(0, this.height - 1);
+        // const bossX = Phaser.Math.Between(0, this.width - 1);
+        // const bossY = Phaser.Math.Between(0, this.height - 1);
         let bossCell;
         if (bossWall < 0.25) {
-            bossCell = this.getCellXY(0, bossY);
+            bossCell = this.getCellXY(0, 0);
             bossCell.value = 4;
         } else if (bossWall < 0.5) {
-            bossCell = this.getCellXY(this.width - 1, bossY);
+            bossCell = this.getCellXY(this.width - 1, this.height - 1);
             bossCell.value = 4;
         } else if (bossWall < 0.75) {
-            bossCell = this.getCellXY(bossX, 0);
+            bossCell = this.getCellXY(this.width - 1, 0);
             bossCell.value = 4;
         } else {
-            bossCell = this.getCellXY(bossX, this.height - 1);
+            bossCell = this.getCellXY(0, this.height - 1);
             bossCell.value = 4;
         }
 
@@ -279,7 +306,8 @@ export default class OverworldGrid {
                         OVERWORLD_CONSTANTS.TILE_HEIGHT / 2,
                     borderImgToPaint,
                 )
-                .setAlpha(0);
+                .setAlpha(0)
+                .setDisplaySize(OVERWORLD_CONSTANTS.TILE_WIDTH, 4);
             cellAbove.borderBottom = borderBottom;
             this.board.add(borderBottom);
         }
@@ -294,6 +322,7 @@ export default class OverworldGrid {
                     cellLeft.y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
                     borderImgToPaint,
                 )
+                .setDisplaySize(OVERWORLD_CONSTANTS.TILE_HEIGHT, 4)
                 .setAngle(90)
                 .setAlpha(0);
             cellLeft.borderRight = borderRight;
@@ -311,6 +340,7 @@ export default class OverworldGrid {
                     cellRight.y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
                     borderImgToPaint,
                 )
+                .setDisplaySize(OVERWORLD_CONSTANTS.TILE_HEIGHT, 4)
                 .setAngle(90)
                 .setAlpha(0);
             cellRight.borderLeft = borderLeft;
@@ -328,7 +358,8 @@ export default class OverworldGrid {
                         OVERWORLD_CONSTANTS.TILE_HEIGHT / 2,
                     borderImgToPaint,
                 )
-                .setAlpha(0);
+                .setAlpha(0)
+                .setDisplaySize(OVERWORLD_CONSTANTS.TILE_WIDTH, 4);
             cellBottom.borderTop = borderTop;
             this.board.add(borderTop);
         }

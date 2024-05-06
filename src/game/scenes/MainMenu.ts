@@ -2,6 +2,7 @@ import { GameObjects, Scene } from "phaser";
 
 import { EventBus } from "../EventBus";
 import { SCENES } from "@/game/types/scenes";
+import { createBackground } from "@/game/functions/background";
 
 export class MainMenu extends Scene {
     background: GameObjects.Image;
@@ -14,12 +15,11 @@ export class MainMenu extends Scene {
     }
 
     create() {
-        this.background = this.add.image(512, 384, "background");
-
+        this.background = createBackground(this);
         this.title = this.add
-            .text(512, 250, "Broom Sweeper", {
+            .text(this.scale.width / 2, 250, "Broom Sweeper", {
                 fontFamily: "Arial Black",
-                fontSize: 56,
+                fontSize: 96,
                 color: "#ffffff",
                 stroke: "#000000",
                 strokeThickness: 8,
@@ -29,9 +29,9 @@ export class MainMenu extends Scene {
             .setDepth(100);
 
         this.overworldButton = this.add
-            .text(512, 460, "New Game", {
+            .text(this.scale.width / 2, 560, "New Game", {
                 fontFamily: "Arial Black",
-                fontSize: 38,
+                fontSize: 96,
                 color: "#ffffff",
                 stroke: "#000000",
                 strokeThickness: 8,
@@ -45,9 +45,9 @@ export class MainMenu extends Scene {
         );
 
         this.overworldButton = this.add
-            .text(512, 520, "Minesweeper Tutorial", {
+            .text(this.scale.width / 2, 700, "Minesweeper Tutorial", {
                 fontFamily: "Arial Black",
-                fontSize: 38,
+                fontSize: 64,
                 color: "#ffffff",
                 stroke: "#000000",
                 strokeThickness: 8,
@@ -63,21 +63,21 @@ export class MainMenu extends Scene {
                     "https://minesweepergame.com/strategy/how-to-play-minesweeper.php"),
         );
 
-        this.fightSceneButton = this.add
-            .text(512, 580, "Go To Fight", {
-                fontFamily: "Arial Black",
-                fontSize: 38,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 8,
-                align: "center",
-            })
-            .setOrigin(0.5)
-            .setDepth(100);
-        this.fightSceneButton.setInteractive();
-        this.fightSceneButton.on("pointerdown", () =>
-            this.scene.start(SCENES.Fight),
-        );
+        // this.fightSceneButton = this.add
+        //     .text(this.scale.width/2, 580, "Go To Fight", {
+        //         fontFamily: "Arial Black",
+        //         fontSize: 38,
+        //         color: "#ffffff",
+        //         stroke: "#000000",
+        //         strokeThickness: 8,
+        //         align: "center",
+        //     })
+        //     .setOrigin(0.5)
+        //     .setDepth(100);
+        // this.fightSceneButton.setInteractive();
+        // this.fightSceneButton.on("pointerdown", () =>
+        //     this.scene.start(SCENES.Fight),
+        // );
 
         EventBus.emit("current-scene-ready", this);
     }

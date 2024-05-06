@@ -59,8 +59,9 @@ class GameStateClass {
         this.isPlaying = false;
         // adds this button to current active scene
         const currentScenes = scene.scene.systems.game.scene.getScenes(true);
+        console.log("currentScenes:", currentScenes);
         this.GameOverBtn = currentScenes[0].add
-            .text(512, 200, "Oh no! Game Over 😭😭😭 👆🖱", {
+            .text(scene.scale.width / 2 - 200, 200, "Oh no! Game Over 😭😭😭", {
                 fontFamily: "Arial Black",
                 fontSize: 38,
                 color: "#ffffff",

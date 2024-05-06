@@ -1,6 +1,7 @@
 import { EventBus } from "../EventBus";
 import { Scene } from "phaser";
 import { SCENES } from "@/game/types/scenes";
+import { createBackground } from "@/game/functions/background";
 
 export class GameOver extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -16,11 +17,10 @@ export class GameOver extends Scene {
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0xff0000);
 
-        this.background = this.add.image(512, 384, "background");
-        this.background.setAlpha(0.5);
+        this.background = createBackground(this);
 
         this.gameOverText = this.add
-            .text(512, 384, "Game Over", {
+            .text(800, 400, "Game Over", {
                 fontFamily: "Arial Black",
                 fontSize: 64,
                 color: "#ffffff",
@@ -32,7 +32,7 @@ export class GameOver extends Scene {
             .setDepth(100);
 
         this.restartGameText = this.add
-            .text(512, 484, "Go To Main Menu", {
+            .text(800, 600, "Go To Main Menu", {
                 fontFamily: "Arial Black",
                 fontSize: 32,
                 color: "#ffffff",
@@ -48,6 +48,6 @@ export class GameOver extends Scene {
         EventBus.emit("current-scene-ready", this);
     }
     resetToMainMenu() {
-        this.scene.switch(SCENES.NewGame);
+        this.scene.switch(SCENES.MainMenu);
     }
 }

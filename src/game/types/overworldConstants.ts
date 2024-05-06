@@ -1,6 +1,6 @@
 export const OVERWORLD_CONSTANTS = {
-    TILE_WIDTH: 64,
-    TILE_HEIGHT: 64,
+    TILE_WIDTH: 128,
+    TILE_HEIGHT: 128,
     COLOR: {
         WHITE: "#000000",
         ORANGE: "#FFA500",

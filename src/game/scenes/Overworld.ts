@@ -6,6 +6,7 @@ import { SCENES } from "@/game/types/scenes";
 import EventDisplay from "@/game/classes/EventDisplay";
 import { GAME_EVENTS } from "@/game/types/events";
 import { GameState } from "../classes/GameState";
+import { createBackground } from "@/game/functions/background";
 
 export class Overworld extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -24,14 +25,17 @@ export class Overworld extends Scene {
         this.load.image("green_border", "assets/overworld/greenBorder.png");
         this.load.image("white_border", "assets/overworld/whiteBorder.png");
         this.load.image("orange_border", "assets/overworld/orangeBorder.png");
+        this.load.image("dust", "assets/overworld/dust.png");
+        this.load.image("player", "assets/overworld/janitor.png");
+        this.load.image("carpet_lines", "assets/overworld/carpetLines.png");
+        this.load.image("room_cleaned", "assets/overworld/roomCleaned.png");
     }
 
     create() {
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0x00000);
 
-        this.background = this.add.image(512, 384, "background");
-        this.background.setAlpha(0.5);
+        this.background = createBackground(this);
 
         const gridWidth = GameState.overworldGridWidth;
         const gridHeight = GameState.overworldGridHeight;

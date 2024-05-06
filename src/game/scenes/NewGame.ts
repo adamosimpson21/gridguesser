@@ -4,6 +4,7 @@ import { EventBus } from "@/game/EventBus";
 import { GameState } from "@/game/classes/GameState";
 import { GAME_EVENTS, PLAYER_EVENTS } from "@/game/types/events";
 import { NAME_CHOICES } from "@/game/types/gameConstants";
+import { createBackground } from "@/game/functions/background";
 
 export class NewGame extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -23,8 +24,7 @@ export class NewGame extends Scene {
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0x00000);
 
-        this.background = this.add.image(512, 384, "background");
-        this.background.setAlpha(0.5);
+        this.background = createBackground(this);
 
         EventBus.emit("current-scene-ready", this);
 
@@ -36,12 +36,12 @@ export class NewGame extends Scene {
             this,
         );
 
-        this.nameChoiceBoard = this.add.container(512, 250);
+        this.nameChoiceBoard = this.add.container(this.scale.width / 2, 350);
 
         this.titleText = this.add
-            .text(512, 170, "Choose your Character", {
+            .text(this.scale.width / 2, 200, "Choose your Character", {
                 fontFamily: "Arial Black",
-                fontSize: 56,
+                fontSize: 96,
                 color: "#ffffff",
                 stroke: "#000000",
                 strokeThickness: 8,
@@ -53,9 +53,9 @@ export class NewGame extends Scene {
         NAME_CHOICES.forEach((name, index) => {
             this.nameChoiceBoard.add(
                 this.add
-                    .text(0, index * 50, name, {
+                    .text(0, index * 80, name, {
                         fontFamily: "Arial Black",
-                        fontSize: 36,
+                        fontSize: 48,
                         color: "#ffffff",
                         stroke: "#000000",
                         strokeThickness: 8,
@@ -71,9 +71,9 @@ export class NewGame extends Scene {
         });
 
         this.submitButton = this.add
-            .text(512, 550, "Let's Go!", {
+            .text(this.scale.width / 2, 850, "Let's Go!", {
                 fontFamily: "Arial Black",
-                fontSize: 56,
+                fontSize: 96,
                 color: "#ffffff",
                 stroke: "#000000",
                 strokeThickness: 8,

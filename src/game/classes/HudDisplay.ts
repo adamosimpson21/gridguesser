@@ -14,6 +14,16 @@ export default class HudDisplay {
     public hpDisplay: Phaser.GameObjects.Text;
     public goldDisplay: Phaser.GameObjects.Text;
     public upgradeDisplay: Phaser.GameObjects.Text;
+    public height: number;
+    public width: number;
+    public hudBoard: Phaser.GameObjects.Container;
+    public clipboard: Phaser.GameObjects.Image;
+    public xOffset: number;
+    public yOffset: number;
+    public lineHeight: number;
+    public fontSize: string;
+    public font: string;
+    public strokeWidth: number;
 
     constructor(
         scene: Scene,
@@ -28,25 +38,78 @@ export default class HudDisplay {
         this.maxHp = maxHp;
         this.gold = gold;
         this.create();
+        this.width = 420;
+        this.height = this.scene.scale.height;
+        this.xOffset = 40;
+        this.yOffset = 160;
+        this.lineHeight = 60;
+        this.fontSize = "36px";
+        this.font = "Courier";
+        this.strokeWidth = 5;
 
-        this.nameDisplay = this.scene.add.text(48, 48, `${this.name}`, {
-            fontSize: "24px",
-        });
+        this.hudBoard = this.scene.add.container(1500, 0);
 
-        this.hpDisplay = this.scene.add.text(
-            248,
-            48,
-            `Health: ${new Array(maxHp).fill("♥").join(" ")}`,
-            { fontSize: "24px" },
+        this.clipboard = this.scene.add.image(
+            this.width / 2,
+            this.height / 2,
+            "clipboard",
         );
 
-        this.goldDisplay = this.scene.add.text(748, 48, `Gold: ${gold} 🥇`, {
-            fontSize: "24px",
-        });
+        this.nameDisplay = this.scene.add.text(
+            this.xOffset,
+            this.yOffset,
+            `Name: ${this.name}`,
+            {
+                fontSize: this.fontSize,
+                color: "black",
+                fontFamily: this.font,
+                // strokeThickness: this.strokeWidth,
+            },
+        );
 
-        this.upgradeDisplay = this.scene.add.text(48, 108, "", {
-            fontSize: "24px",
-        });
+        this.hpDisplay = this.scene.add.text(
+            this.xOffset,
+            this.yOffset + this.lineHeight * 2,
+            // `Health: ${new Array(maxHp).fill("♥").join(" ")}`,
+            `Health: ${hp}/${maxHp}`,
+            {
+                fontSize: this.fontSize,
+                color: "black",
+                fontFamily: this.font,
+                // strokeThickness: this.strokeWidth,
+            },
+        );
+
+        this.goldDisplay = this.scene.add.text(
+            this.xOffset,
+            this.yOffset + this.lineHeight * 1,
+            `$ ${gold} `,
+            {
+                fontSize: this.fontSize,
+                color: "black",
+
+                fontFamily: this.font,
+                // strokeThickness: this.strokeWidth,
+            },
+        );
+
+        this.upgradeDisplay = this.scene.add.text(
+            this.xOffset,
+            this.yOffset + this.lineHeight * 4,
+            "",
+            {
+                fontSize: this.fontSize,
+                color: "black",
+                fontFamily: this.font,
+                // strokeThickness: this.strokeWidth,
+            },
+        );
+
+        this.hudBoard.add(this.clipboard);
+        this.hudBoard.add(this.nameDisplay);
+        this.hudBoard.add(this.hpDisplay);
+        this.hudBoard.add(this.goldDisplay);
+        this.hudBoard.add(this.upgradeDisplay);
     }
 
     create() {
@@ -54,13 +117,13 @@ export default class HudDisplay {
             this.nameDisplay.setText(name);
         });
         EventBus.on(UI_EVENTS.UPDATE_GOLD, (gold: number, silent?: boolean) => {
-            this.goldDisplay.setText(`Gold: ${gold} 🥇`);
+            this.goldDisplay.setText(`$ ${gold} `);
             if (!silent) {
                 EventBus.emit(
                     UI_EVENTS.DISPLAY_MESSAGE,
                     {
                         type: UI_EVENTS.UPDATE_GOLD,
-                        message: `New gold amount ${gold} gold 🥇`,
+                        message: `New money amount $${gold}`,
                     },
                     "5000",
                 );
@@ -69,14 +132,15 @@ export default class HudDisplay {
         EventBus.on(
             UI_EVENTS.UPDATE_HEALTH,
             (hp: number, maxHp: number, silent?: boolean) => {
-                if (hp < 0) {
-                    hp = 0;
-                }
+                // if (hp < 0) {
+                //     hp = 0;
+                // }
                 this.hpDisplay.setText(
-                    `Health: ${new Array(hp)
-                        .fill("♥")
-                        .concat(new Array(maxHp - hp).fill("💔"))
-                        .join(" ")}`,
+                    `Health: ${hp}/${maxHp}`,
+                    // `Health: ${new Array(hp)
+                    //     .fill("♥")
+                    //     .concat(new Array(maxHp - hp).fill("💔"))
+                    //     .join(" ")}`,
                 );
                 if (!silent) {
                     EventBus.emit(

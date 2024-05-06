@@ -5,6 +5,7 @@ import { SCENES } from "@/game/types/scenes";
 import { GameState } from "@/game/classes/GameState";
 import { GAME_EVENTS } from "@/game/types/events";
 import FightInputMenu from "@/game/classes/FightInputMenu";
+import { createBackground } from "@/game/functions/background";
 
 export class Fight extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -25,8 +26,7 @@ export class Fight extends Scene {
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0x00000);
 
-        this.background = this.add.image(512, 384, "background");
-        this.background.setAlpha(0.5);
+        this.background = createBackground(this);
 
         const gridWidth = GameState.fightGridWidth;
         const gridHeight = GameState.fightGridHeight;

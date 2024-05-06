@@ -24,6 +24,7 @@ export default class OverworldCell {
     public borderLeft: Phaser.GameObjects.Image;
     public borderRight: Phaser.GameObjects.Image;
     public borderBottom: Phaser.GameObjects.Image;
+    private tileText: any;
     constructor(
         grid: any,
         index: number,
@@ -42,8 +43,6 @@ export default class OverworldCell {
         this.bomb = false;
         this.hasTriggered = false;
 
-        this.flagged = false;
-        this.query = false;
         this.exploded = false;
         this.typeInfo = typeInfo;
 
@@ -81,11 +80,11 @@ export default class OverworldCell {
                 break;
         }
 
-        this.tile = grid.scene.add
+        this.tileText = grid.scene.add
             .text(
                 (x - 0.5) * OVERWORLD_CONSTANTS.TILE_WIDTH,
                 (y - 0.5) * OVERWORLD_CONSTANTS.TILE_HEIGHT,
-                "❔",
+                "",
                 {
                     fontSize: `${Math.floor(OVERWORLD_CONSTANTS.TILE_WIDTH * 0.7)}px`,
                     // border: "2px solid black",
@@ -97,11 +96,27 @@ export default class OverworldCell {
             )
             .setDepth(5);
 
-        this.borderRect = grid.scene.add.image(
-            x * OVERWORLD_CONSTANTS.TILE_WIDTH,
-            y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
-            "overworld_floor",
-        );
+        this.tile = grid.scene.add
+            .image(
+                x * OVERWORLD_CONSTANTS.TILE_WIDTH,
+                y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
+                "dust",
+            )
+            .setDisplaySize(
+                OVERWORLD_CONSTANTS.TILE_WIDTH / 2,
+                OVERWORLD_CONSTANTS.TILE_HEIGHT / 2,
+            );
+
+        this.borderRect = grid.scene.add
+            .image(
+                x * OVERWORLD_CONSTANTS.TILE_WIDTH,
+                y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
+                "overworld_floor",
+            )
+            .setDisplaySize(
+                OVERWORLD_CONSTANTS.TILE_WIDTH,
+                OVERWORLD_CONSTANTS.TILE_HEIGHT,
+            );
 
         // this.borderTop = grid.scene.add.image(
         //     x * OVERWORLD_CONSTANTS.TILE_WIDTH,
@@ -144,6 +159,7 @@ export default class OverworldCell {
         // grid.board.add(this.borderLeft);
         // grid.board.add(this.borderBottom);
         // grid.board.add(this.borderRight);
+        grid.board.add(this.tileText);
         grid.board.add(this.tile);
 
         this.tile.setInteractive();
@@ -166,25 +182,38 @@ export default class OverworldCell {
     }
 
     onPointerDown(pointer: any) {
-        if (!this.flagged && !this.query) {
-            this.onClick();
-        }
+        this.onClick();
     }
 
     setTileToVisited(delay: number) {
         const fadeTween = this.grid.scene.add.tween({
-            targets: this.tile,
+            targets: this.tileText,
             duration: delay,
             alpha: 0,
         });
         fadeTween.on("complete", (tween: any, targets: any) => {
-            this.value = -1;
-            targets[0].setText("🟢");
-            targets[0].setAlpha(1);
+            this.grid.board.add(
+                this.grid.scene.add
+                    .image(
+                        this.x * OVERWORLD_CONSTANTS.TILE_WIDTH,
+                        this.y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
+                        "room_cleaned",
+                    )
+                    .setAlpha(0.75)
+                    .setDisplaySize(
+                        OVERWORLD_CONSTANTS.TILE_WIDTH,
+                        OVERWORLD_CONSTANTS.TILE_HEIGHT,
+                    ),
+            );
         });
     }
 
     onClick() {
+        this.grid.playerImage.setPosition(
+            this.x * OVERWORLD_CONSTANTS.TILE_WIDTH,
+            this.y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
+        );
+
         if (!this.hasTriggered) {
             switch (this.value) {
                 case 0:
@@ -194,7 +223,6 @@ export default class OverworldCell {
                     break;
                 case 2:
                     this.grid.scene.transitionScene(SCENES.Fight);
-                    this.tile.setInteractive(false);
                     this.setTileToVisited(1000);
                     this.show();
                     break;
@@ -202,17 +230,14 @@ export default class OverworldCell {
                 case 6:
                     this.show();
                     this.typeInfo.trigger();
-                    this.tile.setInteractive(false);
                     this.setTileToVisited(3000);
                     break;
                 case 3:
                     this.grid.scene.transitionScene(SCENES.Shop);
-                    this.tile.setInteractive(false);
                     this.setTileToVisited(1000);
                     this.show();
                     break;
                 case 4:
-                    this.tile.setInteractive(false);
                     this.setTileToVisited(1000);
                     this.grid.scene.transitionScene(SCENES.BossFight);
                     this.show();
@@ -264,34 +289,40 @@ export default class OverworldCell {
             }
         }
 
+        this.grid.scene.tweens.add({
+            targets: this.tile,
+            alpha: 0.001,
+            duration: 500,
+        });
+
         switch (this.value) {
             case -1:
-                this.tile.setText("🟢");
+                this.tileText.setText("🟢");
                 break;
             case 0:
-                this.tile.setText("⚪");
+                this.tileText.setText("");
                 break;
             case 1:
-                this.tile.setText("🏠");
+                this.tileText.setText("🏠");
                 break;
             case 2:
-                this.tile.setText("⚔");
+                this.tileText.setText("⚔");
                 break;
             case 3:
-                this.tile.setText("🏪");
+                this.tileText.setText("🏪");
                 break;
             case 4:
-                this.tile.setText("😈");
+                this.tileText.setText("😈");
                 break;
             case 5:
-                this.tile.setText("↗");
+                this.tileText.setText("↗");
                 break;
             case 6:
-                this.tile.setText("🕷");
+                this.tileText.setText("🕷");
                 break;
 
             default:
-                this.tile.setText("❓");
+                this.tileText.setText("❓");
                 break;
         }
 
@@ -300,6 +331,7 @@ export default class OverworldCell {
 
     show() {
         const values = [1, 8, 9, 10, 11, 12, 13, 14, 15];
+        this.hasTriggered = true;
 
         // show borders
         // this.borderTop && this.borderTop.setAlpha(1);
