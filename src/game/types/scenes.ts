@@ -11,4 +11,5 @@ export const SCENES = {
     NewGame: "NewGame",
     BossFight: "BossFight",
     GameWon: "Game Won",
+    TrapOverlay: "TrapOverlay",
 };

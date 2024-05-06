@@ -166,6 +166,9 @@ export default class OverworldCell {
 
         this.tile.on("pointerdown", this.onPointerDown, this);
         this.tile.on("pointerup", this.onPointerUp, this);
+
+        // testing reveal all
+        // this.reveal();
     }
 
     reset() {

@@ -234,6 +234,13 @@ export default class OverworldGrid {
         this.state = 1;
         homeCell.show();
 
+        // testing reveal
+        this.data.forEach((row) => {
+            row.forEach((cell: OverworldCell) => {
+                cell.reveal();
+            });
+        });
+
         this.debug();
     }
 

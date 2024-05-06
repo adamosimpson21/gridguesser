@@ -217,6 +217,13 @@ export default class ShopItem {
                         "Damage Reduction Increased",
                     );
                     break;
+                case "luckAdd":
+                    GameState.player.luck += itemEffect.luckAdd;
+                    EventBus.emit(
+                        UI_EVENTS.DISPLAY_MESSAGE,
+                        "Up all night to get Lucky 🌟",
+                    );
+                    break;
                 case "fightGridExpand":
                     GameState.fightGridHeight += itemEffect.fightGridExpand;
                     GameState.fightGridWidth += itemEffect.fightGridExpand;
