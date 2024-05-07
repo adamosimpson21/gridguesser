@@ -7,6 +7,7 @@ import Trap from "@/game/classes/Trap";
 import EventDisplay from "@/game/classes/EventDisplay";
 import { Hud } from "@/game/scenes/Hud";
 import { OVERWORLD_CONSTANTS } from "@/game/types/overworldConstants";
+import { TRAPS } from "@/game/types/trapConstants";
 
 export default class OverworldGrid {
     private scene: Phaser.Scene;
@@ -235,11 +236,11 @@ export default class OverworldGrid {
         homeCell.show();
 
         // testing reveal
-        this.data.forEach((row) => {
-            row.forEach((cell: OverworldCell) => {
-                cell.reveal();
-            });
-        });
+        // this.data.forEach((row) => {
+        //     row.forEach((cell: OverworldCell) => {
+        //         cell.reveal();
+        //     });
+        // });
 
         this.debug();
     }
@@ -293,15 +294,18 @@ export default class OverworldGrid {
     paintNeighborBorders(cell: OverworldCell) {
         const orthogonalCells = this.getOrthogonalCells(cell);
         let borderImgToPaint: string;
-        if (cell.value === 4 || cell.value === 2) {
+        if (cell.value === 2) {
+            borderImgToPaint = "orange_border";
+        } else if (cell.value === 4) {
             borderImgToPaint = "red_border";
         } else if (cell.value === 5 || cell.value === 6) {
-            borderImgToPaint = "orange_border";
+            borderImgToPaint = "yellow_border";
         } else if (cell.value === 3) {
             borderImgToPaint = "green_border";
         } else {
             borderImgToPaint = "white_border";
         }
+
         // cell above
         if (orthogonalCells[0]) {
             const cellAbove = orthogonalCells[0];
@@ -393,14 +397,9 @@ export default class OverworldGrid {
                 cell.value = type;
                 if (type === 6 || type === 5) {
                     const rngCall = Math.floor(Phaser.Math.Between(0, 144));
-                    const severity = (rngCall % 3) + 1;
-                    const trapType = rngCall > 72 ? "MONEY" : "HP";
-                    cell.typeInfo = new Trap(
-                        this.scene,
-                        trapType,
-                        severity,
-                        type === 6,
-                    );
+                    // const severity = (rngCall % 3) + 1;
+                    cell.typeInfo =
+                        rngCall > 72 ? TRAPS.GOLD_TRAP : TRAPS.HEALTH_TRAP;
                 }
                 numCells--;
             }

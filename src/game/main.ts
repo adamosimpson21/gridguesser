@@ -10,6 +10,7 @@ import { Shop } from "@/game/scenes/Shop";
 import { NewGame } from "@/game/scenes/NewGame";
 import { BossFight } from "@/game/scenes/BossFight";
 import { GameWon } from "@/game/scenes/GameWon";
+import { TrapOverlay } from "@/game/scenes/TrapOverlay";
 
 //  Find out more information about the Game Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -41,6 +42,7 @@ const config: Phaser.Types.Core.GameConfig = {
         Boot,
         Preloader,
         Overworld,
+        TrapOverlay,
         GameOver,
         GameWon,
         Shop,

@@ -25,6 +25,8 @@ export class Overworld extends Scene {
         this.load.image("green_border", "assets/overworld/greenBorder.png");
         this.load.image("white_border", "assets/overworld/whiteBorder.png");
         this.load.image("orange_border", "assets/overworld/orangeBorder.png");
+        this.load.image("purple_border", "assets/overworld/purpleBorder.png");
+        this.load.image("yellow_border", "assets/overworld/yellowBorder.png");
         this.load.image("dust", "assets/overworld/dust.png");
         this.load.image("player", "assets/overworld/janitor.png");
         this.load.image("carpet_lines", "assets/overworld/carpetLines.png");
@@ -69,12 +71,12 @@ export class Overworld extends Scene {
             this,
         );
     }
-    transitionScene(scene: string) {
+    transitionScene(scene: string, data?: any) {
         this.camera.fadeOut(1000, 0, 0, 0);
         this.camera.once(
             Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
             (cam: any) => {
-                this.scene.launch(scene).pause(SCENES.Overworld);
+                this.scene.launch(scene, data).pause(SCENES.Overworld);
             },
         );
     }

@@ -2,6 +2,7 @@ import { Scene } from "phaser";
 import { CELL_TYPES } from "@/game/types/cells";
 import { SCENES } from "@/game/types/scenes";
 import { OVERWORLD_CONSTANTS } from "@/game/types/overworldConstants";
+import { trapType } from "@/game/types/trapConstants";
 
 export default class OverworldCell {
     public grid: any;
@@ -15,7 +16,7 @@ export default class OverworldCell {
     public exploded: boolean;
     public value: number;
     public tile: any;
-    public typeInfo: any;
+    public typeInfo: trapType | {};
     public hasTriggered: boolean;
     public topBorder: Phaser.GameObjects.Triangle;
     public borderRect: Phaser.GameObjects.Image;
@@ -31,7 +32,7 @@ export default class OverworldCell {
         x: number,
         y: number,
         type: string,
-        typeInfo: any,
+        typeInfo: trapType | {},
     ) {
         this.grid = grid;
 
@@ -232,7 +233,9 @@ export default class OverworldCell {
                 case 5:
                 case 6:
                     this.show();
-                    this.typeInfo.trigger();
+                    this.grid.scene.scene
+                        .launch(SCENES.TrapOverlay, this.typeInfo)
+                        .pause(SCENES.Overworld);
                     this.setTileToVisited(3000);
                     break;
                 case 3:
