@@ -42,6 +42,8 @@ class GameStateClass {
     public lyingTileNum: number;
     public removeLyingNum: number;
     public luck: number;
+    public fightFlawlessGoldReward: number;
+    public fightBossGoldReward: number;
 
     constructor() {
         this.isPlaying = true;
@@ -112,16 +114,21 @@ class GameStateClass {
         this.removeLyingNum = GAME_CONSTANTS.startingRemoveLyingNum;
         this.trashTileNum = GAME_CONSTANTS.startingTrashTileNum;
         this.lyingTileNum = GAME_CONSTANTS.startingLyingTileNum;
+
+        this.fightFlawlessGoldReward =
+            GAME_CONSTANTS.startingFightFlawlessGoldReward;
+
+        this.fightBossGoldReward = GAME_CONSTANTS.startingFightBossGoldReward;
     }
 
-    setLevel(level: number) {
-        this.level = level;
-    }
+    // setLevel(level: number) {
+    //     this.level = level;
+    // }
 
     incrementLevel() {
         this.level += 1;
         this.bombIntensity++;
-        this.bombNum += 3;
+        this.bombNum += 4;
         this.overworldGridWidth++;
         this.overworldGridHeight++;
         this.fightGridWidth += 2;
@@ -132,16 +139,16 @@ class GameStateClass {
         this.fightGoldReward += 2;
     }
 
-    setBombIntensity(intensity: number) {
-        this.bombIntensity = intensity;
-    }
-
-    updateFieldBy(field: string, intensity: number) {
-        if (this.hasOwnProperty(field)) {
-            // @ts-ignore
-            this[field] += intensity;
-        }
-    }
+    // setBombIntensity(intensity: number) {
+    //     this.bombIntensity = intensity;
+    // }
+    //
+    // updateFieldBy(field: string, intensity: number) {
+    //     if (this.hasOwnProperty(field)) {
+    //         // @ts-ignore
+    //         this[field] += intensity;
+    //     }
+    // }
 }
 
 export const GameState = new GameStateClass();

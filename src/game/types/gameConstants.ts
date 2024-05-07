@@ -21,6 +21,8 @@ export const GAME_CONSTANTS = {
     startingShopGridHeight: 4,
     startingShopItemNumber: 5,
     startingFightGoldReward: 5,
+    startingFightBossGoldReward: 3,
+    startingFightFlawlessGoldReward: 3,
     endLevel: 8,
     startingFightInputTypes: [
         FIGHT_INPUT_TYPES.REVEAL,

@@ -1,6 +1,6 @@
 import { Scene } from "phaser";
 import FightGridCell from "./FightGridCell";
-import { GAME_EVENTS, PLAYER_EVENTS } from "@/game/types/events";
+import { GAME_EVENTS, PLAYER_EVENTS, UI_EVENTS } from "@/game/types/events";
 import { EventBus } from "@/game/EventBus";
 import { Fight } from "@/game/scenes/Fight";
 import { SCENES } from "@/game/types/scenes";
@@ -165,12 +165,28 @@ export default class FightGrid extends GameObject {
         this.scene.scene.stop(SCENES.Fight);
     }
 
-    gameWon() {
+    gameWon(flawless: boolean) {
         this.playing = false;
         this.state = 2;
 
+        if (flawless) {
+            EventBus.emit(
+                UI_EVENTS.DISPLAY_MESSAGE,
+                {
+                    type: UI_EVENTS.DISPLAY_MESSAGE,
+                    message: `Flawless victory! $${GameState.fightFlawlessGoldReward} Extra`,
+                },
+                "15000",
+            );
+            EventBus.emit(
+                PLAYER_EVENTS.GAIN_GOLD,
+                GameState.fightFlawlessGoldReward,
+                true,
+            );
+        }
+
         EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, GameState.fightGoldReward);
-        GameState.updateFieldBy("bombNum", FIGHT_CONSTANTS.BOMB_NUM_INCREMENT);
+        GameState.bombNum += FIGHT_CONSTANTS.BOMB_NUM_INCREMENT;
 
         const returnButton = this.scene.make.text({
             x: this.scene.scale.width / 2 - 500,
@@ -200,6 +216,7 @@ export default class FightGrid extends GameObject {
         let location = 0;
         let revealedCells = 0;
         let correctBombCells = 0;
+        let flawless = true;
 
         do {
             const cell = this.getCell(location);
@@ -232,6 +249,10 @@ export default class FightGrid extends GameObject {
                 revealedCells++;
             }
 
+            if (cell.exploded) {
+                flawless = false;
+            }
+
             location++;
         } while (location < this.size);
 
@@ -252,12 +273,13 @@ export default class FightGrid extends GameObject {
             //     revealedCells + this.bombQty - correctBombs,
             // );
             this.flagAllBombs();
-            this.gameWon();
+            this.gameWon(flawless);
         }
     }
 
     flagAllBombs() {
         let location = 0;
+        this.updateBombs(this.bombsCounter);
         do {
             const cell = this.getCell(location);
             if (cell && cell.bombNum > 0) {
