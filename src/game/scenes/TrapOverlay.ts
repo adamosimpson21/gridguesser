@@ -21,9 +21,14 @@ export class TrapOverlay extends Scene {
 
     preload() {
         this.load.image("cubicle", "/assets/trap/cubicle.png");
+        this.load.image("black_screen", "/assets/blackScreen.png");
+        this.load.image("white_screen", "/assets/whiteScreen.png");
     }
 
     create() {
+        const background = this.add
+            .image(this.scale.width / 2, this.scale.height / 2, "black_screen")
+            .setAlpha(0.66);
         EventBus.emit("current-scene-ready", this);
         this.trapDisplay = new TrapDisplay(this, this.trap);
     }

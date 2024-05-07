@@ -8,6 +8,7 @@ import EventDisplay from "@/game/classes/EventDisplay";
 import { Hud } from "@/game/scenes/Hud";
 import { OVERWORLD_CONSTANTS } from "@/game/types/overworldConstants";
 import { TRAPS } from "@/game/types/trapConstants";
+import { random } from "nanoid";
 
 export default class OverworldGrid {
     private scene: Phaser.Scene;
@@ -236,11 +237,11 @@ export default class OverworldGrid {
         homeCell.show();
 
         // testing reveal
-        // this.data.forEach((row) => {
-        //     row.forEach((cell: OverworldCell) => {
-        //         cell.reveal();
-        //     });
-        // });
+        this.data.forEach((row) => {
+            row.forEach((cell: OverworldCell) => {
+                cell.reveal();
+            });
+        });
 
         this.debug();
     }
@@ -395,11 +396,15 @@ export default class OverworldGrid {
             const cell = this.getCell(location);
             if (cell.value === 0) {
                 cell.value = type;
+                // generate traps
                 if (type === 6 || type === 5) {
                     const rngCall = Math.floor(Phaser.Math.Between(0, 144));
-                    // const severity = (rngCall % 3) + 1;
-                    cell.typeInfo =
-                        rngCall > 72 ? TRAPS.GOLD_TRAP : TRAPS.HEALTH_TRAP;
+                    const trapOptions = Object.values(TRAPS);
+                    const randomTrap =
+                        trapOptions[
+                            Math.floor(Math.random() * trapOptions.length)
+                        ];
+                    cell.typeInfo = randomTrap;
                 }
                 numCells--;
             }

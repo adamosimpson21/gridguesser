@@ -1,25 +1,105 @@
 import { Scene } from "phaser";
-import { trapType } from "@/game/types/trapConstants";
+import { trapOutcomeType, trapType } from "@/game/types/trapConstants";
 import { SCENES } from "@/game/types/scenes";
+import { GameState } from "@/game/classes/GameState";
+import { EventBus } from "@/game/EventBus";
+import { PLAYER_EVENTS } from "@/game/types/events";
 
 export default class TrapDisplay {
     public scene: Phaser.Scene;
     public height: number;
     public width: number;
-    private trap: trapType;
-    private trapBoard: Phaser.GameObjects.Container;
-    private background: Phaser.GameObjects.Image;
-    private closeButton: Phaser.GameObjects.Text;
+    public trap: trapType;
+    public trapBoard: Phaser.GameObjects.Container;
+    public background: Phaser.GameObjects.Image;
+    public closeButton: Phaser.GameObjects.Text;
+    public dialogBox: Phaser.GameObjects.Container;
+    public riskyButton: Phaser.GameObjects.Text;
+    public safeButton: Phaser.GameObjects.Text;
+    public dialogDescriptionText: Phaser.GameObjects.Text;
 
     constructor(scene: Scene, trap: trapType) {
         this.scene = scene;
         this.trap = trap;
 
         this.trapBoard = scene.add.container(400, 100);
-        this.background = this.scene.add.image(0, 0, "cubicle").setOrigin(0, 0);
+        this.background = this.scene.add
+            .image(0, 0, trap.background)
+            .setOrigin(0, 0)
+            .setScale(0.8, 0.8);
 
+        this.dialogBox = scene.add.container(250, 250);
+        this.dialogBox.add(
+            scene.add
+                .image(0, 0, "white_screen")
+                .setDisplaySize(500, 500)
+                .setAlpha(0.8)
+                .setOrigin(0, 0),
+        );
+
+        this.dialogDescriptionText = scene.add.text(0, 0, trap.description, {
+            wordWrap: { width: 500, useAdvancedWrap: true },
+            fontSize: 32,
+            color: "black",
+        });
+        this.dialogBox.add(this.dialogDescriptionText);
+
+        this.riskyButton = scene.add.text(0, 300, this.trap.options[0].text, {
+            wordWrap: { width: 500, useAdvancedWrap: true },
+            fontSize: 32,
+            color: "black",
+        });
+        this.riskyButton.setInteractive();
+        this.riskyButton.on("pointerdown", this.riskyAction, this);
+
+        this.safeButton = scene.add.text(0, 350, this.trap.options[1].text, {
+            wordWrap: { width: 500, useAdvancedWrap: true },
+            fontSize: 32,
+            color: "black",
+        });
+        this.safeButton.setInteractive();
+        this.safeButton.on("pointerdown", this.safeAction, this);
+
+        this.dialogBox.add(this.riskyButton);
+        this.dialogBox.add(this.safeButton);
+
+        this.trapBoard.add(this.background);
+        this.trapBoard.add(this.dialogBox);
+    }
+
+    closeTrap() {
+        this.scene.scene.stop(SCENES.TrapOverlay);
+        this.scene.scene.resume(SCENES.Overworld);
+    }
+
+    riskyAction() {
+        const rngCall = Math.random();
+        // player luck is usually between -1 and 1, trap luck factor is between 0 and 1, rngcall is between 0 and 1
+        if (
+            GameState.player.luck * this.trap.luckFactor + rngCall >
+            this.trap.options[0].outcomes[0].chance / 100
+        ) {
+            this.parseOutcome(this.trap.options[0].outcomes[0]);
+        } else {
+            this.parseOutcome(this.trap.options[0].outcomes[1]);
+        }
+        this.concludeTrap();
+    }
+
+    safeAction() {
+        this.parseOutcome(this.trap.options[1].outcomes[0]);
+        this.concludeTrap();
+    }
+
+    concludeTrap() {
+        this.riskyButton.destroy();
+        this.safeButton.destroy();
+        this.makeCloseButton();
+    }
+
+    makeCloseButton() {
         this.closeButton = this.scene.add
-            .text(0, 400, "Close This", {
+            .text(0, 500, "Back to Sweepin'", {
                 backgroundColor: "white",
                 fontSize: 64,
                 color: "black",
@@ -27,12 +107,55 @@ export default class TrapDisplay {
             .setInteractive()
             .on("pointerdown", this.closeTrap, this);
 
-        this.trapBoard.add(this.background);
-        this.trapBoard.add(this.closeButton);
+        this.dialogBox.add(this.closeButton);
     }
 
-    closeTrap() {
-        this.scene.scene.stop(SCENES.TrapOverlay);
-        this.scene.scene.resume(SCENES.Overworld);
+    parseOutcome(trapOutCome: trapOutcomeType) {
+        const trapEffects = Object.entries(trapOutCome.effect);
+        trapEffects.forEach((effect) => {
+            const severity = effect[1];
+            switch (effect[0]) {
+                case "gold":
+                    console.log("you are here 2", effect);
+                    if (typeof severity === "number" && severity > 0) {
+                        EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, severity, true);
+                    } else {
+                        EventBus.emit(PLAYER_EVENTS.LOSE_GOLD, -severity, true);
+                    }
+                    break;
+                case "health":
+                    console.log("you are here 3", effect);
+                    if (typeof severity === "number" && severity > 0) {
+                        EventBus.emit(PLAYER_EVENTS.GAIN_HP, severity, true);
+                    } else {
+                        EventBus.emit(PLAYER_EVENTS.LOSE_HP, -severity, true);
+                    }
+                    break;
+                case "maxHp":
+                    if (typeof severity === "number" && severity > 0) {
+                        EventBus.emit(
+                            PLAYER_EVENTS.GAIN_MAX_HP,
+                            severity,
+                            true,
+                        );
+                    } else {
+                        EventBus.emit(
+                            PLAYER_EVENTS.LOSE_MAX_HP,
+                            -severity,
+                            true,
+                        );
+                    }
+                    break;
+                case "luck":
+                    GameState.player.luck += severity;
+                    break;
+                case "item":
+                    EventBus.emit(PLAYER_EVENTS.LOSE_UPGRADE, severity, true);
+                    break;
+                default:
+                    break;
+            }
+        });
+        this.dialogDescriptionText.setText(trapOutCome.text);
     }
 }
