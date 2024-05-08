@@ -3,6 +3,8 @@ import { CELL_TYPES } from "@/game/types/cells";
 import { SCENES } from "@/game/types/scenes";
 import { OVERWORLD_CONSTANTS } from "@/game/types/overworldConstants";
 import { trapType } from "@/game/types/trapConstants";
+import { EventBus } from "@/game/EventBus";
+import { SCENE_EVENTS } from "@/game/types/events";
 
 export default class OverworldCell {
     public grid: any;
@@ -167,9 +169,6 @@ export default class OverworldCell {
 
         this.tile.on("pointerdown", this.onPointerDown, this);
         this.tile.on("pointerup", this.onPointerUp, this);
-
-        // testing reveal all
-        // this.reveal();
     }
 
     reset() {
@@ -227,6 +226,7 @@ export default class OverworldCell {
                     break;
                 case 2:
                     this.grid.scene.transitionScene(SCENES.Fight);
+                    EventBus.emit(SCENE_EVENTS.ENTER_FIGHT);
                     this.setTileToVisited(1000);
                     this.show();
                     break;
@@ -246,6 +246,7 @@ export default class OverworldCell {
                 case 4:
                     this.setTileToVisited(1000);
                     this.grid.scene.transitionScene(SCENES.BossFight);
+                    EventBus.emit(SCENE_EVENTS.ENTER_FIGHT);
                     this.show();
                     break;
                 case -1:

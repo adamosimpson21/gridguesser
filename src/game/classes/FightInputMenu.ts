@@ -36,6 +36,9 @@ export default class FightInputMenu {
         // this.inputBoard.add(this.background);
         this.populateInputBoard();
 
+        // initially hidden
+        this.hide();
+
         EventBus.on(GAME_EVENTS.GAME_OVER, () => {
             this.inputBoard.list.forEach((input: Phaser.GameObjects.Text) => {
                 input.removeInteractive();
@@ -183,5 +186,13 @@ export default class FightInputMenu {
             inputNumIcon.name = input + "_NUM";
             this.inputBoard.add(inputNumIcon);
         });
+    }
+
+    hide() {
+        this.inputBoard.setAlpha(0);
+    }
+
+    show() {
+        this.inputBoard.setAlpha(1);
     }
 }

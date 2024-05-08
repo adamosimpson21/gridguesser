@@ -26,8 +26,15 @@ export default class EventDisplay {
             50,
             this.scene.scale.height / 2 + (Math.random() * 500 - 350),
             event.message,
+
             {
-                fontSize: 32,
+                fontSize: 48,
+                color: "#ffffff",
+                stroke: "#000000",
+                strokeThickness: 6,
+                align: "center",
+
+                wordWrap: { width: 450, useAdvancedWrap: true },
             },
         );
         this.scene.add.tween({

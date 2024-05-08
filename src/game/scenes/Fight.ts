@@ -3,7 +3,7 @@ import { Scene } from "phaser";
 import FightGrid from "../classes/FightGrid";
 import { SCENES } from "@/game/types/scenes";
 import { GameState } from "@/game/classes/GameState";
-import { GAME_EVENTS } from "@/game/types/events";
+import { GAME_EVENTS, SCENE_EVENTS } from "@/game/types/events";
 import FightInputMenu from "@/game/classes/FightInputMenu";
 import { createBackground } from "@/game/functions/background";
 
@@ -49,6 +49,7 @@ export class Fight extends Scene {
             Phaser.Scenes.Events.SHUTDOWN,
             () => {
                 this.input.setDefaultCursor("default");
+                EventBus.emit(SCENE_EVENTS.LEAVE_FIGHT);
             },
             this,
         );

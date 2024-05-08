@@ -1,6 +1,6 @@
 import { Scene } from "phaser";
 import { EventBus } from "@/game/EventBus";
-import { UI_EVENTS } from "@/game/types/events";
+import { SCENE_EVENTS, UI_EVENTS } from "@/game/types/events";
 import { shopItemType } from "@/game/types/shopItems";
 import { GameState } from "@/game/classes/GameState";
 import FightInputMenu from "@/game/classes/FightInputMenu";
@@ -115,6 +115,13 @@ export default class HudDisplay {
         this.hudBoard.add(this.hpDisplay);
         this.hudBoard.add(this.goldDisplay);
         this.hudBoard.add(this.upgradeDisplay);
+
+        EventBus.on(SCENE_EVENTS.LEAVE_FIGHT, () => {
+            this.fightInputDisplay.hide();
+        });
+        EventBus.on(SCENE_EVENTS.ENTER_FIGHT, () => {
+            this.fightInputDisplay.show();
+        });
     }
 
     create() {

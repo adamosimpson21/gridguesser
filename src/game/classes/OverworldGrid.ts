@@ -237,11 +237,11 @@ export default class OverworldGrid {
         homeCell.show();
 
         // testing reveal
-        this.data.forEach((row) => {
-            row.forEach((cell: OverworldCell) => {
-                cell.reveal();
-            });
-        });
+        // this.data.forEach((row) => {
+        //     row.forEach((cell: OverworldCell) => {
+        //         cell.reveal();
+        //     });
+        // });
 
         this.debug();
     }

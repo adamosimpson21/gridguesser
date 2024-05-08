@@ -33,18 +33,12 @@ export class BossFight extends Scene {
         const gridWidth = Math.floor(GameState.fightGridWidth * 1.5);
         const gridHeight = Math.floor(GameState.fightGridHeight * 1.5);
         const numBombs = Math.floor(GameState.bombNum * 2);
-        this.inputMenu = new FightInputMenu(this);
         this.grid = new BossFightGrid(this, gridWidth, gridHeight, numBombs);
 
         this.camera.fadeIn(500, 0, 0, 0);
 
         EventBus.emit("current-scene-ready", this);
     }
-
-    update() {
-        this.inputMenu.update();
-    }
-
     transitionScene(scene: string) {
         this.camera.fadeOut(1000, 0, 0, 0);
         this.camera.once(

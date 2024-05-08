@@ -28,8 +28,8 @@ export default class BossFightGrid extends FightGrid {
         // final floor
         if (GameState.level === GAME_CONSTANTS.endLevel) {
             const gameEndButton = this.scene.make.text({
-                x: this.scene.scale.width / 2 - 800,
-                y: 100,
+                x: this.scene.scale.width / 2 - 950,
+                y: 80,
                 text: "Floor Cleaned! You find a portal to a parallel dimension ⏩⏩⏩",
                 style: {
                     fontSize: 42,
