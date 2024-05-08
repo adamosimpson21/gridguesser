@@ -1,5 +1,10 @@
 import { EventBus } from "@/game/EventBus";
-import { GAME_EVENTS, PLAYER_EVENTS, UI_EVENTS } from "@/game/types/events";
+import {
+    FIGHT_EVENTS,
+    GAME_EVENTS,
+    PLAYER_EVENTS,
+    UI_EVENTS,
+} from "@/game/types/events";
 import { shopItemType } from "@/game/types/shopItems";
 import { Scene } from "phaser";
 import { SCENES } from "@/game/types/scenes";
@@ -44,6 +49,9 @@ class GameStateClass {
     public luck: number;
     public fightFlawlessGoldReward: number;
     public fightBossGoldReward: number;
+    public instanceRemoveTrashNum: number;
+    public instanceRemoveBombNum: number;
+    public instanceRemoveLyingNum: number;
 
     constructor() {
         this.isPlaying = true;
@@ -52,6 +60,15 @@ class GameStateClass {
 
         EventBus.on(GAME_EVENTS.INCREMENT_LEVEL, () => this.incrementLevel());
         EventBus.on(GAME_EVENTS.RESET, () => this.reset(), this);
+        EventBus.on(FIGHT_EVENTS.USE_LIMITED_INPUT, (inputType: string) => {
+            if (inputType === FIGHT_INPUT_TYPES.REMOVE_BOMB) {
+                GameState.instanceRemoveBombNum--;
+            } else if (inputType === FIGHT_INPUT_TYPES.REMOVE_TRASH) {
+                GameState.instanceRemoveTrashNum--;
+            } else if (inputType === FIGHT_INPUT_TYPES.REMOVE_LIES) {
+                GameState.instanceRemoveLyingNum--;
+            }
+        });
     }
 
     create() {
@@ -115,12 +132,23 @@ class GameStateClass {
         this.trashTileNum = GAME_CONSTANTS.startingTrashTileNum;
         this.lyingTileNum = GAME_CONSTANTS.startingLyingTileNum;
 
+        this.resetFightConstants();
+
         this.fightFlawlessGoldReward =
             GAME_CONSTANTS.startingFightFlawlessGoldReward;
 
         this.fightBossGoldReward = GAME_CONSTANTS.startingFightBossGoldReward;
     }
 
+    resetFightConstants() {
+        this.instanceRemoveTrashNum = this.removeTrashNum;
+        this.instanceRemoveBombNum = this.removeBombNum;
+        this.instanceRemoveLyingNum = this.removeLyingNum;
+    }
+
+    updateFightInputType(fightInputType: string) {
+        this.currentFightInputType = fightInputType;
+    }
     // setLevel(level: number) {
     //     this.level = level;
     // }

@@ -3,9 +3,11 @@ import { EventBus } from "@/game/EventBus";
 import { UI_EVENTS } from "@/game/types/events";
 import { shopItemType } from "@/game/types/shopItems";
 import { GameState } from "@/game/classes/GameState";
+import FightInputMenu from "@/game/classes/FightInputMenu";
+import { Hud } from "@/game/scenes/Hud";
 
 export default class HudDisplay {
-    public scene: Phaser.Scene;
+    public scene: Hud;
     public name: string;
     public hp: number;
     public gold: number;
@@ -24,9 +26,10 @@ export default class HudDisplay {
     public fontSize: string;
     public font: string;
     public strokeWidth: number;
+    public fightInputDisplay: FightInputMenu;
 
     constructor(
-        scene: Scene,
+        scene: Hud,
         name: string,
         hp: number,
         gold: number,
@@ -48,6 +51,8 @@ export default class HudDisplay {
         this.strokeWidth = 5;
 
         this.hudBoard = this.scene.add.container(1500, 0);
+
+        this.fightInputDisplay = new FightInputMenu(scene);
 
         this.clipboard = this.scene.add.image(
             this.width / 2,

@@ -1,4 +1,4 @@
-import { PLAYER_EVENTS } from "@/game/types/events";
+import { FIGHT_EVENTS, PLAYER_EVENTS } from "@/game/types/events";
 import { EventBus } from "@/game/EventBus";
 import {
     FIGHT_CONSTANTS,
@@ -171,7 +171,10 @@ export default class FightGridCell {
 
     removeBomb() {
         if (this.grid.scene.removeBombUses > 0 && !this.open) {
-            this.grid.scene.removeBombUses--;
+            EventBus.emit(
+                FIGHT_EVENTS.USE_LIMITED_INPUT,
+                FIGHT_INPUT_TYPES.REMOVE_BOMB,
+            );
             if (this.bombNum > 0) {
                 this.bombNum--;
                 // update grid
@@ -198,11 +201,19 @@ export default class FightGridCell {
         }
     }
 
-    removeLies() {}
+    removeLies() {
+        EventBus.emit(
+            FIGHT_EVENTS.USE_LIMITED_INPUT,
+            FIGHT_INPUT_TYPES.REMOVE_LIES,
+        );
+    }
     removeTrash() {
         if (this.trash && this.grid.scene.removeTrashUses > 0) {
             this.trash = false;
-            this.grid.scene.removeTrashUses--;
+            EventBus.emit(
+                FIGHT_EVENTS.USE_LIMITED_INPUT,
+                FIGHT_INPUT_TYPES.REMOVE_TRASH,
+            );
             this.show();
         }
     }

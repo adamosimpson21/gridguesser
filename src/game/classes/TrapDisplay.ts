@@ -52,7 +52,7 @@ export default class TrapDisplay {
         this.riskyButton.setInteractive();
         this.riskyButton.on("pointerdown", this.riskyAction, this);
 
-        this.safeButton = scene.add.text(0, 350, this.trap.options[1].text, {
+        this.safeButton = scene.add.text(0, 400, this.trap.options[1].text, {
             wordWrap: { width: 500, useAdvancedWrap: true },
             fontSize: 32,
             color: "black",

@@ -41,6 +41,47 @@ export const TRAPS: { [key: string]: trapType } = {
         ],
         luckFactor: 1,
     },
+    LUCKY_COIN: {
+        id: "LUCKY_COIN",
+        background: "cubicle",
+        benefitIndex: 0.5,
+        description: "Oh wow, what a shiny coin, maybe I should pick it up 🤔 ",
+        options: [
+            {
+                text: "Pick up the very shiny coin",
+                outcomes: [
+                    {
+                        effect: {
+                            luck: 0.25,
+                        },
+                        chance: 50,
+                        positive: true,
+                        text: "This coin sure feels lucky",
+                    },
+                    {
+                        effect: {
+                            luck: -0.25,
+                        },
+                        chance: 50,
+                        positive: false,
+                        text: "This coin sure is shiny",
+                    },
+                ],
+            },
+            {
+                text: "Leave it alone",
+                outcomes: [
+                    {
+                        chance: 100,
+                        positive: true,
+                        text: "That coin probably wasn't lucky at all.",
+                        effect: {},
+                    },
+                ],
+            },
+        ],
+        luckFactor: 2,
+    },
 };
 
 export type trapType = {

@@ -32,7 +32,6 @@ export class Fight extends Scene {
         const gridHeight = GameState.fightGridHeight;
         const numBombs = GameState.bombNum;
         this.grid = new FightGrid(this, gridWidth, gridHeight, numBombs);
-        this.inputMenu = new FightInputMenu(this);
         this.removeTrashUses = GameState.removeTrashNum;
         this.removeBombUses = GameState.removeBombNum;
         this.removeLyingUses = GameState.removeLyingNum;
@@ -42,7 +41,7 @@ export class Fight extends Scene {
         EventBus.emit("current-scene-ready", this);
 
         this.input.setDefaultCursor(
-            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' height='24' width='24'><text y='16' font-size='16'>🔍</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🔍</text><path d='M0,4 L0,0 L4,0' fill='red' /></svg>\"), auto",
         );
 
         this.events.on(
@@ -52,10 +51,6 @@ export class Fight extends Scene {
             },
             this,
         );
-    }
-
-    update() {
-        this.inputMenu.update();
     }
 
     // transitionScene(scene: string) {

@@ -16,6 +16,8 @@ export class Hud extends Scene {
 
     preload() {
         this.load.image("clipboard", "assets/hud/longClipboard.png");
+        this.load.image("key_ring", "assets/hud/keyRing.png");
+        this.load.image("black_key", "assets/hud/blackKey.png");
     }
 
     create() {
