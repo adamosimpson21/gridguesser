@@ -150,6 +150,16 @@ export const SHOP_ITEMS: { [key: string]: shopItemType } = {
         permanent: true,
         singleton: true,
     },
+    FLAWLESS_VICTORY_DOUBLE: {
+        id: "FLAWLESS_VICTORY_DOUBLE",
+        name: "Flawless Victory Mastery",
+        description: "Doubles reward for flawless victories",
+        cost: 7,
+        effect: { flawlessVictoryDouble: 1 },
+        icon: "🌟",
+        permanent: true,
+        singleton: false,
+    },
 };
 
 export type shopItemType = {

@@ -203,6 +203,13 @@ export default class ShopItem {
                         `Added ${itemEffect.trashTileRemove} more trash tile removal`,
                     );
                     break;
+                case "flawlessVictoryDouble":
+                    GameState.fightFlawlessGoldReward += 2;
+                    EventBus.emit(
+                        UI_EVENTS.DISPLAY_MESSAGE,
+                        `Doubled Flawless Victory Reward`,
+                    );
+                    break;
                 case "shopItemsAdd":
                     GameState.shopItemNumber += itemEffect.shopItemsAdd;
                     EventBus.emit(

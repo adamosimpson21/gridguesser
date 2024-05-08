@@ -35,6 +35,7 @@ export class Fight extends Scene {
         this.removeTrashUses = GameState.removeTrashNum;
         this.removeBombUses = GameState.removeBombNum;
         this.removeLyingUses = GameState.removeLyingNum;
+        GameState.resetFightConstants();
 
         this.camera.fadeIn(500, 0, 0, 0);
 
