@@ -27,6 +27,7 @@ export default class FightGrid extends GameObject {
     public board: Phaser.GameObjects.Container;
     public bombsCounterText: Phaser.GameObjects.Text;
     private emergencyGeneratorCutoffNumber: number;
+    private bombsCounterImage: Phaser.GameObjects.Image;
 
     constructor(scene: Fight, width: number, height: number, bombs: number) {
         super(scene, "fightGrid");
@@ -79,11 +80,20 @@ export default class FightGrid extends GameObject {
         this.bombsCounterText = this.scene.make.text({
             x: 12,
             y: 10,
-            text: `${this.bombsCounter}👹`,
+            text: `${this.bombsCounter}`,
             style: { fontSize: "64px", padding: { top: 8 } },
         });
+        this.bombsCounterImage = this.scene.make
+            .image({
+                x: 78,
+                y: 10,
+                key: "enemy1",
+            })
+            .setOrigin(0, 0)
+            .setDisplaySize(64, 64);
 
         this.board.add(this.bombsCounterText);
+        this.board.add(this.bombsCounterImage);
 
         EventBus.on(GAME_EVENTS.GAME_OVER, () => (this.playing = false));
     }
@@ -145,7 +155,7 @@ export default class FightGrid extends GameObject {
 
     updateBombs(diff: number) {
         this.bombsCounter -= diff;
-        this.bombsCounterText.setText(`${this.bombsCounter.toString()}👹`);
+        this.bombsCounterText.setText(`${this.bombsCounter.toString()}`);
     }
 
     restart() {
@@ -176,7 +186,7 @@ export default class FightGrid extends GameObject {
                     type: UI_EVENTS.DISPLAY_MESSAGE,
                     message: `Flawless victory! $${GameState.fightFlawlessGoldReward} Extra`,
                 },
-                "15000",
+                "5000",
             );
             EventBus.emit(
                 PLAYER_EVENTS.GAIN_GOLD,

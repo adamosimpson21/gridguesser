@@ -49,12 +49,18 @@ export default class FightGridCell {
             style: { fontSize: `${FIGHT_CONSTANTS.TILE_HEIGHT}px` },
         });
 
-        this.flagOverlay = grid.scene.make.text({
-            x: grid.offset.x + x * FIGHT_CONSTANTS.TILE_WIDTH + 12,
-            y: grid.offset.y + y * FIGHT_CONSTANTS.TILE_HEIGHT + 8,
-            text: "",
-            style: { fontSize: `${FIGHT_CONSTANTS.TILE_HEIGHT - 16}px` },
-        });
+        this.flagOverlay = grid.scene.make
+            .image({
+                x: grid.offset.x + x * FIGHT_CONSTANTS.TILE_WIDTH + 4,
+                y: grid.offset.y + y * FIGHT_CONSTANTS.TILE_HEIGHT,
+                key: "flagOverlay",
+                frame: 0,
+            })
+            .setOrigin(0, 0)
+            .setDisplaySize(
+                FIGHT_CONSTANTS.TILE_WIDTH,
+                FIGHT_CONSTANTS.TILE_HEIGHT,
+            );
 
         grid.board.add(this.tile);
         grid.board.add(this.flagOverlay);
@@ -148,7 +154,7 @@ export default class FightGridCell {
                 this.flagNum = 1;
                 this.grid.updateBombs(1);
                 this.setMultiFlagText(this.flagNum);
-            } else if (this.flagNum > 0) {
+            } else if (this.flagNum > 0 && this.flagNum < 9) {
                 // add multi-flags
                 this.flagNum++;
                 this.setMultiFlagText(this.flagNum);
@@ -161,10 +167,10 @@ export default class FightGridCell {
         if (!this.open) {
             if (this.query) {
                 this.query = false;
-                this.flagOverlay.setText("");
+                this.flagOverlay.setFrame(0);
             } else {
                 this.query = true;
-                this.flagOverlay.setText("❔");
+                this.flagOverlay.setFrame(10);
             }
         }
     }
@@ -220,20 +226,15 @@ export default class FightGridCell {
 
     setMultiFlagText(flagNumber: number) {
         if (flagNumber === 0) {
-            this.flagOverlay.setText("");
-        } else if (flagNumber > 9) {
-            this.flagOverlay.setText(`${this.flagNum}🚩`);
-            this.flagOverlay.setFontSize(
-                `${Math.floor(FIGHT_CONSTANTS.TILE_WIDTH - 16)}px`,
-            );
+            this.flagOverlay.setFrame(0);
+            // } else if (flagNumber > 9) {
+            //     this.flagOverlay.setImage(`${this.flagNum}🚩`);
+            //     this.flagOverlay.setFontSize(
+            //         `${Math.floor(FIGHT_CONSTANTS.TILE_WIDTH - 16)}px`,
+            //     );
         } else {
             // this.flagOverlay.setText('🚩')
-            this.flagOverlay.setText(
-                `${Array.from(new Array(this.flagNum).fill("🚩")).join("")}`,
-            );
-            this.flagOverlay.setFontSize(
-                `${Math.floor((FIGHT_CONSTANTS.TILE_WIDTH - 16) / flagNumber)}px`,
-            );
+            this.flagOverlay.setFrame(flagNumber);
         }
     }
 
@@ -244,12 +245,7 @@ export default class FightGridCell {
 
     reveal() {
         if (this.exploded) {
-            this.flagOverlay.setText(
-                `${Array.from(new Array(this.bombNum).fill("👹")).join("")}`,
-            );
-            this.flagOverlay.setFontSize(
-                `${Math.floor((FIGHT_CONSTANTS.TILE_WIDTH - 16) / this.bombNum)}px`,
-            );
+            this.flagOverlay.setFrame(this.bombNum + 10);
             this.tile.setText("🟧");
         } else if (!(this.bombNum > 0) && this.flagNum > 0) {
             this.tile.setText("🍕");
