@@ -28,6 +28,7 @@ export default class FightGrid extends GameObject {
     public bombsCounterText: Phaser.GameObjects.Text;
     private emergencyGeneratorCutoffNumber: number;
     private bombsCounterImage: Phaser.GameObjects.Image;
+    private bombsCounterBG: Phaser.GameObjects.Image;
 
     constructor(scene: Fight, width: number, height: number, bombs: number) {
         super(scene, "fightGrid");
@@ -77,11 +78,19 @@ export default class FightGrid extends GameObject {
         this.createBackground();
         this.createCells();
 
+        this.bombsCounterBG = this.scene.make
+            .image({
+                x: 0,
+                y: -2,
+                key: "clipboard",
+            })
+            .setOrigin(0, 0)
+            .setDisplaySize(180, 90);
         this.bombsCounterText = this.scene.make.text({
             x: 12,
             y: 10,
             text: `${this.bombsCounter}`,
-            style: { fontSize: "64px", padding: { top: 8 } },
+            style: { fontSize: "64px", color: "black", padding: { top: 8 } },
         });
         this.bombsCounterImage = this.scene.make
             .image({
@@ -92,6 +101,7 @@ export default class FightGrid extends GameObject {
             .setOrigin(0, 0)
             .setDisplaySize(64, 64);
 
+        this.board.add(this.bombsCounterBG);
         this.board.add(this.bombsCounterText);
         this.board.add(this.bombsCounterImage);
 
@@ -222,68 +232,71 @@ export default class FightGrid extends GameObject {
     }
 
     checkWinState() {
-        let correctBombs = 0;
-        let location = 0;
-        let revealedCells = 0;
-        let correctBombCells = 0;
-        let flawless = true;
+        if (this.playing) {
+            let correctBombs = 0;
+            let location = 0;
+            let revealedCells = 0;
+            let correctBombCells = 0;
+            let flawless = true;
 
-        do {
-            const cell = this.getCell(location);
+            do {
+                const cell = this.getCell(location);
 
-            // if (cell.open) {
-            //     // exploded bomb
-            //     if (cell.exploded) {
-            //         console.log("calculating exploded bombs");
-            //         correctBombs += cell.bombNum;
-            //         correctBombCells++;
-            //     }
-            //
-            //     // exploded or normal reveal
-            //     revealedCells++;
-            // } else if (
-            //     cell.bombNum > 0 &&
-            //     cell.flagNum > 0 &&
-            //     cell.bombNum === cell.flagNum
+                // if (cell.open) {
+                //     // exploded bomb
+                //     if (cell.exploded) {
+                //         console.log("calculating exploded bombs");
+                //         correctBombs += cell.bombNum;
+                //         correctBombCells++;
+                //     }
+                //
+                //     // exploded or normal reveal
+                //     revealedCells++;
+                // } else if (
+                //     cell.bombNum > 0 &&
+                //     cell.flagNum > 0 &&
+                //     cell.bombNum === cell.flagNum
+                // ) {
+                //     // flag number matches bomb number
+                //     correctBombs += cell.bombNum;
+                //     correctBombCells++;
+                // }
+                // // if(cell.bombNum > 0 && cell.open){
+                // //     open++;
+                // // }
+                if (cell.open) {
+                    revealedCells++;
+                } else if (cell.bombNum > 0) {
+                    revealedCells++;
+                }
+
+                if (cell.exploded) {
+                    flawless = false;
+                }
+
+                location++;
+            } while (location < this.size);
+
+            // console.log("correct bombs", correctBombs);
+            // console.log("this.bombQty", this.bombQty);
+            // console.log("revealedCells", revealedCells);
+
+            // if ((correctBombs === this.bombQty && revealedCells === this.size))
+            // if (
+            //     (correctBombs === this.bombQty && revealedCells === this.size) ||
+            //     revealedCells + this.bombQty - correctBombs >= this.size
             // ) {
-            //     // flag number matches bomb number
-            //     correctBombs += cell.bombNum;
-            //     correctBombCells++;
-            // }
-            // // if(cell.bombNum > 0 && cell.open){
-            // //     open++;
-            // // }
-            if (cell.open) {
-                revealedCells++;
-            } else if (cell.bombNum > 0) {
-                revealedCells++;
+
+            // unsure if something is wrong here
+            if (revealedCells >= this.size) {
+                // console.log(
+                //     "revealedCells + this.bombQrt - correctBombs:",
+                //     revealedCells + this.bombQty - correctBombs,
+                // );
+                this.playing = false;
+                this.flagAllBombs();
+                this.gameWon(flawless);
             }
-
-            if (cell.exploded) {
-                flawless = false;
-            }
-
-            location++;
-        } while (location < this.size);
-
-        // console.log("correct bombs", correctBombs);
-        // console.log("this.bombQty", this.bombQty);
-        // console.log("revealedCells", revealedCells);
-
-        // if ((correctBombs === this.bombQty && revealedCells === this.size))
-        // if (
-        //     (correctBombs === this.bombQty && revealedCells === this.size) ||
-        //     revealedCells + this.bombQty - correctBombs >= this.size
-        // ) {
-
-        // unsure if something is wrong here
-        if (revealedCells >= this.size) {
-            // console.log(
-            //     "revealedCells + this.bombQrt - correctBombs:",
-            //     revealedCells + this.bombQty - correctBombs,
-            // );
-            this.flagAllBombs();
-            this.gameWon(flawless);
         }
     }
 
@@ -404,6 +417,29 @@ export default class FightGrid extends GameObject {
         ];
     }
 
+    getXYDirectionFromAdjacantCellIndex(index: number) {
+        switch (index) {
+            case 0:
+                return [-1, -1];
+            case 1:
+                return [0, -1];
+            case 2:
+                return [+1, -1];
+            case 3:
+                return [-1, 0];
+            case 4:
+                return [+1, 0];
+            case 5:
+                return [-1, +1];
+            case 6:
+                return [0, +1];
+            case 7:
+                return [+1, +1];
+            default:
+                return [0, 0];
+        }
+    }
+
     getAdjacentCellFlaggedAndBombedNumber(cell: { x: number; y: number }) {
         const adjacentCells = this.getAdjacentCells(cell);
         let numFlagAndBombed = 0;
@@ -426,14 +462,20 @@ export default class FightGrid extends GameObject {
             }
 
             if (cell.value === 0) {
-                this.floodFill(x, y - 1);
-                this.floodFill(x, y + 1);
-                this.floodFill(x - 1, y);
-                this.floodFill(x + 1, y);
-                this.floodFill(x + 1, y + 1);
-                this.floodFill(x - 1, y + 1);
-                this.floodFill(x - 1, y - 1);
-                this.floodFill(x + 1, y - 1);
+                this.scene.time.addEvent({
+                    delay: 100,
+                    callback: () => {
+                        this.floodFill(x, y - 1);
+                        this.floodFill(x, y + 1);
+                        this.floodFill(x - 1, y);
+                        this.floodFill(x + 1, y);
+                        this.floodFill(x + 1, y + 1);
+                        this.floodFill(x - 1, y + 1);
+                        this.floodFill(x - 1, y - 1);
+                        this.floodFill(x + 1, y - 1);
+                    },
+                    callbackScope: this,
+                });
             }
         }
     }
@@ -441,7 +483,7 @@ export default class FightGrid extends GameObject {
     chordFill(x: number, y: number) {
         const cell = this.getCellXY(x, y);
         if (cell && cell.open && cell.bombNum <= 0) {
-            this.getAdjacentCells({ x, y }).forEach((adjacentCell) => {
+            this.getAdjacentCells({ x, y }).forEach((adjacentCell, index) => {
                 if (adjacentCell && !(adjacentCell.flagNum > 0)) {
                     if (adjacentCell.bombNum > 0) {
                         if (!adjacentCell.exploded) {
@@ -450,8 +492,46 @@ export default class FightGrid extends GameObject {
                     } else if (adjacentCell.value === 0) {
                         this.floodFill(adjacentCell.x, adjacentCell.y);
                     } else {
-                        adjacentCell.show();
+                        adjacentCell.show(true);
                     }
+                } else if (adjacentCell && adjacentCell.flagNum > 0) {
+                    // chord flagged animation
+                    const previousText = adjacentCell.tile.text;
+                    const xyDirection =
+                        this.getXYDirectionFromAdjacantCellIndex(index);
+                    adjacentCell.tile.setText("🟩");
+                    const yRaiseIndex = 3;
+                    const chordFillTween = this.scene.tweens.chain({
+                        targets: adjacentCell.tile,
+                        tweens: [
+                            {
+                                y: `-=${yRaiseIndex}`,
+                                ease: "power3",
+                                duration: 300,
+                            },
+
+                            {
+                                x: `-=${xyDirection[0] * 4}`,
+                                y: `-=${xyDirection[1] * 4 - yRaiseIndex}`,
+                                ease: "power3",
+                                duration: 300,
+                            },
+                            {
+                                x: `+=${xyDirection[0] * 4}`,
+                                y: `+=${xyDirection[1] * 4 - yRaiseIndex}`,
+                                ease: "power3",
+                                duration: 100,
+                            },
+                            {
+                                y: `+=${yRaiseIndex}`,
+                                ease: "power3",
+                                duration: 100,
+                            },
+                        ],
+                    });
+                    chordFillTween.on("complete", () => {
+                        adjacentCell.tile.setText(previousText);
+                    });
                 }
             });
         }

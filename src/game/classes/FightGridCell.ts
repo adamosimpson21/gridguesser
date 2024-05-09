@@ -132,7 +132,7 @@ export default class FightGridCell {
                 } else {
                     this.show();
                 }
-                this.grid.checkWinState();
+                // this.grid.checkWinState();
             }
         } else if (inputType === FIGHT_INPUT_TYPES.FLAG) {
             this.addFlag();
@@ -203,6 +203,7 @@ export default class FightGridCell {
                 if (this.bombNum === 0) {
                     this.show();
                 }
+                this.grid.checkWinState();
             }
         }
     }
@@ -256,7 +257,7 @@ export default class FightGridCell {
         }
     }
 
-    show() {
+    show(shouldNotAnimate?: boolean) {
         const values = [
             "⬜️",
             "1️⃣",
@@ -271,17 +272,49 @@ export default class FightGridCell {
             "🔟",
         ];
 
+        let textToSet = "" as string;
         if (this.trash) {
-            this.tile.setText("🚮");
+            textToSet = "🚮";
         } else {
             if (values[this.value]) {
-                this.tile.setText(values[this.value].toString());
+                textToSet = values[this.value].toString();
             } else {
-                this.tile.setText(this.value.toString());
+                textToSet = this.value.toString();
             }
+        }
+        if (!shouldNotAnimate) {
+            const bumpTween = this.grid.scene.tweens.chain({
+                targets: this.tile,
+                tweens: [
+                    {
+                        y: "-=6",
+                        ease: "power3",
+                        duration: 150,
+                    },
+                    {
+                        y: "+=8",
+                        ease: "power3",
+                        duration: 300,
+                    },
+                    {
+                        y: "-=2",
+                        ease: "power3",
+                        duration: 150,
+                    },
+                ],
+            });
+            bumpTween.on("complete", (tween: any, targets: any) => {
+                this.tile.setText(textToSet);
+                this.tile.setY(
+                    this.grid.offset.y + this.y * FIGHT_CONSTANTS.TILE_HEIGHT,
+                );
+            });
+        } else {
+            this.tile.setText(textToSet);
         }
 
         this.open = true;
+        this.grid.checkWinState();
     }
 
     debug() {

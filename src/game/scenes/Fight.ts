@@ -42,6 +42,7 @@ export class Fight extends Scene {
         // this.load.image("flag9", "/assets/fight/cautionSign9.png");
         //
         this.load.image("enemy1", "/assets/fight/dustBunny.png");
+        this.load.image("clipboard", "/assets/hud/longClipboard.png");
         //
         // this.load.image("enemy2", "/assets/fight/dustBunny2.png");
         //
