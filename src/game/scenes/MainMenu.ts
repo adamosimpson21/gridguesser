@@ -6,7 +6,7 @@ import { createBackground } from "@/game/functions/background";
 
 export class MainMenu extends Scene {
     background: GameObjects.Image;
-    title: GameObjects.Text;
+    title: Phaser.GameObjects.Image;
     overworldButton: GameObjects.Text;
     fightSceneButton: GameObjects.Text;
 
@@ -14,17 +14,15 @@ export class MainMenu extends Scene {
         super(SCENES.MainMenu);
     }
 
+    preload() {
+        this.load.image("title_logo", "/assets/titleLogo.png");
+    }
+
     create() {
         this.background = createBackground(this);
         this.title = this.add
-            .text(this.scale.width / 2, 250, "Broom Sweeper", {
-                fontFamily: "Arial Black",
-                fontSize: 96,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 8,
-                align: "center",
-            })
+            .image(this.scale.width / 2, 250, "title_logo")
+            .setDisplaySize(1400, 400)
             .setOrigin(0.5)
             .setDepth(100);
 

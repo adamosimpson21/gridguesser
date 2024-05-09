@@ -20,14 +20,17 @@ export class Overworld extends Scene {
     }
 
     preload() {
-        this.load.image("overworld_floor", "assets/overworld/officeCarpet.png");
+        this.load.image(
+            "overworld_floor",
+            "assets/overworld/officeCarpet2.png",
+        );
         this.load.image("red_border", "assets/overworld/redBorder.png");
         this.load.image("green_border", "assets/overworld/greenBorder.png");
         this.load.image("white_border", "assets/overworld/whiteBorder.png");
         this.load.image("orange_border", "assets/overworld/orangeBorder.png");
         this.load.image("purple_border", "assets/overworld/purpleBorder.png");
         this.load.image("yellow_border", "assets/overworld/yellowBorder.png");
-        this.load.image("dust", "assets/overworld/dust.png");
+        this.load.image("dust", "assets/overworld/dustBunny.png");
         this.load.image("player", "assets/overworld/janitor.png");
         this.load.image("carpet_lines", "assets/overworld/carpetLines.png");
         this.load.image("room_cleaned", "assets/overworld/roomCleaned.png");

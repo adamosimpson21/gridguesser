@@ -106,8 +106,8 @@ export default class OverworldCell {
                 "dust",
             )
             .setDisplaySize(
-                OVERWORLD_CONSTANTS.TILE_WIDTH / 2,
-                OVERWORLD_CONSTANTS.TILE_HEIGHT / 2,
+                OVERWORLD_CONSTANTS.TILE_WIDTH * 0.8,
+                OVERWORLD_CONSTANTS.TILE_HEIGHT * 0.8,
             );
 
         this.borderRect = grid.scene.add
