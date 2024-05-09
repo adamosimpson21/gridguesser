@@ -194,7 +194,7 @@ export default class FightGrid extends GameObject {
                 UI_EVENTS.DISPLAY_MESSAGE,
                 {
                     type: UI_EVENTS.DISPLAY_MESSAGE,
-                    message: `Flawless victory! $${GameState.fightFlawlessGoldReward} Extra`,
+                    message: `Clean Sweep! $${GameState.fightFlawlessGoldReward} Extra`,
                 },
                 "5000",
             );

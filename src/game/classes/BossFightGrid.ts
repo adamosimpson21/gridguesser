@@ -53,9 +53,9 @@ export default class BossFightGrid extends FightGrid {
                     UI_EVENTS.DISPLAY_MESSAGE,
                     {
                         type: UI_EVENTS.DISPLAY_MESSAGE,
-                        message: `Flawless victory! $${GameState.fightFlawlessGoldReward} Extra`,
+                        message: `Clean Sweep! $${GameState.fightFlawlessGoldReward} Extra`,
                     },
-                    "15000",
+                    "5000",
                 );
                 EventBus.emit(
                     PLAYER_EVENTS.GAIN_GOLD,
