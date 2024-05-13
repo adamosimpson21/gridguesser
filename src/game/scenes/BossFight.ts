@@ -33,12 +33,15 @@ export class BossFight extends Scene {
                 frameHeight: 64,
             },
         );
+        this.load.image("black_screen", "/assets/blackScreen.png");
         this.load.image("enemy1", "/assets/fight/dustBunny.png");
         this.load.image("clipboard", "/assets/hud/longClipboard.png");
         this.load.image("blank", "/assets/blank.png");
         this.load.image("trash_bag", "/assets/fight/trashBag.png");
         this.load.image("trash_can", "/assets/fight/trashCan.png");
         this.load.image("trash_can_over", "/assets/fight/trashCanOver.png");
+        this.load.image("boss_desk", "/assets/fight/bossDesk.png");
+        this.load.image("black_key", "/assets/hud/blackKey.png");
     }
 
     create() {

@@ -10,6 +10,7 @@ import { FIGHT_EVENTS, GAME_EVENTS } from "@/game/types/events";
 import { BossFight } from "@/game/scenes/BossFight";
 import { Hud } from "@/game/scenes/Hud";
 import UppercaseFirst = Phaser.Utils.String.UppercaseFirst;
+import { getInputUsesAvailable } from "@/game/functions/getInputUsesAvailable";
 
 export default class FightInputMenu {
     public availableInputs: string[];
@@ -65,12 +66,24 @@ export default class FightInputMenu {
                             inputText.setText(
                                 `${GameState.instanceRemoveLyingNum}`,
                             );
+                        } else if (
+                            inputTypeUse === FIGHT_INPUT_TYPES.UMBRELLA
+                        ) {
+                            inputText.setText(
+                                `${GameState.instanceUmbrellaNum}`,
+                            );
+                        } else if (inputTypeUse === FIGHT_INPUT_TYPES.TOWER) {
+                            inputText.setText(`${GameState.instanceTowerNum}`);
+                        } else if (inputTypeUse === FIGHT_INPUT_TYPES.BLOCK) {
+                            inputText.setText(`${GameState.instanceBlockNum}`);
                         }
                     }
                 },
             );
         });
-        EventBus.on(FIGHT_EVENTS.ADD_INPUT_TYPE, (newInputType: string) => {});
+        EventBus.on(FIGHT_EVENTS.ADD_INPUT_TYPE, (newInputType: string) => {
+            this.createInputKey(newInputType, GameState.fightInputTypes.length);
+        });
         EventBus.on(FIGHT_EVENTS.CHANGE_INPUT_TYPE, (newInput: string) => {
             switch (newInput) {
                 case FIGHT_INPUT_TYPES.REVEAL:
@@ -148,61 +161,54 @@ export default class FightInputMenu {
     }
 
     populateInputBoard() {
-        GameState.fightInputTypes.forEach((input, index) => {
-            const inputIcon = this.scene.make.text({
-                x: 28,
-                y: index * 64 - 20,
-                text: `${UppercaseFirst(input.toLowerCase())}`,
-                style: {
-                    // backgroundColor:
-                    //     this.currentInput === input ? "white" : "darkgray",
-                    color:
-                        GameState.currentFightInputType === input
-                            ? "white"
-                            : "gray",
-                    fontSize: "38px",
-                },
-            });
-            inputIcon.name = input;
+        GameState.fightInputTypes.forEach(this.createInputKey, this);
+    }
 
-            const inputBackground = this.scene.add
-                .image(-50, index * 64 - 48, "black_key")
-                .setDisplaySize(350, 100)
-                .setOrigin(0, 0);
-
-            inputBackground.setInteractive();
-            inputBackground.on("pointerdown", () => {
-                EventBus.emit(FIGHT_EVENTS.CHANGE_INPUT_TYPE, input);
-                GameState.currentFightInputType = input;
-            });
-
-            this.inputBoard.add(inputBackground);
-            this.inputBoard.add(inputIcon);
-
-            let usesAvailable = -1;
-            if (input === FIGHT_INPUT_TYPES.REMOVE_TRASH) {
-                usesAvailable = GameState.removeTrashNum;
-            } else if (input === FIGHT_INPUT_TYPES.REMOVE_BOMB) {
-                usesAvailable = GameState.removeBombNum;
-            } else if (input === FIGHT_INPUT_TYPES.REMOVE_LIES) {
-                usesAvailable = GameState.removeLyingNum;
-            }
-            const inputNumIcon = this.scene.make.text({
-                x: -20,
-                y: index * 64 - 20,
-                text: `${usesAvailable === -1 ? "♾" : usesAvailable}`,
-                style: {
-                    color:
-                        GameState.currentFightInputType === input
-                            ? "white"
-                            : "gray",
-                    fontSize: "40px",
-                },
-            });
-
-            inputNumIcon.name = input + "_NUM";
-            this.inputBoard.add(inputNumIcon);
+    createInputKey(input: string, index: number) {
+        const inputIcon = this.scene.make.text({
+            x: 28,
+            y: index * 64 - 20,
+            text: `${UppercaseFirst(input.toLowerCase())}`,
+            style: {
+                color:
+                    GameState.currentFightInputType === input
+                        ? "white"
+                        : "gray",
+                fontSize: "38px",
+            },
         });
+        inputIcon.name = input;
+
+        const inputBackground = this.scene.add
+            .image(-50, index * 64 - 48, "black_key")
+            .setDisplaySize(350, 100)
+            .setOrigin(0, 0);
+
+        inputBackground.setInteractive();
+        inputBackground.on("pointerdown", () => {
+            EventBus.emit(FIGHT_EVENTS.CHANGE_INPUT_TYPE, input);
+            GameState.currentFightInputType = input;
+        });
+
+        this.inputBoard.add(inputBackground);
+        this.inputBoard.add(inputIcon);
+
+        const usesAvailable = getInputUsesAvailable(input);
+        const inputNumIcon = this.scene.make.text({
+            x: -20,
+            y: index * 64 - 20,
+            text: `${usesAvailable === -1 ? "♾" : usesAvailable}`,
+            style: {
+                color:
+                    GameState.currentFightInputType === input
+                        ? "white"
+                        : "gray",
+                fontSize: "40px",
+            },
+        });
+
+        inputNumIcon.name = input + "_NUM";
+        this.inputBoard.add(inputNumIcon);
     }
 
     hide() {

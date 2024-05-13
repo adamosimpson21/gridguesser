@@ -144,6 +144,12 @@ export default class FightGridCell {
             this.removeTrash();
         } else if (inputType === FIGHT_INPUT_TYPES.REMOVE_LIES) {
             this.removeLies();
+        } else if (inputType === FIGHT_INPUT_TYPES.BLOCK) {
+            this.useBlock();
+        } else if (inputType === FIGHT_INPUT_TYPES.TOWER) {
+            this.useTower();
+        } else if (inputType === FIGHT_INPUT_TYPES.UMBRELLA) {
+            this.useUmbrella();
         }
     }
 
@@ -224,6 +230,11 @@ export default class FightGridCell {
             this.show();
         }
     }
+
+    useBlock() {}
+
+    useTower() {}
+    useUmbrella() {}
 
     setMultiFlagText(flagNumber: number) {
         if (flagNumber === 0) {

@@ -52,6 +52,15 @@ class GameStateClass {
     public instanceRemoveTrashNum: number;
     public instanceRemoveBombNum: number;
     public instanceRemoveLyingNum: number;
+    public umbrellaNum: number;
+    public towerNum: number;
+    public blockNum: number;
+    public instanceUmbrellaNum: number;
+    public instanceTowerNum: number;
+    public instanceBlockNum: number;
+    public umbrellaSize: number;
+    public towerSize: number;
+    public blockSize: number;
 
     constructor() {
         this.isPlaying = true;
@@ -129,6 +138,12 @@ class GameStateClass {
         this.removeTrashNum = GAME_CONSTANTS.startingRemoveTrashNum;
         this.removeBombNum = GAME_CONSTANTS.startingRemoveBombNum;
         this.removeLyingNum = GAME_CONSTANTS.startingRemoveLyingNum;
+        this.umbrellaNum = GAME_CONSTANTS.startingUmbrellaNum;
+        this.umbrellaSize = GAME_CONSTANTS.startingUmbrellaSize;
+        this.towerNum = GAME_CONSTANTS.startingTowerNum;
+        this.towerSize = GAME_CONSTANTS.startingTowersize;
+        this.blockNum = GAME_CONSTANTS.startingBlockNum;
+        this.blockSize = GAME_CONSTANTS.startingBlockSize;
         this.trashTileNum = GAME_CONSTANTS.startingTrashTileNum;
         this.lyingTileNum = GAME_CONSTANTS.startingLyingTileNum;
 
@@ -144,6 +159,9 @@ class GameStateClass {
         this.instanceRemoveTrashNum = this.removeTrashNum;
         this.instanceRemoveBombNum = this.removeBombNum;
         this.instanceRemoveLyingNum = this.removeLyingNum;
+        this.instanceUmbrellaNum = this.umbrellaNum;
+        this.instanceTowerNum = this.towerNum;
+        this.instanceBlockNum = this.blockNum;
     }
 
     updateFightInputType(fightInputType: string) {
