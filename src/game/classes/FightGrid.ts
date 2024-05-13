@@ -330,6 +330,7 @@ export default class FightGrid extends GameObject {
                 // );
                 this.playing = false;
                 this.flagAllBombs();
+                this.removalAllLies();
                 this.gameWon(flawless);
             }
         }
@@ -348,8 +349,23 @@ export default class FightGrid extends GameObject {
         } while (location < this.size);
     }
 
+    removalAllLies() {
+        let location = 0;
+        do {
+            const cell = this.getCell(location);
+            if (cell && cell.lying) {
+                cell.lying = false;
+                // add flip over animation
+                cell.show();
+            }
+            location++;
+        } while (location < this.size);
+    }
+
     generate(startIndex: number) {
         let qty = this.bombQty;
+        let trashQuantity = GameState.trashTileNum;
+        let lyingQuantity = GameState.lyingTileNum;
 
         const bombs = [];
 
@@ -361,7 +377,8 @@ export default class FightGrid extends GameObject {
 
             if (
                 cell.index !== startIndex &&
-                (cell.bombNum === 0 || GameState.fightCanHaveMultiBombTiles)
+                (cell.bombNum === 0 || GameState.fightCanHaveMultiBombTiles) &&
+                cell.bombNum <= 9
             ) {
                 // if (!(cell.bombNum > 0) && cell.index !== startIndex)
                 cell.bombNum++;
@@ -388,8 +405,6 @@ export default class FightGrid extends GameObject {
             });
         });
 
-        let trashQuantity = GameState.trashTileNum;
-
         if (GameState.fightCanHaveTrashTiles) {
             do {
                 this.emergencyGeneratorCutoffNumber++;
@@ -408,6 +423,29 @@ export default class FightGrid extends GameObject {
                 }
             } while (
                 trashQuantity > 0 &&
+                this.emergencyGeneratorCutoffNumber <
+                    FIGHT_CONSTANTS.EMERGENCY_GENERATOR_CUTOFF_NUMBER
+            );
+        }
+
+        if (GameState.fightCanHaveLyingTiles) {
+            do {
+                this.emergencyGeneratorCutoffNumber++;
+                const location = Phaser.Math.Between(0, this.size - 1);
+
+                const cell = this.getCell(location);
+                // trash tiles must have a value before becoming trash
+                if (
+                    cell.bombNum <= 0 &&
+                    cell.value >= 1 &&
+                    !cell.trash &&
+                    !cell.lying
+                ) {
+                    cell.lying = true;
+                    lyingQuantity--;
+                }
+            } while (
+                lyingQuantity > 0 &&
                 this.emergencyGeneratorCutoffNumber <
                     FIGHT_CONSTANTS.EMERGENCY_GENERATOR_CUTOFF_NUMBER
             );

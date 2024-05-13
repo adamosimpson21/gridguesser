@@ -49,9 +49,6 @@ export class Fight extends Scene {
         const gridHeight = GameState.fightGridHeight;
         const numBombs = GameState.bombNum;
         this.grid = new FightGrid(this, gridWidth, gridHeight, numBombs);
-        this.removeTrashUses = GameState.removeTrashNum;
-        this.removeBombUses = GameState.removeBombNum;
-        this.removeLyingUses = GameState.removeLyingNum;
         GameState.resetFightConstants();
 
         this.camera.fadeIn(500, 0, 0, 0);

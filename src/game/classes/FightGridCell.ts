@@ -22,6 +22,7 @@ export default class FightGridCell {
     public query: boolean;
     public trash: boolean;
     public lying: boolean;
+    public lyingOffset: number;
     constructor(grid: any, index: number, x: number, y: number) {
         this.grid = grid;
 
@@ -38,6 +39,7 @@ export default class FightGridCell {
         this.query = false;
         this.trash = false;
         this.lying = false;
+        this.lyingOffset = this.generateLyingOffset();
 
         //  0 = empty, 1,2,3,4,5,6,7,8 = number of adjacent bombs
         this.value = 0;
@@ -105,35 +107,7 @@ export default class FightGridCell {
     onClick() {
         const inputType = GameState.currentFightInputType;
         if (inputType === FIGHT_INPUT_TYPES.REVEAL) {
-            // chording
-            if (this.open && this.value > 0 && !this.trash) {
-                const numFlagged =
-                    this.grid.getAdjacentCellFlaggedAndBombedNumber(this);
-                if (this.value === numFlagged) {
-                    this.grid.chordFill(this.x, this.y);
-                }
-            }
-            if (this.query) {
-                this.toggleQuery();
-            } else if (this.flagNum > 0) {
-                //remove 1 flag with left click
-                this.flagNum--;
-                this.setMultiFlagText(this.flagNum);
-                this.grid.updateBombs(-1);
-            } else if (this.bombNum > 0) {
-                this.exploded = true;
-                this.reveal();
-                this.tile.setInteractive(false);
-                this.grid.updateBombs(this.bombNum);
-                EventBus.emit(PLAYER_EVENTS.HIT_BOMB, this.bombNum);
-            } else {
-                if (this.value === 0) {
-                    this.grid.floodFill(this.x, this.y);
-                } else {
-                    this.show();
-                }
-                // this.grid.checkWinState();
-            }
+            this.useReveal();
         } else if (inputType === FIGHT_INPUT_TYPES.FLAG) {
             this.addFlag();
         } else if (inputType === FIGHT_INPUT_TYPES.QUERY) {
@@ -150,6 +124,38 @@ export default class FightGridCell {
             this.useTower();
         } else if (inputType === FIGHT_INPUT_TYPES.UMBRELLA) {
             this.useUmbrella();
+        }
+    }
+
+    useReveal() {
+        // chording
+        if (this.open && this.value > 0 && !this.trash && !this.lying) {
+            const numFlagged =
+                this.grid.getAdjacentCellFlaggedAndBombedNumber(this);
+            if (this.value === numFlagged) {
+                this.grid.chordFill(this.x, this.y);
+            }
+        }
+        if (this.query) {
+            this.toggleQuery();
+        } else if (this.flagNum > 0) {
+            //remove 1 flag with left click
+            this.flagNum--;
+            this.setMultiFlagText(this.flagNum);
+            this.grid.updateBombs(-1);
+        } else if (this.bombNum > 0) {
+            this.exploded = true;
+            this.reveal();
+            this.tile.setInteractive(false);
+            this.grid.updateBombs(this.bombNum);
+            EventBus.emit(PLAYER_EVENTS.HIT_BOMB, this.bombNum);
+        } else {
+            if (this.value === 0) {
+                this.grid.floodFill(this.x, this.y);
+            } else {
+                this.show();
+            }
+            // this.grid.checkWinState();
         }
     }
 
@@ -182,7 +188,7 @@ export default class FightGridCell {
     }
 
     removeBomb() {
-        if (this.grid.scene.removeBombUses > 0 && !this.open) {
+        if (GameState.instanceRemoveBombNum > 0 && !this.open) {
             EventBus.emit(
                 FIGHT_EVENTS.USE_LIMITED_INPUT,
                 FIGHT_INPUT_TYPES.REMOVE_BOMB,
@@ -215,13 +221,28 @@ export default class FightGridCell {
     }
 
     removeLies() {
-        EventBus.emit(
-            FIGHT_EVENTS.USE_LIMITED_INPUT,
-            FIGHT_INPUT_TYPES.REMOVE_LIES,
-        );
+        if (GameState.instanceRemoveLyingNum > 0) {
+            this.lying = false;
+            // add flip over animation
+            this.show();
+            EventBus.emit(
+                FIGHT_EVENTS.USE_LIMITED_INPUT,
+                FIGHT_INPUT_TYPES.REMOVE_LIES,
+            );
+        }
     }
+
+    generateLyingOffset() {
+        let offset = Math.floor(Math.random() * 6) - 3;
+        // offset is a -3, -2, -1, 1, 2, or 3
+        if (offset > 0) {
+            offset++;
+        }
+        return offset;
+    }
+
     removeTrash() {
-        if (this.trash && this.grid.scene.removeTrashUses > 0) {
+        if (this.trash && GameState.instanceRemoveTrashNum > 0) {
             this.trash = false;
             EventBus.emit(
                 FIGHT_EVENTS.USE_LIMITED_INPUT,
@@ -231,10 +252,19 @@ export default class FightGridCell {
         }
     }
 
-    useBlock() {}
+    useBlock() {
+        if (GameState.instanceBlockNum > 0) {
+        }
+    }
 
-    useTower() {}
-    useUmbrella() {}
+    useTower() {
+        if (GameState.instanceTowerNum > 0) {
+        }
+    }
+    useUmbrella() {
+        if (GameState.instanceUmbrellaNum > 0) {
+        }
+    }
 
     setMultiFlagText(flagNumber: number) {
         if (flagNumber === 0) {
@@ -286,6 +316,16 @@ export default class FightGridCell {
         let textToSet = "" as string;
         if (this.trash) {
             textToSet = "🚮";
+        } else if (this.lying) {
+            console.log("in lying, offset:", this.lyingOffset, this.index);
+            if (this.value + this.lyingOffset <= 0) {
+                textToSet = "0️⃣";
+            } else if (this.value + this.lyingOffset > 9) {
+                textToSet = values[9].toString();
+            } else {
+                textToSet = values[this.value + this.lyingOffset].toString();
+            }
+            console.log("textToSet:", textToSet);
         } else {
             if (values[this.value]) {
                 textToSet = values[this.value].toString();
