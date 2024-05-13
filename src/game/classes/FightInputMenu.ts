@@ -11,6 +11,7 @@ import { BossFight } from "@/game/scenes/BossFight";
 import { Hud } from "@/game/scenes/Hud";
 import UppercaseFirst = Phaser.Utils.String.UppercaseFirst;
 import { getInputUsesAvailable } from "@/game/functions/getInputUsesAvailable";
+import { translateNumberToString } from "@/game/functions/translateNumberToString";
 
 export default class FightInputMenu {
     public availableInputs: string[];
@@ -189,6 +190,18 @@ export default class FightInputMenu {
             EventBus.emit(FIGHT_EVENTS.CHANGE_INPUT_TYPE, input);
             GameState.currentFightInputType = input;
         });
+        if (this.scene.input.keyboard) {
+            this.scene.input.keyboard
+                .addKey(
+                    Phaser.Input.Keyboard.KeyCodes[
+                        translateNumberToString(index + 1)
+                    ],
+                )
+                .on("down", () => {
+                    EventBus.emit(FIGHT_EVENTS.CHANGE_INPUT_TYPE, input);
+                    GameState.currentFightInputType = input;
+                });
+        }
 
         this.inputBoard.add(inputBackground);
         this.inputBoard.add(inputIcon);

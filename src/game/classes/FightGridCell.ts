@@ -23,6 +23,7 @@ export default class FightGridCell {
     public trash: boolean;
     public lying: boolean;
     public lyingOffset: number;
+    queryOverlay: any;
     constructor(grid: any, index: number, x: number, y: number) {
         this.grid = grid;
 
@@ -64,8 +65,22 @@ export default class FightGridCell {
                 FIGHT_CONSTANTS.TILE_HEIGHT,
             );
 
+        this.queryOverlay = grid.scene.make
+            .image({
+                x: grid.offset.x + x * FIGHT_CONSTANTS.TILE_WIDTH + 4,
+                y: grid.offset.y + y * FIGHT_CONSTANTS.TILE_HEIGHT,
+                key: "flagOverlay",
+                frame: 0,
+            })
+            .setOrigin(0, 0)
+            .setDisplaySize(
+                FIGHT_CONSTANTS.TILE_WIDTH,
+                FIGHT_CONSTANTS.TILE_HEIGHT,
+            );
+
         grid.board.add(this.tile);
         grid.board.add(this.flagOverlay);
+        grid.board.add(this.queryOverlay);
 
         this.tile.setInteractive();
 
@@ -161,6 +176,7 @@ export default class FightGridCell {
 
     addFlag() {
         this.query = false;
+        this.queryOverlay.setFrame(0);
         if (!this.open) {
             if (this.flagNum === 0) {
                 this.flagNum = 1;
@@ -176,14 +192,12 @@ export default class FightGridCell {
     }
 
     toggleQuery() {
-        if (!this.open) {
-            if (this.query) {
-                this.query = false;
-                this.flagOverlay.setFrame(0);
-            } else {
-                this.query = true;
-                this.flagOverlay.setFrame(10);
-            }
+        if (this.query) {
+            this.query = false;
+            this.queryOverlay.setFrame(0);
+        } else {
+            this.query = true;
+            this.queryOverlay.setFrame(10);
         }
     }
 
@@ -233,7 +247,7 @@ export default class FightGridCell {
     }
 
     generateLyingOffset() {
-        let offset = Math.floor(Math.random() * 6) - 3;
+        let offset = Math.floor(Math.random() * 4) - 2;
         // offset is a -3, -2, -1, 1, 2, or 3
         if (offset > 0) {
             offset++;

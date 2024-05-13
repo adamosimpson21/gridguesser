@@ -78,6 +78,9 @@ class GameStateClass {
                 GameState.instanceRemoveLyingNum--;
             }
         });
+        EventBus.on(FIGHT_EVENTS.CHANGE_INPUT_TYPE, (newInputType: string) => {
+            this.currentFightInputType = newInputType;
+        });
     }
 
     create() {
@@ -88,7 +91,6 @@ class GameStateClass {
         this.isPlaying = false;
         // adds this button to current active scene
         const currentScenes = scene.scene.systems.game.scene.getScenes(true);
-        console.log("currentScenes:", currentScenes);
         this.GameOverBtn = currentScenes[0].add
             .text(scene.scale.width / 2 - 200, 200, "Oh no! Game Over 😭😭😭", {
                 fontFamily: "Arial Black",
