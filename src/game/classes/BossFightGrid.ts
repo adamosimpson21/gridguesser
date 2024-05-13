@@ -25,22 +25,17 @@ export default class BossFightGrid extends FightGrid {
         this.playing = false;
         this.state = 2;
         this.returnButton.setText(
-            "Floor Cleaned! You find creepy stairs downward... ↘",
+            "Floor Cleaned! You find 3 keys inside the Boss's desk. Choose one to take and descend down the creepy staircase...",
         );
 
         // final floor
         if (GameState.level === GAME_CONSTANTS.endLevel) {
-            const gameEndButton = this.scene.make.text({
-                x: this.scene.scale.width / 2 - 950,
-                y: 80,
-                text: "Floor Cleaned! You find a portal to a parallel dimension ⏩⏩⏩",
-                style: {
-                    fontSize: 42,
-                },
-            });
+            this.returnButton.setText(
+                "Floor Cleaned! You find a portal to a parallel dimension ⏩⏩⏩",
+            );
 
-            gameEndButton.setInteractive();
-            gameEndButton.on("pointerdown", () => {
+            this.returnButton.setInteractive();
+            this.returnButton.on("pointerdown", () => {
                 this.scene.time.addEvent({
                     delay: 1000,
                     loop: false,

@@ -37,7 +37,8 @@ export default class FightInputMenu {
         this.populateInputBoard();
 
         // initially hidden
-        this.hide();
+        // hide hidden for testing purposes
+        // this.hide();
 
         EventBus.on(GAME_EVENTS.GAME_OVER, () => {
             this.inputBoard.list.forEach((input: Phaser.GameObjects.Text) => {
