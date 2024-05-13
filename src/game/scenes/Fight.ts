@@ -6,6 +6,7 @@ import { GameState } from "@/game/classes/GameState";
 import { FIGHT_EVENTS, GAME_EVENTS, SCENE_EVENTS } from "@/game/types/events";
 import FightInputMenu from "@/game/classes/FightInputMenu";
 import { createBackground } from "@/game/functions/background";
+import { changeInputScrollWheel } from "@/game/functions/changeInputScrollWheel";
 
 export class Fight extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -46,48 +47,7 @@ export class Fight extends Scene {
         this.background = createBackground(this);
         this.background.setInteractive();
 
-        this.background.on(
-            "wheel",
-            (pointer: Phaser.Input.Pointer, deltaX: number, deltaY: number) => {
-                // change input on scroll down
-                if (deltaY > 0) {
-                    const currentIndex = GameState.fightInputTypes.indexOf(
-                        GameState.currentFightInputType,
-                    );
-                    // end of list
-                    if (currentIndex === GameState.fightInputTypes.length - 1) {
-                        EventBus.emit(
-                            FIGHT_EVENTS.CHANGE_INPUT_TYPE,
-                            GameState.fightInputTypes[0],
-                        );
-                    } else {
-                        EventBus.emit(
-                            FIGHT_EVENTS.CHANGE_INPUT_TYPE,
-                            GameState.fightInputTypes[currentIndex + 1],
-                        );
-                    }
-                } else {
-                    const currentIndex = GameState.fightInputTypes.indexOf(
-                        GameState.currentFightInputType,
-                    );
-                    //scroll up
-
-                    if (currentIndex === 0) {
-                        EventBus.emit(
-                            FIGHT_EVENTS.CHANGE_INPUT_TYPE,
-                            GameState.fightInputTypes[
-                                GameState.fightInputTypes.length - 1
-                            ],
-                        );
-                    } else {
-                        EventBus.emit(
-                            FIGHT_EVENTS.CHANGE_INPUT_TYPE,
-                            GameState.fightInputTypes[currentIndex - 1],
-                        );
-                    }
-                }
-            },
-        );
+        this.background.on("wheel", changeInputScrollWheel);
 
         const gridWidth = GameState.fightGridWidth;
         const gridHeight = GameState.fightGridHeight;

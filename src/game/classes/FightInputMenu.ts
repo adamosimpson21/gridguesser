@@ -12,6 +12,7 @@ import { Hud } from "@/game/scenes/Hud";
 import UppercaseFirst = Phaser.Utils.String.UppercaseFirst;
 import { getInputUsesAvailable } from "@/game/functions/getInputUsesAvailable";
 import { translateNumberToString } from "@/game/functions/translateNumberToString";
+import { changeInputScrollWheel } from "@/game/functions/changeInputScrollWheel";
 
 export default class FightInputMenu {
     public availableInputs: string[];
@@ -190,6 +191,7 @@ export default class FightInputMenu {
             EventBus.emit(FIGHT_EVENTS.CHANGE_INPUT_TYPE, input);
             GameState.currentFightInputType = input;
         });
+        inputBackground.on("wheel", changeInputScrollWheel);
         if (this.scene.input.keyboard) {
             this.scene.input.keyboard
                 .addKey(

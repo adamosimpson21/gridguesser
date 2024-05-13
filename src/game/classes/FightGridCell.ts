@@ -6,6 +6,7 @@ import {
 } from "@/game/types/fightConstants";
 import { GameState } from "@/game/classes/GameState";
 import { Simulate } from "react-dom/test-utils";
+import { changeInputScrollWheel } from "@/game/functions/changeInputScrollWheel";
 
 export default class FightGridCell {
     public grid: any;
@@ -85,6 +86,7 @@ export default class FightGridCell {
         this.tile.setInteractive();
 
         this.tile.on("pointerdown", this.onPointerDown, this);
+        this.tile.on("wheel", changeInputScrollWheel);
         // this.tile.on('pointerup', this.onPointerUp, this);
     }
 

@@ -10,6 +10,7 @@ import {
     FIGHT_CONSTANTS,
     FIGHT_INPUT_TYPES,
 } from "@/game/types/fightConstants";
+import { changeInputScrollWheel } from "@/game/functions/changeInputScrollWheel";
 
 export default class FightGrid extends GameObject {
     public scene: Fight;
