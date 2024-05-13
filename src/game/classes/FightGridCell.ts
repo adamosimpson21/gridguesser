@@ -7,6 +7,7 @@ import {
 import { GameState } from "@/game/classes/GameState";
 import { Simulate } from "react-dom/test-utils";
 import { changeInputScrollWheel } from "@/game/functions/changeInputScrollWheel";
+import { angryShakeTween } from "@/game/functions/angryShakeTween";
 
 export default class FightGridCell {
     public grid: any;
@@ -232,15 +233,35 @@ export default class FightGridCell {
                     this.show();
                 }
                 this.grid.checkWinState();
+            } else {
+                this.tile.setText("🟥");
+                angryShakeTween(this.tile, this.grid.scene).on(
+                    "complete",
+                    (tween: any, targets: any) => {
+                        this.tile.setText("🔲");
+                    },
+                );
             }
         }
     }
 
     removeLies() {
         if (GameState.instanceRemoveLyingNum > 0) {
-            this.lying = false;
-            // add flip over animation
-            this.show();
+            console.log("in remove lies");
+            if (!this.lying) {
+                console.log("didn't remove lie:", this.lying);
+                this.tile.setText("🟥");
+                angryShakeTween(this.tile, this.grid.scene).on(
+                    "complete",
+                    (tween: any, targets: any) => {
+                        this.show(true);
+                    },
+                );
+            } else {
+                this.lying = false;
+                // add flip over animation
+                this.show();
+            }
             EventBus.emit(
                 FIGHT_EVENTS.USE_LIMITED_INPUT,
                 FIGHT_INPUT_TYPES.REMOVE_LIES,

@@ -46,6 +46,7 @@ export const GAME_CONSTANTS = {
     startingUmbrellaSize: 3,
     startingTowersize: 5,
     startingBlockSize: 2,
+    advancedMechanics: [],
 };
 
 export const NAME_CHOICES = [
