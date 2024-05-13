@@ -26,9 +26,15 @@ export default class FightGrid extends GameObject {
     public gridData: any[];
     public board: Phaser.GameObjects.Container;
     public bombsCounterText: Phaser.GameObjects.Text;
-    private emergencyGeneratorCutoffNumber: number;
-    private bombsCounterImage: Phaser.GameObjects.Image;
-    private bombsCounterBG: Phaser.GameObjects.Image;
+    public emergencyGeneratorCutoffNumber: number;
+    public bombsCounterImage: Phaser.GameObjects.Image;
+    public bombsCounterBG: Phaser.GameObjects.Image;
+    public endGameBoard: Phaser.GameObjects.Container;
+    public trashBG: Phaser.GameObjects.Image;
+    public endGameBoardUnder: Phaser.GameObjects.Container;
+    public endGameTrashCan: Phaser.GameObjects.Image;
+    public endGameTrashCanOver: Phaser.GameObjects.Image;
+    public returnButton: Phaser.GameObjects.Text;
 
     constructor(scene: Fight, width: number, height: number, bombs: number) {
         super(scene, "fightGrid");
@@ -105,6 +111,10 @@ export default class FightGrid extends GameObject {
         this.board.add(this.bombsCounterText);
         this.board.add(this.bombsCounterImage);
 
+        this.createAndHideEndGame();
+
+        // .setDisplaySize(300, 600);
+
         EventBus.on(GAME_EVENTS.GAME_OVER, () => (this.playing = false));
     }
 
@@ -122,45 +132,73 @@ export default class FightGrid extends GameObject {
         }
     }
 
+    createAndHideEndGame() {
+        this.endGameBoard = this.scene.add.container(80, 200);
+        this.trashBG = this.scene.add
+            .image(0, 0, "trash_bag")
+            .setOrigin(0, 0)
+            .setDepth(3);
+
+        this.returnButton = this.scene.make.text({
+            x: 80,
+            y: 150,
+            text: "Room Cleaned! Back to the office",
+            style: {
+                fontSize: 38,
+                color: "black",
+                wordWrap: {
+                    width: 350,
+                    useAdvancedWrap: true,
+                },
+            },
+        });
+
+        this.returnButton.setInteractive().setDepth(4);
+        this.returnButton.on("pointerdown", () => {
+            this.scene.tweens.add({
+                targets: this.endGameBoard,
+                y: 800,
+            });
+            this.scene.tweens.add({
+                targets: [this.endGameTrashCan, this.endGameTrashCanOver],
+                y: 0,
+            });
+            this.scene.time.addEvent({
+                delay: 1000,
+                loop: false,
+                callback: () => {
+                    this.scene.scene.stop(SCENES.Fight);
+                    this.scene.scene.resume(SCENES.Overworld);
+                },
+                callbackScope: this,
+            });
+        });
+
+        (this.endGameTrashCan = this.scene.add
+            .image(0, 2000, "trash_can")
+            .setOrigin(0, 0)
+            .setDepth(0)),
+            (this.endGameTrashCanOver = this.scene.add
+                .image(0, 2000, "trash_can_over")
+                .setOrigin(0, 0)
+                .setDepth(5)),
+            this.endGameBoard.add(this.endGameTrashCan);
+
+        this.endGameBoard.add(this.trashBG);
+        this.endGameBoard.add(this.returnButton);
+
+        this.endGameBoard.add(this.endGameTrashCanOver);
+
+        //hide
+
+        this.endGameBoard.setPosition(80, -800);
+    }
+
     createBackground() {
         const board = this.board;
         const factory = this.scene.add;
-
-        //  55 added to the top, 8 added to the bottom (63)
-        //  12 added to the left, 8 added to the right (20)
-        //  cells.ts start at 12 x 55
-
         const width = this.width * 16;
         const height = this.height * 16;
-
-        //  Top
-
-        // board.add(factory.image(0, 0, 'topLeft').setOrigin(0));
-        //
-        // const topBgWidth = (width + 20) - 60 - 56;
-        //
-        // board.add(factory.tileSprite(60, 0, topBgWidth, 55, 'topBg').setOrigin(0));
-        //
-        // board.add(factory.image(width + 20, 0, 'topRight').setOrigin(1, 0));
-        //
-        // //  Sides
-        //
-        // const sideHeight = (height + 63) - 55 - 8;
-        //
-        // board.add(factory.tileSprite(0, 55, 12, sideHeight, 'left').setOrigin(0));
-        // board.add(factory.tileSprite(width + 20, 55, 8, sideHeight, 'right').setOrigin(1, 0));
-        //
-        // //  Bottom
-        //
-        // board.add(factory.image(0, height + 63, 'botLeft').setOrigin(0, 1));
-        //
-        // const botBgWidth = (width + 20) - 12 - 8;
-        //
-        // board.add(factory.tileSprite(12, height + 63, botBgWidth, 8, 'botBg').setOrigin(0, 1));
-        //
-        // board.add(factory.image(width + 20, height + 63, 'botRight').setOrigin(1, 1));
-        //
-        // const x = (width + 20) - 54;
     }
 
     updateBombs(diff: number) {
@@ -191,44 +229,41 @@ export default class FightGrid extends GameObject {
 
         if (flawless) {
             EventBus.emit(
-                UI_EVENTS.DISPLAY_MESSAGE,
-                {
-                    type: UI_EVENTS.DISPLAY_MESSAGE,
-                    message: `Clean Sweep! $${GameState.fightFlawlessGoldReward} Extra`,
-                },
-                "5000",
-            );
-            EventBus.emit(
                 PLAYER_EVENTS.GAIN_GOLD,
                 GameState.fightFlawlessGoldReward,
                 true,
             );
+
+            this.endGameBoard.add(
+                this.scene.add
+                    .text(
+                        80,
+                        300,
+                        `Clean Sweep! $${GameState.fightFlawlessGoldReward} extra`,
+                        {
+                            fontSize: 38,
+                            color: "black",
+                            wordWrap: {
+                                width: 350,
+                                useAdvancedWrap: true,
+                            },
+                        },
+                    )
+                    .setDepth(3),
+            );
         }
 
-        EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, GameState.fightGoldReward);
+        this.scene.tweens.add({
+            targets: this.endGameBoard,
+            y: 200,
+        });
+        this.scene.add.tween({
+            targets: [this.endGameTrashCan, this.endGameTrashCanOver],
+            y: 600,
+        });
+
+        EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, GameState.fightGoldReward, true);
         GameState.bombNum += FIGHT_CONSTANTS.BOMB_NUM_INCREMENT;
-
-        const returnButton = this.scene.make.text({
-            x: this.scene.scale.width / 2 - 500,
-            y: 130,
-            text: "Room Cleaned! Back to the office 👆",
-            style: {
-                fontSize: 42,
-            },
-        });
-
-        returnButton.setInteractive();
-        returnButton.on("pointerdown", () => {
-            this.scene.time.addEvent({
-                delay: 1000,
-                loop: false,
-                callback: () => {
-                    this.scene.scene.stop(SCENES.Fight);
-                    this.scene.scene.resume(SCENES.Overworld);
-                },
-                callbackScope: this,
-            });
-        });
     }
 
     checkWinState() {

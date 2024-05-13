@@ -69,7 +69,62 @@ export default class FightInputMenu {
                 },
             );
         });
+        EventBus.on(FIGHT_EVENTS.ADD_INPUT_TYPE, (newInputType: string) => {});
         EventBus.on(FIGHT_EVENTS.CHANGE_INPUT_TYPE, (newInput: string) => {
+            switch (newInput) {
+                case FIGHT_INPUT_TYPES.REVEAL:
+                    this.scene.input.setDefaultCursor(
+                        "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🔍</text><path d='M0,4 L0,0 L4,0' fill='red' /></svg>\"), auto",
+                    );
+                    break;
+
+                case FIGHT_INPUT_TYPES.FLAG:
+                    this.scene.input.setDefaultCursor(
+                        "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🚩</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                    );
+                    break;
+
+                case FIGHT_INPUT_TYPES.QUERY:
+                    this.scene.input.setDefaultCursor(
+                        "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>❓</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                    );
+                    break;
+
+                case FIGHT_INPUT_TYPES.REMOVE_BOMB:
+                    this.scene.input.setDefaultCursor(
+                        "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='96'><text y='32' font-size='32'>❌👹</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                    );
+                    break;
+
+                case FIGHT_INPUT_TYPES.REMOVE_TRASH:
+                    this.scene.input.setDefaultCursor(
+                        "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🚯</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                    );
+                    break;
+
+                case FIGHT_INPUT_TYPES.REMOVE_LIES:
+                    this.scene.input.setDefaultCursor(
+                        "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🤥</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                    );
+                    break;
+                case FIGHT_INPUT_TYPES.BLOCK:
+                    this.scene.input.setDefaultCursor(
+                        "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🤘</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                    );
+                    break;
+                case FIGHT_INPUT_TYPES.UMBRELLA:
+                    this.scene.input.setDefaultCursor(
+                        "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>☂</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                    );
+                    break;
+                case FIGHT_INPUT_TYPES.TOWER:
+                    this.scene.input.setDefaultCursor(
+                        "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🗼</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                    );
+                    break;
+                default:
+                    break;
+            }
             this.inputBoard.list.forEach((inputText: any) => {
                 if (inputText.name) {
                     if (
@@ -118,45 +173,6 @@ export default class FightInputMenu {
             inputBackground.on("pointerdown", () => {
                 EventBus.emit(FIGHT_EVENTS.CHANGE_INPUT_TYPE, input);
                 GameState.currentFightInputType = input;
-                switch (input) {
-                    case FIGHT_INPUT_TYPES.REVEAL:
-                        this.scene.input.setDefaultCursor(
-                            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🔍</text><path d='M0,4 L0,0 L4,0' fill='red' /></svg>\"), auto",
-                        );
-                        break;
-
-                    case FIGHT_INPUT_TYPES.FLAG:
-                        this.scene.input.setDefaultCursor(
-                            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🚩</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
-                        );
-                        break;
-
-                    case FIGHT_INPUT_TYPES.QUERY:
-                        this.scene.input.setDefaultCursor(
-                            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>❓</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
-                        );
-                        break;
-
-                    case FIGHT_INPUT_TYPES.REMOVE_BOMB:
-                        this.scene.input.setDefaultCursor(
-                            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='96'><text y='32' font-size='32'>❌👹</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
-                        );
-                        break;
-
-                    case FIGHT_INPUT_TYPES.REMOVE_TRASH:
-                        this.scene.input.setDefaultCursor(
-                            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🚯</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
-                        );
-                        break;
-
-                    case FIGHT_INPUT_TYPES.REMOVE_LIES:
-                        this.scene.input.setDefaultCursor(
-                            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🤥</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
-                        );
-                        break;
-                    default:
-                        break;
-                }
             });
 
             this.inputBoard.add(inputBackground);

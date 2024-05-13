@@ -24,6 +24,9 @@ export default class BossFightGrid extends FightGrid {
     gameWon(flawless: boolean) {
         this.playing = false;
         this.state = 2;
+        this.returnButton.setText(
+            "Floor Cleaned! You find creepy stairs downward... ↘",
+        );
 
         // final floor
         if (GameState.level === GAME_CONSTANTS.endLevel) {
@@ -50,37 +53,54 @@ export default class BossFightGrid extends FightGrid {
         } else {
             if (flawless) {
                 EventBus.emit(
-                    UI_EVENTS.DISPLAY_MESSAGE,
-                    {
-                        type: UI_EVENTS.DISPLAY_MESSAGE,
-                        message: `Clean Sweep! $${GameState.fightFlawlessGoldReward} Extra`,
-                    },
-                    "5000",
-                );
-                EventBus.emit(
                     PLAYER_EVENTS.GAIN_GOLD,
                     GameState.fightFlawlessGoldReward,
                     true,
+                );
+
+                this.endGameBoard.add(
+                    this.scene.add
+                        .text(
+                            80,
+                            300,
+                            `Clean Sweep! $${GameState.fightFlawlessGoldReward} extra`,
+                            {
+                                fontSize: 38,
+                                color: "black",
+                                wordWrap: {
+                                    width: 350,
+                                    useAdvancedWrap: true,
+                                },
+                            },
+                        )
+                        .setDepth(3),
                 );
             }
 
             EventBus.emit(
                 PLAYER_EVENTS.GAIN_GOLD,
                 GameState.fightGoldReward + GameState.fightBossGoldReward,
+                true,
             );
 
-            // go to next floor
-            const returnButton = this.scene.make.text({
-                x: this.scene.scale.width / 2 - 500,
-                y: 130,
-                text: "Floor Cleaned! You find creepy stairs downward... ↘",
-                style: {
-                    fontSize: 42,
-                },
+            this.scene.tweens.add({
+                targets: this.endGameBoard,
+                y: 200,
+            });
+            this.scene.add.tween({
+                targets: [this.endGameTrashCan, this.endGameTrashCanOver],
+                y: 600,
             });
 
-            returnButton.setInteractive();
-            returnButton.on("pointerdown", () => {
+            this.returnButton.on("pointerdown", () => {
+                this.scene.tweens.add({
+                    targets: this.endGameBoard,
+                    y: 800,
+                });
+                this.scene.tweens.add({
+                    targets: [this.endGameTrashCan, this.endGameTrashCanOver],
+                    y: 0,
+                });
                 this.scene.time.addEvent({
                     delay: 1000,
                     loop: false,
