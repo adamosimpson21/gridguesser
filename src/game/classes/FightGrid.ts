@@ -491,21 +491,13 @@ export default class FightGrid extends GameObject {
         ];
     }
 
-    getAllCellsInDiameter(
-        cell: { x: number; y: number },
-        diameterInput?: number,
-    ) {
+    getAllCellsInDiameter(cell: FightGridCell, diameterInput?: number) {
         const diameter = diameterInput || 3;
         let width = 0;
         let height = 0;
         let returnArray = [];
         do {
             do {
-                console.log(
-                    "height, width",
-                    -Math.floor(diameter / 2) + height + 1,
-                    -Math.floor(diameter / 2) + width + 1,
-                );
                 returnArray.push(
                     this.getCellXY(
                         cell.x -

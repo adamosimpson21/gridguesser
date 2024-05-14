@@ -308,12 +308,40 @@ export default class FightGridCell {
 
             const diameter = GameState.blockSize;
             this.grid
-                .getAdjacentCells(this, diameter)
-                .forEAch((cell: FightGridCell) => {
-                    cell.open = true;
-                    cell.isBlock = true;
-                    cell.value = 0;
+                .getAllCellsInDiameter(this, diameter)
+                .forEach((cell: FightGridCell) => {
+                    if (cell) {
+                        this.grid
+                            .getAdjacentCells(cell)
+                            .forEach((neighbor: FightGridCell) => {
+                                if (neighbor) {
+                                    if (cell.bombNum > 0) {
+                                        neighbor.value -= cell.bombNum;
+                                        if (neighbor.open) {
+                                            neighbor.show();
+                                        }
+                                    }
+                                }
+                            });
+
+                        cell.open = true;
+                        console.log(
+                            "about to update bomb count:",
+                            cell.bombNum,
+                        );
+                        if (cell.flagNum > 0) {
+                            this.grid.updateBombs(-cell.flagNum);
+                        }
+                        cell.flagNum = 0;
+                        this.grid.updateBombs(cell.bombNum);
+                        cell.bombNum = 0;
+                        cell.isBlock = true;
+                        cell.value = 0;
+                        cell.tile.setText("");
+                        cell.flagOverlay.setFrame(21);
+                    }
                 });
+            this.grid.checkWinState();
         }
     }
 
