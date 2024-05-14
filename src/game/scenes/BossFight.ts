@@ -63,6 +63,8 @@ export class BossFight extends Scene {
 
         this.camera.fadeIn(500, 0, 0, 0);
 
+        this.createIntroModal();
+
         EventBus.emit("current-scene-ready", this);
         this.events.on(
             Phaser.Scenes.Events.SHUTDOWN,
@@ -81,5 +83,41 @@ export class BossFight extends Scene {
                 this.scene.start(scene);
             },
         );
+    }
+
+    createIntroModal() {
+        const deskImage = this.add.image(
+            this.scale.width / 2,
+            this.scale.height / 2,
+            "boss_desk",
+        );
+
+        deskImage.setInteractive();
+
+        const background = this.add
+            .image(this.scale.width / 2, this.scale.height / 2, "black_screen")
+            .setAlpha(0.66);
+
+        const introText = this.add.text(
+            600,
+            250,
+            "As you enter the boss's corner office, something seems amiss. It's dirtier, smellier, and is in disarray. You stay alert while you begin cleaning...",
+            {
+                fontSize: "40px",
+                wordWrap: { width: 800, useAdvancedWrap: true },
+            },
+        );
+
+        const introButton = this.add.text(900, 850, "Continue", {
+            fontSize: "40px",
+            backgroundColor: "gray",
+        });
+
+        deskImage.on("pointerdown", () => {
+            deskImage.setAlpha(0);
+            background.setAlpha(0);
+            introText.setAlpha(0);
+            introButton.setAlpha(0);
+        });
     }
 }

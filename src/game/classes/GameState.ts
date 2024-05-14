@@ -76,6 +76,12 @@ class GameStateClass {
                 GameState.instanceRemoveTrashNum--;
             } else if (inputType === FIGHT_INPUT_TYPES.REMOVE_LIES) {
                 GameState.instanceRemoveLyingNum--;
+            } else if (inputType === FIGHT_INPUT_TYPES.UMBRELLA) {
+                GameState.instanceUmbrellaNum--;
+            } else if (inputType === FIGHT_INPUT_TYPES.TOWER) {
+                GameState.instanceTowerNum--;
+            } else if (inputType === FIGHT_INPUT_TYPES.BLOCK) {
+                GameState.instanceBlockNum--;
             }
         });
         EventBus.on(FIGHT_EVENTS.CHANGE_INPUT_TYPE, (newInputType: string) => {

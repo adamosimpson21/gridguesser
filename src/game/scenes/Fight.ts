@@ -38,6 +38,7 @@ export class Fight extends Scene {
         this.load.image("blank", "/assets/blank.png");
         this.load.image("trash_can", "/assets/fight/trashCan.png");
         this.load.image("trash_can_over", "/assets/fight/trashCanOver.png");
+        this.load.image("towel_cover", "/assets/fight/yellowSquare.png");
     }
 
     create() {

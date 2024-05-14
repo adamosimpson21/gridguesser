@@ -491,6 +491,41 @@ export default class FightGrid extends GameObject {
         ];
     }
 
+    getAllCellsInDiameter(
+        cell: { x: number; y: number },
+        diameterInput?: number,
+    ) {
+        const diameter = diameterInput || 3;
+        let width = 0;
+        let height = 0;
+        let returnArray = [];
+        do {
+            do {
+                console.log(
+                    "height, width",
+                    -Math.floor(diameter / 2) + height + 1,
+                    -Math.floor(diameter / 2) + width + 1,
+                );
+                returnArray.push(
+                    this.getCellXY(
+                        cell.x -
+                            Math.floor(diameter / 2) +
+                            height +
+                            ((diameter + 1) % 2),
+                        cell.y -
+                            Math.floor(diameter / 2) +
+                            width +
+                            ((diameter + 1) % 2),
+                    ),
+                );
+                height++;
+            } while (height < diameter);
+            height = 0;
+            width++;
+        } while (width < diameter);
+        return returnArray;
+    }
+
     getXYDirectionFromAdjacantCellIndex(index: number) {
         switch (index) {
             case 0:
@@ -525,6 +560,20 @@ export default class FightGrid extends GameObject {
             }
         });
         return numFlagAndBombed;
+    }
+
+    getAdjacentCellBombNumber(
+        cell: { x: number; y: number; bombNum: number },
+        diameter: number,
+    ) {
+        const adjacentCells = this.getAllCellsInDiameter(cell, diameter);
+        let numBombs = 0;
+        adjacentCells.forEach((cell) => {
+            if (cell && cell.bombNum > 0) {
+                numBombs += cell.bombNum;
+            }
+        });
+        return numBombs;
     }
 
     floodFill(x: number, y: number) {
