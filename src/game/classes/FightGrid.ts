@@ -1,6 +1,11 @@
 import { Scene } from "phaser";
 import FightGridCell from "./FightGridCell";
-import { GAME_EVENTS, PLAYER_EVENTS, UI_EVENTS } from "@/game/types/events";
+import {
+    GAME_EVENTS,
+    PLAYER_EVENTS,
+    SCENE_EVENTS,
+    UI_EVENTS,
+} from "@/game/types/events";
 import { EventBus } from "@/game/EventBus";
 import { Fight } from "@/game/scenes/Fight";
 import { SCENES } from "@/game/types/scenes";
@@ -454,6 +459,8 @@ export default class FightGrid extends GameObject {
 
         this.playing = true;
         this.populated = true;
+        EventBus.emit(SCENE_EVENTS.POPULATE_FIGHT);
+
         this.state = 1;
 
         this.debug();
@@ -554,10 +561,7 @@ export default class FightGrid extends GameObject {
         return numFlagAndBombed;
     }
 
-    getAdjacentCellBombNumber(
-        cell: { x: number; y: number; bombNum: number },
-        diameter: number,
-    ) {
+    getAdjacentCellBombNumber(cell: FightGridCell, diameter: number) {
         const adjacentCells = this.getAllCellsInDiameter(cell, diameter);
         let numBombs = 0;
         adjacentCells.forEach((cell) => {
@@ -611,7 +615,6 @@ export default class FightGrid extends GameObject {
                     }
                 } else if (adjacentCell && adjacentCell.flagNum > 0) {
                     // chord flagged animation
-                    const previousText = adjacentCell.tile.text;
                     const xyDirection =
                         this.getXYDirectionFromAdjacantCellIndex(index);
                     adjacentCell.tile.setText("🟩");
@@ -645,7 +648,7 @@ export default class FightGrid extends GameObject {
                         ],
                     });
                     chordFillTween.on("complete", () => {
-                        adjacentCell.tile.setText(previousText);
+                        adjacentCell.tile.setText("🔲");
                     });
                 }
             });

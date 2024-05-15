@@ -28,6 +28,7 @@ const config: Phaser.Types.Core.GameConfig = {
     render: {
         antialiasGL: false,
         pixelArt: true,
+        roundPixels: true,
     },
     autoFocus: true,
     // callbacks: {

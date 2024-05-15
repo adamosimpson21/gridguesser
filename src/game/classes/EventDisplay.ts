@@ -24,7 +24,7 @@ export default class EventDisplay {
     ) {
         const eventText = this.scene.add.text(
             50,
-            this.scene.scale.height / 2 + (Math.random() * 500 - 350),
+            this.scene.scale.height / 2 + Phaser.Math.Between(350, 500),
             event.message,
 
             {

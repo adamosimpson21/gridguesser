@@ -4,7 +4,6 @@ import {
     SHOP_ITEMS,
     shopItemType,
 } from "@/game/types/shopItems";
-import { random } from "nanoid";
 import ShopGrid from "@/game/classes/ShopGrid";
 import { EventBus } from "@/game/EventBus";
 import { GAME_EVENTS, PLAYER_EVENTS, UI_EVENTS } from "@/game/types/events";
@@ -126,7 +125,7 @@ export default class ShopItem {
 
     chooseRandomShopItem(): shopItemType {
         const keys = Object.keys(SHOP_ITEMS);
-        const randomIndex = Math.floor(Math.random() * keys.length);
+        const randomIndex = Phaser.Math.Between(0, keys.length);
         const randomKey = keys[randomIndex] as keyof shopItemType;
         this.type = randomKey;
         return SHOP_ITEMS[randomKey];

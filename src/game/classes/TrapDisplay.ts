@@ -73,7 +73,7 @@ export default class TrapDisplay {
     }
 
     riskyAction() {
-        const rngCall = Math.random();
+        const rngCall = Phaser.Math.FloatBetween(0, 1);
         // player luck is usually between -1 and 1, trap luck factor is between 0 and 1, rngcall is between 0 and 1
         if (
             GameState.player.luck * this.trap.luckFactor + rngCall >

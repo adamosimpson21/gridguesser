@@ -39,6 +39,8 @@ export class Fight extends Scene {
         this.load.image("trash_can", "/assets/fight/trashCan.png");
         this.load.image("trash_can_over", "/assets/fight/trashCanOver.png");
         this.load.image("towel_cover", "/assets/fight/yellowSquare.png");
+        this.load.image("brown_square", "/assets/fight/brownSquare.png");
+        this.load.image("ladder", "/assets/fight/ladder.png");
     }
 
     create() {
@@ -61,7 +63,7 @@ export class Fight extends Scene {
         EventBus.emit("current-scene-ready", this);
 
         this.input.setDefaultCursor(
-            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🔍</text><path d='M0,4 L0,0 L4,0' fill='red' /></svg>\"), auto",
+            "url(/assets/cursors/broomSm.cur), pointer",
         );
 
         this.events.on(

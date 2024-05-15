@@ -58,7 +58,7 @@ export class BossFight extends Scene {
         this.grid = new BossFightGrid(this, gridWidth, gridHeight, numBombs);
 
         this.input.setDefaultCursor(
-            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🔍</text><path d='M0,4 L0,0 L4,0' fill='red' /></svg>\"), auto",
+            "url(/assets/cursors/broomSm.cur), pointer",
         );
 
         this.camera.fadeIn(500, 0, 0, 0);

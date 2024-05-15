@@ -398,11 +398,10 @@ export default class OverworldGrid {
                 cell.value = type;
                 // generate traps
                 if (type === 6 || type === 5) {
-                    const rngCall = Math.floor(Phaser.Math.Between(0, 144));
                     const trapOptions = Object.values(TRAPS);
                     const randomTrap =
                         trapOptions[
-                            Math.floor(Math.random() * trapOptions.length)
+                            Phaser.Math.Between(0, trapOptions.length - 1)
                         ];
                     cell.typeInfo = randomTrap;
                 }

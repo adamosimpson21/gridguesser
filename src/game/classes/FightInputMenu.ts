@@ -21,6 +21,7 @@ export default class FightInputMenu {
     public inputBoard: any;
     public previousCurrentInput: string;
     private background: Phaser.GameObjects.Image;
+    public inputHint: GameObjects.Image;
     constructor(scene: Hud) {
         this.scene = scene;
 
@@ -41,7 +42,20 @@ export default class FightInputMenu {
 
         // initially hidden
         // hide hidden for testing purposes
-        // this.hide();
+        this.hide();
+
+        this.inputHint = this.scene.make.image({
+            x: this.scene.input.mousePointer.x,
+            y: this.scene.input.mousePointer.y,
+            key: "input_hints",
+            frame: 0,
+        });
+
+        this.hideInputHint();
+
+        this.scene.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
+            this.inputHint.setPosition(pointer.x, pointer.y);
+        });
 
         EventBus.on(GAME_EVENTS.GAME_OVER, () => {
             this.inputBoard.list.forEach((input: Phaser.GameObjects.Text) => {
@@ -90,55 +104,67 @@ export default class FightInputMenu {
             switch (newInput) {
                 case FIGHT_INPUT_TYPES.REVEAL:
                     this.scene.input.setDefaultCursor(
-                        "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🔍</text><path d='M0,4 L0,0 L4,0' fill='red' /></svg>\"), auto",
+                        "url(/assets/cursors/broomSm.cur), pointer",
                     );
+                    this.hideInputHint();
                     break;
 
                 case FIGHT_INPUT_TYPES.FLAG:
                     this.scene.input.setDefaultCursor(
-                        "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🚩</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                        "url(/assets/cursors/cautionSm.cur), pointer",
                     );
+                    this.hideInputHint();
                     break;
 
                 case FIGHT_INPUT_TYPES.QUERY:
                     this.scene.input.setDefaultCursor(
                         "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>❓</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
                     );
+                    this.hideInputHint();
                     break;
 
                 case FIGHT_INPUT_TYPES.REMOVE_BOMB:
                     this.scene.input.setDefaultCursor(
-                        "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='96'><text y='32' font-size='32'>❌👹</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                        "url(/assets/cursors/featherDusterSm.cur), pointer",
                     );
+                    this.hideInputHint();
                     break;
 
                 case FIGHT_INPUT_TYPES.REMOVE_TRASH:
                     this.scene.input.setDefaultCursor(
-                        "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🚯</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                        "url(/assets/cursors/trashCanSm.cur), pointer",
                     );
+                    this.hideInputHint();
                     break;
 
                 case FIGHT_INPUT_TYPES.REMOVE_LIES:
                     this.scene.input.setDefaultCursor(
-                        "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🤥</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                        "url(/assets/cursors/removeLieSm.cur), pointer",
                     );
+                    this.hideInputHint();
                     break;
                 case FIGHT_INPUT_TYPES.BLOCK:
                     this.scene.input.setDefaultCursor(
-                        "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🤘</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                        "url(/assets/cursors/concreteSm.cur), pointer",
                     );
+                    this.showInputHint(1, GameState.blockSize);
                     break;
                 case FIGHT_INPUT_TYPES.UMBRELLA:
                     this.scene.input.setDefaultCursor(
-                        "url(/assets/cursors/yellowSquareSmall.cur), pointer",
+                        "url(/assets/cursors/yellowSquaresm.cur), pointer",
                     );
+
+                    this.showInputHint(2, GameState.umbrellaSize);
                     break;
                 case FIGHT_INPUT_TYPES.TOWER:
                     this.scene.input.setDefaultCursor(
-                        "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>🗼</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                        "url(/assets/cursors/ladder2Sm.cur), pointer",
                     );
+
+                    this.showInputHint(3, GameState.towerSize);
                     break;
                 default:
+                    this.hideInputHint();
                     break;
             }
             this.inputBoard.list.forEach((inputText: any) => {
@@ -164,6 +190,25 @@ export default class FightInputMenu {
 
     populateInputBoard() {
         GameState.fightInputTypes.forEach(this.createInputKey, this);
+    }
+
+    hideInputHint() {
+        this.inputHint.setFrame(0).setAlpha(0).setDisplaySize(0, 0);
+    }
+
+    showInputHint(frame: number, size: number) {
+        let anchorPoint = 0.5;
+        if (size % 2 === 0) {
+            anchorPoint = 0.5 - 1 / (size * 2);
+        }
+        this.inputHint
+            .setFrame(frame)
+            .setAlpha(0.4)
+            .setDisplaySize(
+                FIGHT_CONSTANTS.TILE_WIDTH * size,
+                FIGHT_CONSTANTS.TILE_HEIGHT * size,
+            )
+            .setOrigin(anchorPoint, anchorPoint);
     }
 
     createInputKey(input: string, index: number) {

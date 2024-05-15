@@ -119,7 +119,7 @@ export default class HudDisplay {
         EventBus.on(SCENE_EVENTS.LEAVE_FIGHT, () => {
             this.fightInputDisplay.hide();
         });
-        EventBus.on(SCENE_EVENTS.ENTER_FIGHT, () => {
+        EventBus.on(SCENE_EVENTS.POPULATE_FIGHT, () => {
             this.fightInputDisplay.show();
         });
     }

@@ -164,7 +164,9 @@ export default class BossFightGrid extends FightGrid {
             do {
                 const keyToAdd =
                     totalKeysAvailable[
-                        Math.floor(Math.random() * totalKeysAvailable.length)
+                        Math.floor(
+                            Phaser.Math.Between(0, totalKeysAvailable.length),
+                        )
                     ];
                 if (!threeKeys.includes(keyToAdd)) {
                     threeKeys.push(keyToAdd);

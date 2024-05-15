@@ -18,6 +18,10 @@ export class Hud extends Scene {
         this.load.image("clipboard", "assets/hud/longClipboard.png");
         this.load.image("key_ring", "assets/hud/keyRing.png");
         this.load.image("black_key", "assets/hud/blackKey.png");
+        this.load.spritesheet("input_hints", "assets/cursors/inputHints.png", {
+            frameWidth: 64,
+            frameHeight: 64,
+        });
     }
 
     create() {

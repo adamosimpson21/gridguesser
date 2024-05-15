@@ -27,7 +27,7 @@ export default class FightGridCell {
     public lying: boolean;
     public lyingOffset: number;
     public queryOverlay: any;
-    public specialOverlay: any;
+    public specialOverlayContainer: any;
     public isBlock: boolean;
     constructor(grid: any, index: number, x: number, y: number) {
         this.grid = grid;
@@ -58,12 +58,10 @@ export default class FightGridCell {
             style: { fontSize: `${FIGHT_CONSTANTS.TILE_HEIGHT}px` },
         });
 
-        this.specialOverlay = grid.scene.make.text({
-            x: grid.offset.x + x * FIGHT_CONSTANTS.TILE_WIDTH,
-            y: grid.offset.y + y * FIGHT_CONSTANTS.TILE_HEIGHT,
-            text: "",
-            style: { fontSize: `${FIGHT_CONSTANTS.TILE_HEIGHT}px` },
-        });
+        this.specialOverlayContainer = this.grid.scene.add.container(
+            grid.offset.x + x * FIGHT_CONSTANTS.TILE_WIDTH,
+            grid.offset.y + y * FIGHT_CONSTANTS.TILE_HEIGHT,
+        );
 
         this.flagOverlay = grid.scene.make
             .image({
@@ -94,7 +92,7 @@ export default class FightGridCell {
         grid.board.add(this.tile);
         grid.board.add(this.flagOverlay);
         grid.board.add(this.queryOverlay);
-        grid.board.add(this.specialOverlay);
+        grid.board.add(this.specialOverlayContainer);
 
         this.tile.setInteractive();
 
@@ -280,8 +278,8 @@ export default class FightGridCell {
     }
 
     generateLyingOffset() {
-        let offset = Math.floor(Math.random() * 4) - 2;
-        // offset is a -3, -2, -1, 1, 2, or 3
+        let offset = Phaser.Math.Between(-2, 2);
+        // offset is a -2, -1, 1, 2
         if (offset > 0) {
             offset++;
         }
@@ -325,10 +323,6 @@ export default class FightGridCell {
                             });
 
                         cell.open = true;
-                        console.log(
-                            "about to update bomb count:",
-                            cell.bombNum,
-                        );
                         if (cell.flagNum > 0) {
                             this.grid.updateBombs(-cell.flagNum);
                         }
@@ -347,6 +341,73 @@ export default class FightGridCell {
 
     useTower() {
         if (GameState.instanceTowerNum > 0) {
+            EventBus.emit(
+                FIGHT_EVENTS.USE_LIMITED_INPUT,
+                FIGHT_INPUT_TYPES.TOWER,
+            );
+
+            const towerNumberToShow = this.grid.getAdjacentCellBombNumber(
+                this,
+                GameState.towerSize,
+            );
+
+            const towerShadow = this.grid.scene.make
+                .image({
+                    x:
+                        Math.floor(
+                            (this.x +
+                                // even amounts get incremented by 1/2 index
+                                (((GameState.towerSize + 1) % 2) -
+                                    // should be located in the center, or up left of center
+                                    Math.floor(GameState.towerSize - 1)) /
+                                    2) *
+                                FIGHT_CONSTANTS.TILE_WIDTH,
+                        ) +
+                        //grid offset
+                        this.grid.offset.x +
+                        8,
+                    y:
+                        Math.floor(
+                            (this.y +
+                                (((GameState.towerSize + 1) % 2) -
+                                    Math.floor(GameState.towerSize - 1)) /
+                                    2) *
+                                FIGHT_CONSTANTS.TILE_HEIGHT,
+                        ) +
+                        this.grid.offset.y -
+                        4,
+                    key: "brown_square",
+                })
+                .setDisplaySize(
+                    GameState.towerSize * FIGHT_CONSTANTS.TILE_WIDTH,
+                    GameState.towerSize * FIGHT_CONSTANTS.TILE_HEIGHT,
+                )
+                .setAlpha(0.4)
+                .setOrigin(0, 0)
+                .setDepth(6);
+            this.tile.on("pointerover", () => {
+                towerShadow.setAlpha(0.4);
+            });
+            this.tile.on("pointerout", () => {
+                towerShadow.setAlpha(0);
+            });
+            this.grid.board.add(towerShadow);
+
+            this.specialOverlayContainer.add(
+                this.grid.scene.add
+                    .image(28, 0, "ladder")
+                    .setDisplaySize(
+                        FIGHT_CONSTANTS.TILE_WIDTH,
+                        FIGHT_CONSTANTS.TILE_HEIGHT,
+                    )
+                    .setOrigin(0, 0),
+            );
+            this.specialOverlayContainer.add(
+                this.grid.scene.add.text(0, 0, towerNumberToShow, {
+                    fontSize: `${FIGHT_CONSTANTS.TILE_WIDTH}px`,
+                    color: "dark brown",
+                }),
+            );
         }
     }
     useUmbrella() {
@@ -361,49 +422,62 @@ export default class FightGridCell {
                 GameState.umbrellaSize,
             );
 
-            this.specialOverlay.setText(umbrellaNumToShow.toString() + "☂");
-            this.specialOverlay.setColor("black").setDepth(2);
+            const umbrellaShadow = this.grid.scene.make
+                .image({
+                    x:
+                        Math.floor(
+                            (this.x +
+                                // even amounts get incremented by 1/2 index
+                                (((GameState.umbrellaSize + 1) % 2) -
+                                    // should be located in the center, or up left of center
+                                    Math.floor(GameState.umbrellaSize - 1)) /
+                                    2) *
+                                FIGHT_CONSTANTS.TILE_WIDTH,
+                        ) +
+                        //grid offset
+                        this.grid.offset.x +
+                        8,
+                    y:
+                        Math.floor(
+                            (this.y +
+                                (((GameState.umbrellaSize + 1) % 2) -
+                                    Math.floor(GameState.umbrellaSize - 1)) /
+                                    2) *
+                                FIGHT_CONSTANTS.TILE_HEIGHT,
+                        ) +
+                        this.grid.offset.y -
+                        4,
+                    key: "towel_cover",
+                })
+                .setDisplaySize(
+                    GameState.umbrellaSize * FIGHT_CONSTANTS.TILE_WIDTH,
+                    GameState.umbrellaSize * FIGHT_CONSTANTS.TILE_HEIGHT,
+                )
+                .setAlpha(0.4)
+                .setOrigin(0, 0)
+                .setDepth(6);
 
-            this.grid.board.add(
-                this.grid.scene.make
-                    .image({
-                        x:
-                            Math.floor(
-                                (this.x +
-                                    // even amounts get incremented by 1/2 index
-                                    (((GameState.umbrellaSize + 1) % 2) -
-                                        // should be located in the center, or up left of center
-                                        Math.floor(
-                                            GameState.umbrellaSize - 1,
-                                        )) /
-                                        2) *
-                                    FIGHT_CONSTANTS.TILE_WIDTH,
-                            ) +
-                            //grid offset
-                            this.grid.offset.x +
-                            8,
-                        y:
-                            Math.floor(
-                                (this.y +
-                                    (((GameState.umbrellaSize + 1) % 2) -
-                                        Math.floor(
-                                            GameState.umbrellaSize - 1,
-                                        )) /
-                                        2) *
-                                    FIGHT_CONSTANTS.TILE_HEIGHT,
-                            ) +
-                            this.grid.offset.y -
-                            4,
-                        key: "towel_cover",
-                    })
-                    .setDisplaySize(
-                        GameState.umbrellaSize * FIGHT_CONSTANTS.TILE_WIDTH,
-                        GameState.umbrellaSize * FIGHT_CONSTANTS.TILE_HEIGHT,
-                    )
-                    .setAlpha(0.4)
-                    .setOrigin(0, 0)
-                    .setDepth(6),
+            this.tile.on("pointerover", () => {
+                umbrellaShadow.setAlpha(0.4);
+            });
+            this.tile.on("pointerout", () => {
+                umbrellaShadow.setAlpha(0);
+            });
+
+            const umbrellaText = this.grid.scene.add.text(
+                0,
+                0,
+                `${umbrellaNumToShow}☂`,
+                {
+                    fontSize: `${FIGHT_CONSTANTS.TILE_WIDTH}px`,
+                    color: "black",
+                },
             );
+
+            this.specialOverlayContainer.add(umbrellaShadow);
+            this.specialOverlayContainer.add(umbrellaText);
+
+            this.grid.board.add(umbrellaShadow);
         }
     }
 
