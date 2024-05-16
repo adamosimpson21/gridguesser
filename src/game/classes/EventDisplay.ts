@@ -1,6 +1,6 @@
-import Phaser from "phaser";
 import { UI_EVENTS } from "@/game/types/events";
 import { EventBus } from "../EventBus";
+import { largeText } from "@/game/types/textStyleConstructor";
 
 export default class EventDisplay {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -25,16 +25,7 @@ export default class EventDisplay {
             50,
             this.scene.scale.height / 2 + Phaser.Math.Between(350, 500),
             event.message,
-
-            {
-                fontSize: 48,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 6,
-                align: "center",
-
-                wordWrap: { width: 450, useAdvancedWrap: true },
-            },
+            largeText({}),
         );
         this.scene.add.tween({
             targets: eventText,

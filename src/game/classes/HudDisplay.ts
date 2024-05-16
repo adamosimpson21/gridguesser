@@ -5,6 +5,7 @@ import { shopItemType } from "@/game/types/shopItems";
 import { GameState } from "@/game/classes/GameState";
 import FightInputMenu from "@/game/classes/FightInputMenu";
 import { Hud } from "@/game/scenes/Hud";
+import { headingText, paragraphText } from "@/game/types/textStyleConstructor";
 
 export default class HudDisplay {
     public scene: Hud;
@@ -64,12 +65,7 @@ export default class HudDisplay {
             this.xOffset,
             this.yOffset,
             `Name: ${this.name}`,
-            {
-                fontSize: this.fontSize,
-                color: "black",
-                fontFamily: this.font,
-                // strokeThickness: this.strokeWidth,
-            },
+            headingText({}),
         );
 
         this.hpDisplay = this.scene.add.text(
@@ -77,37 +73,21 @@ export default class HudDisplay {
             this.yOffset + this.lineHeight * 2,
             // `Health: ${new Array(maxHp).fill("♥").join(" ")}`,
             `Health: ${hp}/${maxHp}`,
-            {
-                fontSize: this.fontSize,
-                color: "black",
-                fontFamily: this.font,
-                // strokeThickness: this.strokeWidth,
-            },
+            headingText({}),
         );
 
         this.goldDisplay = this.scene.add.text(
             this.xOffset,
             this.yOffset + this.lineHeight * 1,
             `$ ${gold} `,
-            {
-                fontSize: this.fontSize,
-                color: "black",
-
-                fontFamily: this.font,
-                // strokeThickness: this.strokeWidth,
-            },
+            headingText({}),
         );
 
         this.upgradeDisplay = this.scene.add.text(
             this.xOffset,
             this.yOffset + this.lineHeight * 4,
             "",
-            {
-                fontSize: this.fontSize,
-                color: "black",
-                fontFamily: this.font,
-                // strokeThickness: this.strokeWidth,
-            },
+            headingText({}),
         );
 
         this.hudBoard.add(this.clipboard);
@@ -144,16 +124,15 @@ export default class HudDisplay {
         EventBus.on(
             UI_EVENTS.UPDATE_HEALTH,
             (hp: number, maxHp: number, silent?: boolean) => {
-                // if (hp < 0) {
-                //     hp = 0;
-                // }
-                this.hpDisplay.setText(
-                    `Health: ${hp}/${maxHp}`,
-                    // `Health: ${new Array(hp)
-                    //     .fill("♥")
-                    //     .concat(new Array(maxHp - hp).fill("💔"))
-                    //     .join(" ")}`,
-                );
+                if (
+                    hp <=
+                    GameState.bombIntensity - GameState.playerDamageReduction
+                ) {
+                    this.hpDisplay.setStyle({ color: "red" });
+                } else {
+                    this.hpDisplay.setStyle({ color: "black" });
+                }
+                this.hpDisplay.setText(`Health: ${hp}/${maxHp}`);
                 if (!silent) {
                     EventBus.emit(
                         UI_EVENTS.DISPLAY_MESSAGE,

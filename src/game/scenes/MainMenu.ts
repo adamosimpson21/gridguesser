@@ -3,12 +3,15 @@ import { GameObjects, Scene } from "phaser";
 import { EventBus } from "../EventBus";
 import { SCENES } from "@/game/types/scenes";
 import { createBackground } from "@/game/functions/background";
+import { mainMenuText } from "@/game/types/textStyleConstructor";
 
 export class MainMenu extends Scene {
     background: GameObjects.Image;
     title: Phaser.GameObjects.Image;
     overworldButton: GameObjects.Text;
     fightSceneButton: GameObjects.Text;
+    private tutorialButton: Phaser.GameObjects.Text;
+    public hallOfFameButton: Phaser.GameObjects.Text;
 
     constructor() {
         super(SCENES.MainMenu);
@@ -27,14 +30,12 @@ export class MainMenu extends Scene {
             .setDepth(100);
 
         this.overworldButton = this.add
-            .text(this.scale.width / 2, 560, "New Game", {
-                fontFamily: "Arial Black",
-                fontSize: 96,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 8,
-                align: "center",
-            })
+            .text(
+                this.scale.width / 2,
+                560,
+                "New Game",
+                mainMenuText({ fontSize: "69px" }),
+            )
             .setOrigin(0.5)
             .setDepth(100);
         this.overworldButton.setInteractive();
@@ -42,24 +43,35 @@ export class MainMenu extends Scene {
             this.scene.start(SCENES.NewGame),
         );
 
-        this.overworldButton = this.add
-            .text(this.scale.width / 2, 700, "Minesweeper Tutorial", {
-                fontFamily: "Arial Black",
-                fontSize: 64,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 8,
-                align: "center",
-            })
+        this.tutorialButton = this.add
+            .text(
+                this.scale.width / 2,
+                700,
+                "Minesweeper Tutorial",
+                mainMenuText({ wordWrapWidth: 800 }),
+            )
             .setOrigin(0.5)
             .setDepth(100);
-        this.overworldButton.setInteractive();
-        this.overworldButton.on(
+        this.tutorialButton.setInteractive();
+        this.tutorialButton.on(
             "pointerdown",
             () =>
                 (window.location.href =
                     "https://minesweepergame.com/strategy/how-to-play-minesweeper.php"),
         );
+
+        this.hallOfFameButton = this.add
+            .text(
+                this.scale.width / 2,
+                800,
+                "Employees of the Month",
+                mainMenuText({ wordWrapWidth: 1000 }),
+            )
+            .setOrigin(0.5, 0.5);
+        this.hallOfFameButton.setInteractive();
+        this.hallOfFameButton.on("pointerdown", () => {
+            this.scene.start(SCENES.HallOfFame);
+        });
 
         // this.fightSceneButton = this.add
         //     .text(this.scale.width/2, 580, "Go To Fight", {

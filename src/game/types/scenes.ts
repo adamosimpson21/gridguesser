@@ -12,4 +12,5 @@ export const SCENES = {
     BossFight: "BossFight",
     GameWon: "Game Won",
     TrapOverlay: "TrapOverlay",
+    HallOfFame: "HallOfFame",
 };
