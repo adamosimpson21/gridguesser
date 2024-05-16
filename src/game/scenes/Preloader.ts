@@ -36,6 +36,6 @@ export class Preloader extends Scene {
         //  this one works, don't delete it or mess with it plz
         // this.scene.start(SCENES.MainMenu).launch(SCENES.Hud);
         //
-        this.scene.launch(SCENES.Fight).launch(SCENES.Hud).remove();
+        this.scene.launch(SCENES.BossFight).launch(SCENES.Hud).remove();
     }
 }

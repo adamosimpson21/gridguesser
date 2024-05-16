@@ -76,19 +76,19 @@ export class Fight extends Scene {
         );
 
         // scroll wheel to change input type
-        this.input.on(
-            "gameobjectwheel",
-            (
-                pointer: Phaser.Input.Pointer,
-                gameObj: Phaser.GameObjects.GameObject,
-                deltaX: number,
-                deltaY: number,
-            ) => {
-                if (deltaY > 0) {
-                } else {
-                }
-            },
-        );
+        // this.input.on(
+        //     "gameobjectwheel",
+        //     (
+        //         pointer: Phaser.Input.Pointer,
+        //         gameObj: Phaser.GameObjects.GameObject,
+        //         deltaX: number,
+        //         deltaY: number,
+        //     ) => {
+        //         if (deltaY > 0) {
+        //         } else {
+        //         }
+        //     },
+        // );
     }
 
     // transitionScene(scene: string) {

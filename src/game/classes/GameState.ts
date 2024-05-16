@@ -14,6 +14,7 @@ import {
     FIGHT_CONSTANTS,
     FIGHT_INPUT_TYPES,
 } from "@/game/types/fightConstants";
+import { getInputInstanceUsesAvailable } from "@/game/functions/getInputUsesAvailable";
 
 class GameStateClass {
     // stores information about current run
@@ -72,20 +73,59 @@ class GameStateClass {
         EventBus.on(FIGHT_EVENTS.USE_LIMITED_INPUT, (inputType: string) => {
             if (inputType === FIGHT_INPUT_TYPES.REMOVE_BOMB) {
                 GameState.instanceRemoveBombNum--;
+                if (GameState.instanceRemoveBombNum === 0) {
+                    EventBus.emit(
+                        FIGHT_EVENTS.CHANGE_INPUT_TYPE,
+                        FIGHT_INPUT_TYPES.REVEAL,
+                    );
+                }
             } else if (inputType === FIGHT_INPUT_TYPES.REMOVE_TRASH) {
                 GameState.instanceRemoveTrashNum--;
+                if (GameState.instanceRemoveTrashNum === 0) {
+                    EventBus.emit(
+                        FIGHT_EVENTS.CHANGE_INPUT_TYPE,
+                        FIGHT_INPUT_TYPES.REVEAL,
+                    );
+                }
             } else if (inputType === FIGHT_INPUT_TYPES.REMOVE_LIES) {
                 GameState.instanceRemoveLyingNum--;
+                if (GameState.instanceRemoveLyingNum === 0) {
+                    EventBus.emit(
+                        FIGHT_EVENTS.CHANGE_INPUT_TYPE,
+                        FIGHT_INPUT_TYPES.REVEAL,
+                    );
+                }
             } else if (inputType === FIGHT_INPUT_TYPES.UMBRELLA) {
                 GameState.instanceUmbrellaNum--;
+                if (GameState.instanceUmbrellaNum === 0) {
+                    EventBus.emit(
+                        FIGHT_EVENTS.CHANGE_INPUT_TYPE,
+                        FIGHT_INPUT_TYPES.REVEAL,
+                    );
+                }
             } else if (inputType === FIGHT_INPUT_TYPES.TOWER) {
                 GameState.instanceTowerNum--;
+                if (GameState.instanceTowerNum === 0) {
+                    EventBus.emit(
+                        FIGHT_EVENTS.CHANGE_INPUT_TYPE,
+                        FIGHT_INPUT_TYPES.REVEAL,
+                    );
+                }
             } else if (inputType === FIGHT_INPUT_TYPES.BLOCK) {
                 GameState.instanceBlockNum--;
+                if (GameState.instanceBlockNum === 0) {
+                    EventBus.emit(
+                        FIGHT_EVENTS.CHANGE_INPUT_TYPE,
+                        FIGHT_INPUT_TYPES.REVEAL,
+                    );
+                }
             }
         });
         EventBus.on(FIGHT_EVENTS.CHANGE_INPUT_TYPE, (newInputType: string) => {
-            this.currentFightInputType = newInputType;
+            // validate user has uses of input
+            if (getInputInstanceUsesAvailable(newInputType) != 0) {
+                this.currentFightInputType = newInputType;
+            }
         });
     }
 

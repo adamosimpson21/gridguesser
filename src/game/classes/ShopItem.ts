@@ -125,7 +125,7 @@ export default class ShopItem {
 
     chooseRandomShopItem(): shopItemType {
         const keys = Object.keys(SHOP_ITEMS);
-        const randomIndex = Phaser.Math.Between(0, keys.length);
+        const randomIndex = Phaser.Math.Between(0, keys.length - 1);
         const randomKey = keys[randomIndex] as keyof shopItemType;
         this.type = randomKey;
         return SHOP_ITEMS[randomKey];

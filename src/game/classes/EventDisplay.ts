@@ -1,5 +1,4 @@
-import Phaser, { Scene } from "phaser";
-import { useRef } from "react";
+import Phaser from "phaser";
 import { UI_EVENTS } from "@/game/types/events";
 import { EventBus } from "../EventBus";
 
@@ -9,7 +8,7 @@ export default class EventDisplay {
     private event: { type: string; message: string };
     private fadeDelay: string;
 
-    constructor(scene: Scene) {
+    constructor(scene: Phaser.Scene) {
         this.scene = scene;
         this.create();
     }

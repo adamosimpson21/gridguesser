@@ -340,7 +340,7 @@ export default class FightGridCell {
     }
 
     useTower() {
-        if (GameState.instanceTowerNum > 0) {
+        if (GameState.instanceTowerNum > 0 && this.open) {
             EventBus.emit(
                 FIGHT_EVENTS.USE_LIMITED_INPUT,
                 FIGHT_INPUT_TYPES.TOWER,

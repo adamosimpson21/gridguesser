@@ -42,6 +42,9 @@ export class BossFight extends Scene {
         this.load.image("trash_can_over", "/assets/fight/trashCanOver.png");
         this.load.image("boss_desk", "/assets/fight/bossDesk.png");
         this.load.image("black_key", "/assets/hud/blackKey.png");
+        this.load.image("towel_cover", "/assets/fight/yellowSquare.png");
+        this.load.image("brown_square", "/assets/fight/brownSquare.png");
+        this.load.image("ladder", "/assets/fight/ladder.png");
     }
 
     create() {

@@ -10,7 +10,10 @@ import { FIGHT_EVENTS, GAME_EVENTS } from "@/game/types/events";
 import { BossFight } from "@/game/scenes/BossFight";
 import { Hud } from "@/game/scenes/Hud";
 import UppercaseFirst = Phaser.Utils.String.UppercaseFirst;
-import { getInputUsesAvailable } from "@/game/functions/getInputUsesAvailable";
+import {
+    getInputInstanceUsesAvailable,
+    getInputUsesAvailable,
+} from "@/game/functions/getInputUsesAvailable";
 import { translateNumberToString } from "@/game/functions/translateNumberToString";
 import { changeInputScrollWheel } from "@/game/functions/changeInputScrollWheel";
 
@@ -101,90 +104,92 @@ export default class FightInputMenu {
             this.createInputKey(newInputType, GameState.fightInputTypes.length);
         });
         EventBus.on(FIGHT_EVENTS.CHANGE_INPUT_TYPE, (newInput: string) => {
-            switch (newInput) {
-                case FIGHT_INPUT_TYPES.REVEAL:
-                    this.scene.input.setDefaultCursor(
-                        "url(/assets/cursors/broomSm.cur), pointer",
-                    );
-                    this.hideInputHint();
-                    break;
+            if (getInputInstanceUsesAvailable(newInput) != 0) {
+                switch (newInput) {
+                    case FIGHT_INPUT_TYPES.REVEAL:
+                        this.scene.input.setDefaultCursor(
+                            "url(/assets/cursors/broomSm.cur), pointer",
+                        );
+                        this.hideInputHint();
+                        break;
 
-                case FIGHT_INPUT_TYPES.FLAG:
-                    this.scene.input.setDefaultCursor(
-                        "url(/assets/cursors/cautionSm.cur), pointer",
-                    );
-                    this.hideInputHint();
-                    break;
+                    case FIGHT_INPUT_TYPES.FLAG:
+                        this.scene.input.setDefaultCursor(
+                            "url(/assets/cursors/cautionSm.cur), pointer",
+                        );
+                        this.hideInputHint();
+                        break;
 
-                case FIGHT_INPUT_TYPES.QUERY:
-                    this.scene.input.setDefaultCursor(
-                        "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>❓</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
-                    );
-                    this.hideInputHint();
-                    break;
+                    case FIGHT_INPUT_TYPES.QUERY:
+                        this.scene.input.setDefaultCursor(
+                            "url(\"data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' height='48' width='48'><text y='32' font-size='32'>❓</text><path d='M0,2 L0,0 L2,0' fill='red' /></svg>\"), auto",
+                        );
+                        this.hideInputHint();
+                        break;
 
-                case FIGHT_INPUT_TYPES.REMOVE_BOMB:
-                    this.scene.input.setDefaultCursor(
-                        "url(/assets/cursors/featherDusterSm.cur), pointer",
-                    );
-                    this.hideInputHint();
-                    break;
+                    case FIGHT_INPUT_TYPES.REMOVE_BOMB:
+                        this.scene.input.setDefaultCursor(
+                            "url(/assets/cursors/featherDusterSm.cur), pointer",
+                        );
+                        this.hideInputHint();
+                        break;
 
-                case FIGHT_INPUT_TYPES.REMOVE_TRASH:
-                    this.scene.input.setDefaultCursor(
-                        "url(/assets/cursors/trashCanSm.cur), pointer",
-                    );
-                    this.hideInputHint();
-                    break;
+                    case FIGHT_INPUT_TYPES.REMOVE_TRASH:
+                        this.scene.input.setDefaultCursor(
+                            "url(/assets/cursors/trashCanSm.cur), pointer",
+                        );
+                        this.hideInputHint();
+                        break;
 
-                case FIGHT_INPUT_TYPES.REMOVE_LIES:
-                    this.scene.input.setDefaultCursor(
-                        "url(/assets/cursors/removeLieSm.cur), pointer",
-                    );
-                    this.hideInputHint();
-                    break;
-                case FIGHT_INPUT_TYPES.BLOCK:
-                    this.scene.input.setDefaultCursor(
-                        "url(/assets/cursors/concreteSm.cur), pointer",
-                    );
-                    this.showInputHint(1, GameState.blockSize);
-                    break;
-                case FIGHT_INPUT_TYPES.UMBRELLA:
-                    this.scene.input.setDefaultCursor(
-                        "url(/assets/cursors/yellowSquaresm.cur), pointer",
-                    );
+                    case FIGHT_INPUT_TYPES.REMOVE_LIES:
+                        this.scene.input.setDefaultCursor(
+                            "url(/assets/cursors/removeLieSm.cur), pointer",
+                        );
+                        this.hideInputHint();
+                        break;
+                    case FIGHT_INPUT_TYPES.BLOCK:
+                        this.scene.input.setDefaultCursor(
+                            "url(/assets/cursors/concreteSm.cur), pointer",
+                        );
+                        this.showInputHint(1, GameState.blockSize);
+                        break;
+                    case FIGHT_INPUT_TYPES.UMBRELLA:
+                        this.scene.input.setDefaultCursor(
+                            "url(/assets/cursors/yellowSquaresm.cur), pointer",
+                        );
 
-                    this.showInputHint(2, GameState.umbrellaSize);
-                    break;
-                case FIGHT_INPUT_TYPES.TOWER:
-                    this.scene.input.setDefaultCursor(
-                        "url(/assets/cursors/ladder2Sm.cur), pointer",
-                    );
+                        this.showInputHint(2, GameState.umbrellaSize);
+                        break;
+                    case FIGHT_INPUT_TYPES.TOWER:
+                        this.scene.input.setDefaultCursor(
+                            "url(/assets/cursors/ladder2Sm.cur), pointer",
+                        );
 
-                    this.showInputHint(3, GameState.towerSize);
-                    break;
-                default:
-                    this.hideInputHint();
-                    break;
-            }
-            this.inputBoard.list.forEach((inputText: any) => {
-                if (inputText.name) {
-                    if (
-                        inputText.name === newInput ||
-                        inputText.name === newInput + "_NUM"
-                    ) {
-                        inputText.setStyle({
-                            // backgroundColor: "white",
-                            color: "white",
-                        });
-                    } else {
-                        inputText.setStyle({
-                            // backgroundColor: "darkgray",
-                            color: "gray",
-                        });
-                    }
+                        this.showInputHint(3, GameState.towerSize);
+                        break;
+                    default:
+                        this.hideInputHint();
+                        break;
                 }
-            });
+                this.inputBoard.list.forEach((inputText: any) => {
+                    if (inputText.name) {
+                        if (
+                            inputText.name === newInput ||
+                            inputText.name === newInput + "_NUM"
+                        ) {
+                            inputText.setStyle({
+                                // backgroundColor: "white",
+                                color: "white",
+                            });
+                        } else {
+                            inputText.setStyle({
+                                // backgroundColor: "darkgray",
+                                color: "gray",
+                            });
+                        }
+                    }
+                });
+            }
         });
     }
 

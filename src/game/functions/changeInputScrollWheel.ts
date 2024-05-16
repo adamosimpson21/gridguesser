@@ -1,6 +1,7 @@
 import { GameState } from "@/game/classes/GameState";
 import { EventBus } from "@/game/EventBus";
 import { FIGHT_EVENTS } from "@/game/types/events";
+import { getInputInstanceUsesAvailable } from "@/game/functions/getInputUsesAvailable";
 
 export const changeInputScrollWheel = (
     pointer: Phaser.Input.Pointer,
@@ -8,38 +9,37 @@ export const changeInputScrollWheel = (
     deltaY: number,
 ) => {
     // change input on scroll down
-    if (deltaY > 0) {
-        const currentIndex = GameState.fightInputTypes.indexOf(
-            GameState.currentFightInputType,
-        );
-        // end of list
-        if (currentIndex === GameState.fightInputTypes.length - 1) {
-            EventBus.emit(
-                FIGHT_EVENTS.CHANGE_INPUT_TYPE,
-                GameState.fightInputTypes[0],
-            );
+    const currentIndex = GameState.fightInputTypes.indexOf(
+        GameState.currentFightInputType,
+    );
+    let nextIndex = currentIndex;
+    let resolved = false;
+    do {
+        if (deltaY > 0) {
+            // end of list
+            if (nextIndex === GameState.fightInputTypes.length - 1) {
+                nextIndex = 0;
+            } else {
+                nextIndex++;
+            }
         } else {
-            EventBus.emit(
-                FIGHT_EVENTS.CHANGE_INPUT_TYPE,
-                GameState.fightInputTypes[currentIndex + 1],
-            );
+            // beginning going backwards
+            if (nextIndex === 0) {
+                nextIndex = GameState.fightInputTypes.length - 1;
+            } else {
+                nextIndex--;
+            }
         }
-    } else {
-        const currentIndex = GameState.fightInputTypes.indexOf(
-            GameState.currentFightInputType,
-        );
-        //scroll up
-
-        if (currentIndex === 0) {
+        if (
+            getInputInstanceUsesAvailable(
+                GameState.fightInputTypes[nextIndex],
+            ) != 0
+        ) {
             EventBus.emit(
                 FIGHT_EVENTS.CHANGE_INPUT_TYPE,
-                GameState.fightInputTypes[GameState.fightInputTypes.length - 1],
+                GameState.fightInputTypes[nextIndex],
             );
-        } else {
-            EventBus.emit(
-                FIGHT_EVENTS.CHANGE_INPUT_TYPE,
-                GameState.fightInputTypes[currentIndex - 1],
-            );
+            resolved = true;
         }
-    }
+    } while (!resolved);
 };
