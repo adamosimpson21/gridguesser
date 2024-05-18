@@ -176,13 +176,27 @@ export default class ShopItem {
         this.type = itemToAssign.id;
         this.item = itemToAssign;
         this.tile.setText(itemToAssign.icon);
-        this.tooltipImage.setText(itemToAssign.icon);
         // this.name.setText(itemToAssign.name);
         this.tooltipName.setText(itemToAssign.name);
+        this.tooltipImage
+            .setText(itemToAssign.icon)
+            .setPosition(0, this.tooltipName.displayHeight + 8);
         // this.description.setText(itemToAssign.description);
-        this.tooltipDescription.setText(itemToAssign.description);
+        this.tooltipDescription
+            .setText(itemToAssign.description)
+            .setPosition(
+                0,
+                this.tooltipImage.y + this.tooltipImage.displayHeight + 8,
+            );
         this.cost.setText(`$${itemToAssign.cost}`);
-        this.tooltipCost.setText(`$${itemToAssign.cost}`);
+        this.tooltipCost
+            .setText(`$${itemToAssign.cost}`)
+            .setPosition(
+                0,
+                this.tooltipDescription.y +
+                    this.tooltipDescription.displayHeight +
+                    8,
+            );
         this.numPadImage.setText(itemToAssign.icon);
         this.numPadImage.setInteractive();
         this.numPadImage.on("pointerdown", this.onClick, this);
@@ -224,7 +238,7 @@ export default class ShopItem {
                 UI_EVENTS.DISPLAY_MESSAGE,
                 {
                     type: UI_EVENTS.ILLEGAL_ACTION,
-                    message: `You're already have ${item.name}`,
+                    message: `You already have ${item.name}`,
                 },
                 3000,
             );

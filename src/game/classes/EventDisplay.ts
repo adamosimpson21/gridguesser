@@ -13,7 +13,7 @@ export default class EventDisplay {
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
         this.create();
-        this.displayContainer = this.scene.add.container(50, 900);
+        this.displayContainer = this.scene.add.container(50, 1020);
         this.displayArray = [] as Phaser.GameObjects.Container[];
         this.displayContainer.add(this.displayArray);
     }
@@ -27,15 +27,12 @@ export default class EventDisplay {
         fadeDelay?: string,
     ) {
         const eventContainer = this.scene.add.container(0, 0);
-        const eventText = this.scene.add.text(
-            30,
-            20,
-            event.message,
-            largeText({ wordWrapWidth: 450 }),
-        );
+        const eventText = this.scene.add
+            .text(30, -30, event.message, largeText({ wordWrapWidth: 450 }))
+            .setOrigin(0, 1);
         const eventBackground = this.scene.add
             .image(0, 0, "clipboard")
-            .setOrigin(0, 0)
+            .setOrigin(0, 1)
             .setDisplaySize(500, eventText.height + 50);
 
         eventContainer.add(eventBackground);
