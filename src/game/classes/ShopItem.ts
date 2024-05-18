@@ -6,8 +6,15 @@ import {
 } from "@/game/types/shopItems";
 import ShopGrid from "@/game/classes/ShopGrid";
 import { EventBus } from "@/game/EventBus";
-import { GAME_EVENTS, PLAYER_EVENTS, UI_EVENTS } from "@/game/types/events";
+import {
+    GAME_EVENTS,
+    PLAYER_EVENTS,
+    UI_EVENTS,
+    UI_MESSAGE_TYPES,
+} from "@/game/types/events";
 import { GameState } from "@/game/classes/GameState";
+import { paragraphText } from "@/game/types/textStyleConstructor";
+import { addTooltip, TOOLTIP_CONSTANTS } from "@/game/functions/addTooltip";
 
 export default class ShopItem {
     private scene: Phaser.Scene;
@@ -21,13 +28,19 @@ export default class ShopItem {
     private description: Phaser.GameObjects.Text;
     private cost: Phaser.GameObjects.Text;
     private numPadImage: Phaser.GameObjects.Text;
+    private grid: ShopGrid;
+    private tooltipName: Phaser.GameObjects.Text;
+    private tooltipInnerObject: Phaser.GameObjects.Container;
+    private tooltipDescription: Phaser.GameObjects.Text;
+    private tooltipCost: Phaser.GameObjects.Text;
+    private tooltipImage: Phaser.GameObjects.Text;
     constructor(
         grid: ShopGrid,
         type: string | undefined,
         x: number,
         y: number,
     ) {
-        this.type = type;
+        (this.grid = grid), (this.type = type);
         this.item = undefined;
         this.x = x;
         this.y = y;
@@ -42,54 +55,56 @@ export default class ShopItem {
                 padding: { y: 10 },
             },
         });
-        this.name = grid.scene.make.text({
-            x:
-                grid.offset.x +
-                SHOP_CONSTANTS.SHOP_TILE_OFFSET_X +
-                x * SHOP_CONSTANTS.SHOP_TILE_WIDTH,
-            y:
-                grid.offset.y +
-                y * SHOP_CONSTANTS.SHOP_TILE_HEIGHT +
-                SHOP_CONSTANTS.SHOP_TILE_NAME_OFFSET_Y,
-            text: "",
-            style: {
-                fontSize: SHOP_CONSTANTS.SHOP_TILE_FONT_SIZE,
-                padding: { y: 10 },
-            },
-        });
+        // this.name = grid.scene.make.text({
+        //     x:
+        //         grid.offset.x +
+        //         SHOP_CONSTANTS.SHOP_TILE_OFFSET_X +
+        //         x * SHOP_CONSTANTS.SHOP_TILE_WIDTH,
+        //     y:
+        //         grid.offset.y +
+        //         y * SHOP_CONSTANTS.SHOP_TILE_HEIGHT +
+        //         SHOP_CONSTANTS.SHOP_TILE_NAME_OFFSET_Y,
+        //     text: "",
+        //
+        //     style: paragraphText({
+        //         fontSize: `${SHOP_CONSTANTS.SHOP_TILE_FONT_SIZE}px`,
+        //         color: "white",
+        //         wordWrapWidth: 225,
+        //     }),
+        // });
         this.cost = grid.scene.make.text({
-            x:
-                grid.offset.x +
-                SHOP_CONSTANTS.SHOP_TILE_OFFSET_X +
-                x * SHOP_CONSTANTS.SHOP_TILE_WIDTH,
-            y:
-                grid.offset.y +
-                y * SHOP_CONSTANTS.SHOP_TILE_HEIGHT +
-                SHOP_CONSTANTS.SHOP_TILE_NAME_OFFSET_Y +
-                SHOP_CONSTANTS.SHOP_TILE_COST_OFFSET_Y,
-            text: "",
-            style: {
-                fontSize: SHOP_CONSTANTS.SHOP_TILE_FONT_SIZE,
-                padding: { y: 10 },
-            },
-        });
-        this.description = grid.scene.make.text({
-            x:
-                grid.offset.x +
-                SHOP_CONSTANTS.SHOP_TILE_OFFSET_X +
-                x * SHOP_CONSTANTS.SHOP_TILE_WIDTH,
+            x: grid.offset.x + x * SHOP_CONSTANTS.SHOP_TILE_WIDTH + 12,
             y:
                 grid.offset.y +
                 y * SHOP_CONSTANTS.SHOP_TILE_HEIGHT +
                 SHOP_CONSTANTS.SHOP_TILE_NAME_OFFSET_Y +
                 SHOP_CONSTANTS.SHOP_TILE_COST_OFFSET_Y +
-                SHOP_CONSTANTS.SHOP_TILE_DESC_OFFSET_Y,
+                50,
             text: "",
-            style: {
-                fontSize: Math.floor(SHOP_CONSTANTS.SHOP_TILE_FONT_SIZE * 0.75),
-                padding: { y: 10 },
-            },
+            style: paragraphText({
+                fontSize: `${SHOP_CONSTANTS.SHOP_TILE_FONT_SIZE}px`,
+                color: "white",
+            }),
         });
+        // this.description = grid.scene.make.text({
+        //     x:
+        //         grid.offset.x +
+        //         SHOP_CONSTANTS.SHOP_TILE_OFFSET_X +
+        //         x * SHOP_CONSTANTS.SHOP_TILE_WIDTH,
+        //     y:
+        //         grid.offset.y +
+        //         y * SHOP_CONSTANTS.SHOP_TILE_HEIGHT +
+        //         SHOP_CONSTANTS.SHOP_TILE_NAME_OFFSET_Y +
+        //         SHOP_CONSTANTS.SHOP_TILE_COST_OFFSET_Y +
+        //         SHOP_CONSTANTS.SHOP_TILE_DESC_OFFSET_Y,
+        //     text: "",
+        //     style: paragraphText({
+        //         fontSize: `${SHOP_CONSTANTS.SHOP_TILE_FONT_SIZE}px`,
+        //         color: "white",
+        //         wordWrapWidth: 225,
+        //         lineSpacing: 18,
+        //     }),
+        // });
         this.numPadImage = grid.scene.make.text({
             x: x * SHOP_CONSTANTS.NUM_PAD_TILE_WIDTH,
             y: y * SHOP_CONSTANTS.NUM_PAD_TILE_HEIGHT,
@@ -100,9 +115,57 @@ export default class ShopItem {
             },
         });
 
+        this.tooltipInnerObject = this.grid.scene.add.container(
+            TOOLTIP_CONSTANTS.X_OFFSET,
+            TOOLTIP_CONSTANTS.Y_OFFSET,
+        );
+
+        this.tooltipName = grid.scene.make.text({
+            x: 0,
+            y: 0,
+            text: "",
+            style: paragraphText({
+                wordWrapWidth: TOOLTIP_CONSTANTS.BASE_WIDTH,
+                align: "left",
+            }),
+        });
+        this.tooltipDescription = grid.scene.make.text({
+            x: 0,
+            y: 128,
+            text: "",
+            style: paragraphText({
+                wordWrapWidth: TOOLTIP_CONSTANTS.BASE_WIDTH,
+                align: "left",
+            }),
+        });
+        this.tooltipCost = grid.scene.make.text({
+            x: 0,
+            y: 96,
+            text: "",
+            style: paragraphText({
+                align: "left",
+                wordWrapWidth: TOOLTIP_CONSTANTS.BASE_WIDTH,
+            }),
+        });
+        this.tooltipImage = grid.scene.make.text({
+            x: 0,
+            y: 64,
+            text: "",
+            style: paragraphText({
+                wordWrapWidth: TOOLTIP_CONSTANTS.BASE_WIDTH,
+                fontSize: "32px",
+                align: "left",
+            }),
+        });
+
+        this.tooltipInnerObject.add(this.tooltipName);
+        this.tooltipInnerObject.add(this.tooltipDescription);
+        this.tooltipInnerObject.add(this.tooltipCost);
+        this.tooltipInnerObject.add(this.tooltipImage);
+
         grid.board.add(this.tile);
-        grid.board.add(this.name);
-        grid.board.add(this.description);
+        // grid.board.add(this.name);
+        // grid.board.add(this.description);
         grid.board.add(this.cost);
 
         grid.numPadBoard.add(this.numPadImage);
@@ -113,14 +176,24 @@ export default class ShopItem {
         this.type = itemToAssign.id;
         this.item = itemToAssign;
         this.tile.setText(itemToAssign.icon);
-        this.name.setText(itemToAssign.name);
-        this.description.setText(itemToAssign.description);
+        this.tooltipImage.setText(itemToAssign.icon);
+        // this.name.setText(itemToAssign.name);
+        this.tooltipName.setText(itemToAssign.name);
+        // this.description.setText(itemToAssign.description);
+        this.tooltipDescription.setText(itemToAssign.description);
         this.cost.setText(`$${itemToAssign.cost}`);
+        this.tooltipCost.setText(`$${itemToAssign.cost}`);
         this.numPadImage.setText(itemToAssign.icon);
         this.numPadImage.setInteractive();
         this.numPadImage.on("pointerdown", this.onClick, this);
         this.tile.setInteractive();
         this.tile.on("pointerdown", this.onClick, this);
+
+        const itemTooltip = addTooltip(this.grid.scene, this.tile, {
+            // width: 300,
+            // height: 500,
+            innerObject: this.tooltipInnerObject,
+        });
     }
 
     chooseRandomShopItem(): shopItemType {
@@ -197,60 +270,60 @@ export default class ShopItem {
                     break;
                 case "trashTileRemove":
                     GameState.removeTrashNum += itemEffect.trashTileRemove;
-                    EventBus.emit(
-                        UI_EVENTS.DISPLAY_MESSAGE,
-                        `Added ${itemEffect.trashTileRemove} more trash tile removal`,
-                    );
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message: `Added ${itemEffect.trashTileRemove} more trash tile removal`,
+                    });
                     break;
                 case "flawlessVictoryDouble":
                     GameState.fightFlawlessGoldReward += 2;
-                    EventBus.emit(
-                        UI_EVENTS.DISPLAY_MESSAGE,
-                        `Doubled Flawless Victory Reward`,
-                    );
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message: `Doubled Flawless Victory Reward`,
+                    });
                     break;
                 case "shopItemsAdd":
                     GameState.shopItemNumber += itemEffect.shopItemsAdd;
-                    EventBus.emit(
-                        UI_EVENTS.DISPLAY_MESSAGE,
-                        `Added ${itemEffect.trashTileRemove} items to future Vending Machines`,
-                    );
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message: `Added ${itemEffect.shopItemsAdd} items to future Vending Machines`,
+                    });
                     break;
                 case "damage_reduce":
                     GameState.playerDamageReduction += itemEffect.damage_reduce;
-                    EventBus.emit(
-                        UI_EVENTS.DISPLAY_MESSAGE,
-                        "Damage Reduction Increased",
-                    );
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message: "Damage Reduction Increased",
+                    });
                     break;
                 case "luckAdd":
                     GameState.player.luck += itemEffect.luckAdd;
-                    EventBus.emit(
-                        UI_EVENTS.DISPLAY_MESSAGE,
-                        "Up all night to get Lucky 🌟",
-                    );
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message: "Up all night to get Lucky 🌟",
+                    });
                     break;
                 case "fightGridExpand":
                     GameState.fightGridHeight += itemEffect.fightGridExpand;
                     GameState.fightGridWidth += itemEffect.fightGridExpand;
-                    EventBus.emit(
-                        UI_EVENTS.DISPLAY_MESSAGE,
-                        "Room size width and height increased",
-                    );
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message: "Room size width and height increased",
+                    });
                     break;
                 case "bombNumberReduce":
                     GameState.bombNum -= itemEffect.bombNumberReduce;
-                    EventBus.emit(
-                        UI_EVENTS.DISPLAY_MESSAGE,
-                        "Reduced Bomb Number",
-                    );
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message: "Reduced Bomb Number",
+                    });
                     break;
                 case "fightGoldIncrease":
                     GameState.fightGoldReward += itemEffect.fightGoldIncrease;
-                    EventBus.emit(
-                        UI_EVENTS.DISPLAY_MESSAGE,
-                        "Increased Room reward Gold",
-                    );
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message: "Increased Room reward Gold",
+                    });
                     break;
             }
         });

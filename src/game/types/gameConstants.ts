@@ -3,7 +3,7 @@ import { FIGHT_INPUT_TYPES } from "@/game/types/fightConstants";
 export const GAME_CONSTANTS = {
     startingHp: 5,
     startingMaxHp: 5,
-    startingGold: 5,
+    startingGold: 50,
     startingLevel: 1,
     startingBombIntensity: 2,
     startingLuck: 0,

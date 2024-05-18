@@ -7,10 +7,15 @@ export default class EventDisplay {
     private scene: Phaser.Scene;
     private event: { type: string; message: string };
     private fadeDelay: string;
+    private displayArray: Phaser.GameObjects.Container[];
+    private displayContainer: Phaser.GameObjects.Container;
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
         this.create();
+        this.displayContainer = this.scene.add.container(50, 900);
+        this.displayArray = [] as Phaser.GameObjects.Container[];
+        this.displayContainer.add(this.displayArray);
     }
 
     create() {
@@ -21,15 +26,35 @@ export default class EventDisplay {
         event: { type: string; message: string },
         fadeDelay?: string,
     ) {
+        const eventContainer = this.scene.add.container(0, 0);
         const eventText = this.scene.add.text(
-            50,
-            this.scene.scale.height / 2 + Phaser.Math.Between(350, 500),
+            30,
+            20,
             event.message,
-            largeText({}),
+            largeText({ wordWrapWidth: 450 }),
         );
+        const eventBackground = this.scene.add
+            .image(0, 0, "clipboard")
+            .setOrigin(0, 0)
+            .setDisplaySize(500, eventText.height + 50);
+
+        eventContainer.add(eventBackground);
+        eventContainer.add(eventText);
+
+        this.displayContainer.add(eventContainer);
+        this.displayArray.push(eventContainer);
+        this.displayArray.forEach((item, index) => {
+            item.setPosition(
+                0,
+                index === this.displayArray.length - 1
+                    ? 0
+                    : (item.y -= eventBackground.displayHeight + 15),
+            );
+        });
         this.scene.add.tween({
-            targets: eventText,
-            duration: fadeDelay || 3000,
+            targets: eventContainer,
+            duration: fadeDelay || 1000,
+            delay: 2000,
             alpha: 0,
         });
     }

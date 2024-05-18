@@ -20,6 +20,14 @@ export const UI_EVENTS = {
     UPDATE_NAME: "UPDATE_NAME",
 };
 
+export const UI_MESSAGE_TYPES = {
+    ERROR: "ERROR",
+    INFO: "INFO",
+    SUCCESS: "SUCCESS",
+    UNLOCK: "UNLOCK",
+    WARNING: "WARNING",
+};
+
 export const GAME_EVENTS = {
     GAME_OVER: "GAME_OVER",
     UNLOCK_ITEM: "UNLOCK_ITEM",
@@ -32,6 +40,7 @@ export const FIGHT_EVENTS = {
     USE_LIMITED_INPUT: "USE_LIMITED_INPUT",
     ADD_INPUT_TYPE: "ADD_INPUT_TYPE",
     REMOVE_INPUT_TYPE: "REMOVE_INPUT_TYPE",
+    FIGHT_WON: "FIGHT_WON",
 };
 
 export const SCENE_EVENTS = {

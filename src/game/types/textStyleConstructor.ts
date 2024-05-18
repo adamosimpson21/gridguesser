@@ -18,9 +18,9 @@ export const paragraphText = ({
         fontFamily: fontFamily || "Courier",
         color: color || "#000",
         stroke: "#000",
-        strokeThickness: 3,
+        strokeThickness: 1,
         align: align || "center",
-        lineSpacing: lineSpacing || 24,
+        lineSpacing: lineSpacing || 6,
         wordWrap: {
             width: wordWrapWidth || 450,
             useAdvancedWrap: true,
@@ -50,9 +50,9 @@ export const headingText = ({
         stroke: "#000",
         strokeThickness: 2,
         align: align || "center",
-        lineSpacing: lineSpacing || 32,
+        lineSpacing: lineSpacing || 16,
         wordWrap: {
-            width: wordWrapWidth || 450,
+            width: wordWrapWidth || 550,
             useAdvancedWrap: true,
         },
     };
@@ -76,13 +76,13 @@ export const largeText = ({
     return {
         fontSize: fontSize || "42px",
         fontFamily: fontFamily || "Courier",
-        color: color || "#000",
+        color: color || "#fff",
         stroke: "#000",
         strokeThickness: 3,
         align: align || "center",
-        lineSpacing: lineSpacing || 42,
+        lineSpacing: lineSpacing || 22,
         wordWrap: {
-            width: wordWrapWidth || 450,
+            width: wordWrapWidth || 650,
             useAdvancedWrap: true,
         },
     };
@@ -110,9 +110,9 @@ export const mainMenuText = ({
         stroke: "#000",
         strokeThickness: 8,
         align: align || "center",
-        lineSpacing: lineSpacing || 52,
+        lineSpacing: lineSpacing || 26,
         wordWrap: {
-            width: wordWrapWidth || 450,
+            width: wordWrapWidth || 750,
             useAdvancedWrap: true,
         },
     };

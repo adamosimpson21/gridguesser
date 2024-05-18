@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 import FightGridCell from "./FightGridCell";
 import {
+    FIGHT_EVENTS,
     GAME_EVENTS,
     PLAYER_EVENTS,
     SCENE_EVENTS,
@@ -16,6 +17,8 @@ import {
     FIGHT_INPUT_TYPES,
 } from "@/game/types/fightConstants";
 import { changeInputScrollWheel } from "@/game/functions/changeInputScrollWheel";
+import { flavorConstants } from "@/game/types/flavorConstants";
+import { headingText, paragraphText } from "@/game/types/textStyleConstructor";
 
 export default class FightGrid extends GameObject {
     public scene: Fight;
@@ -41,6 +44,7 @@ export default class FightGrid extends GameObject {
     public endGameTrashCan: Phaser.GameObjects.Image;
     public endGameTrashCanOver: Phaser.GameObjects.Image;
     public returnButton: Phaser.GameObjects.Text;
+    private returnButtonSubtext: Phaser.GameObjects.Text;
 
     constructor(scene: Fight, width: number, height: number, bombs: number) {
         super(scene, "fightGrid");
@@ -146,21 +150,18 @@ export default class FightGrid extends GameObject {
             .setDepth(3);
 
         this.returnButton = this.scene.make.text({
-            x: 80,
+            x: 75,
             y: 150,
-            text: "Room Cleaned! Back to the office",
-            style: {
-                fontSize: 38,
-                color: "black",
-                wordWrap: {
-                    width: 350,
-                    useAdvancedWrap: true,
-                },
-            },
+            text: "Room Cleaned! Back to the Lobby",
+            style: headingText({
+                wordWrapWidth: 350,
+                align: "left",
+                lineSpacing: 24,
+            }),
         });
 
-        this.returnButton.setInteractive().setDepth(4);
-        this.returnButton.on("pointerdown", () => {
+        this.trashBG.setInteractive().setDepth(4);
+        this.trashBG.on("pointerdown", () => {
             this.scene.tweens.add({
                 targets: this.endGameBoard,
                 y: 800,
@@ -192,6 +193,22 @@ export default class FightGrid extends GameObject {
 
         this.endGameBoard.add(this.trashBG);
         this.endGameBoard.add(this.returnButton);
+        this.endGameBoard.add(
+            (this.returnButtonSubtext = this.scene.make.text({
+                x: 80,
+                y: 350,
+                text: `$${GameState.fightGoldReward} earned`,
+                style: headingText({}),
+            })),
+        );
+        this.endGameBoard.add(
+            this.scene.make.text({
+                x: 80,
+                y: 400,
+                text: `${GameState.bombNumFightIncrement} ${flavorConstants.ENEMY_NAME_PLURAL} added`,
+                style: headingText({ wordWrapWidth: 350 }),
+            }),
+        );
 
         this.endGameBoard.add(this.endGameTrashCanOver);
 
@@ -245,17 +262,18 @@ export default class FightGrid extends GameObject {
                     .text(
                         80,
                         300,
-                        `Clean Sweep! $${GameState.fightFlawlessGoldReward} extra`,
-                        {
-                            fontSize: 38,
-                            color: "black",
-                            wordWrap: {
-                                width: 350,
-                                useAdvancedWrap: true,
-                            },
-                        },
+                        `$${GameState.fightFlawlessGoldReward} Clean Sweep bonus!`,
+                        headingText({
+                            wordWrapWidth: 350,
+                            lineSpacing: 24,
+                            fontSize: "24px",
+                        }),
                     )
                     .setDepth(3),
+            );
+
+            this.returnButtonSubtext.setText(
+                `$${GameState.fightGoldReward} + $${GameState.fightFlawlessGoldReward} earned`,
             );
         }
 
@@ -269,7 +287,7 @@ export default class FightGrid extends GameObject {
         });
 
         EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, GameState.fightGoldReward, true);
-        GameState.bombNum += FIGHT_CONSTANTS.BOMB_NUM_INCREMENT;
+        EventBus.emit(FIGHT_EVENTS.FIGHT_WON, false);
     }
 
     checkWinState() {

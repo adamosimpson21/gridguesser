@@ -113,7 +113,7 @@ export default class BossFightGrid extends FightGrid {
                 delay: 1000,
                 loop: false,
                 callback: () => {
-                    EventBus.emit(GAME_EVENTS.INCREMENT_LEVEL);
+                    EventBus.emit(FIGHT_EVENTS.FIGHT_WON, true);
                     this.scene.scene.stop(SCENES.Overworld);
                     this.scene.transitionScene(SCENES.Overworld);
                 },

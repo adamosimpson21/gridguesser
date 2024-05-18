@@ -62,6 +62,7 @@ class GameStateClass {
     public umbrellaSize: number;
     public towerSize: number;
     public blockSize: number;
+    public bombNumFightIncrement: number;
 
     constructor() {
         this.isPlaying = true;
@@ -127,6 +128,9 @@ class GameStateClass {
                 this.currentFightInputType = newInputType;
             }
         });
+        EventBus.on(FIGHT_EVENTS.FIGHT_WON, (isBoss: boolean) => {
+            this.fightWon(isBoss);
+        });
     }
 
     create() {
@@ -164,6 +168,7 @@ class GameStateClass {
         this.level = GAME_CONSTANTS.startingLevel;
         this.bombIntensity = GAME_CONSTANTS.startingBombIntensity;
         this.bombNum = GAME_CONSTANTS.startingBombNum;
+        this.bombNumFightIncrement = FIGHT_CONSTANTS.BOMB_NUM_INCREMENT;
         this.overworldGridWidth = GAME_CONSTANTS.startingOverworldGridWidth;
         this.overworldGridHeight = GAME_CONSTANTS.startingOverworldGridHeight;
         this.fightGridWidth = GAME_CONSTANTS.startingFightGridWidth;
@@ -231,6 +236,13 @@ class GameStateClass {
         this.overworldBuffs++;
         this.overworldTraps++;
         this.fightGoldReward += 2;
+    }
+
+    fightWon(isBoss: boolean) {
+        if (isBoss) {
+            this.incrementLevel();
+        }
+        this.bombNum += this.bombNumFightIncrement;
     }
 
     // setBombIntensity(intensity: number) {

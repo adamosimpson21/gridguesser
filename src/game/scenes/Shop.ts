@@ -20,6 +20,7 @@ export class Shop extends Scene {
             "vending_machine",
             "/assets/shop/vendingMachineBlack.png",
         );
+        this.load.image("clipboard", "/assets/hud/longClipboard.png");
     }
 
     create() {

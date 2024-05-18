@@ -9,6 +9,7 @@ import OverworldCell from "@/game/classes/OverworldCell";
 import { CELL_TYPES } from "@/game/types/cells";
 import ShopItem from "@/game/classes/ShopItem";
 import { GameState } from "@/game/classes/GameState";
+import { headingText } from "@/game/types/textStyleConstructor";
 
 export default class ShopGrid {
     public scene: Shop;
@@ -28,38 +29,32 @@ export default class ShopGrid {
         this.height = GameState.shopGridHeight;
         this.size = this.width * this.height;
 
-        this.offset = new Phaser.Math.Vector2(64, 12);
+        this.offset = new Phaser.Math.Vector2(64, 36);
 
-        const x = Math.floor((scene.scale.width - 1600) / 2);
-        const y = Math.floor(
-            scene.scale.height / 2 - (this.height * 48 + 400) / 2,
-        );
+        const x = Math.floor((scene.scale.width - 950) / 2);
+        const y = Math.floor(80);
 
         this.data = [];
         this.board = scene.add.container(x, y);
         this.numPadBoard = scene.add.container(
             1250,
-            (scene.scale.height - 100) / 2,
+            (scene.scale.height - 300) / 2,
         );
 
         this.createBackground();
 
         this.returnButton = this.scene.make.text({
             x: 600,
-            y: 100,
-            text: "👋 Exit Vending Machine 👋",
-            style: {
-                fontSize: "32px",
-                padding: { y: 6 },
-                color: "black",
-            },
+            y: 800,
+            text: "Exit Vending Machine",
+            style: { ...headingText({}), backgroundColor: "green" },
         });
         this.returnButton.setInteractive();
         this.returnButton.on("pointerdown", this.handleReturnButton, this);
         this.vendingMachine = this.scene.add
-            .image(0, 0, "vending_machine")
+            .image(-30, -30, "vending_machine")
             .setOrigin(0, 0)
-            .setScale(2.5, 1)
+            .setScale(2, 1.3)
             .setDepth(0);
 
         this.board.add(this.vendingMachine);

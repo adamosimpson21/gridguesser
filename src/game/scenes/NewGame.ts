@@ -5,6 +5,11 @@ import { GameState } from "@/game/classes/GameState";
 import { GAME_EVENTS, PLAYER_EVENTS } from "@/game/types/events";
 import { NAME_CHOICES } from "@/game/types/gameConstants";
 import { createBackground } from "@/game/functions/background";
+import {
+    largeText,
+    mainMenuText,
+    paragraphText,
+} from "@/game/types/textStyleConstructor";
 
 export class NewGame extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -39,14 +44,12 @@ export class NewGame extends Scene {
         this.nameChoiceBoard = this.add.container(this.scale.width / 2, 350);
 
         this.titleText = this.add
-            .text(this.scale.width / 2, 200, "Choose your Character", {
-                fontFamily: "Arial Black",
-                fontSize: 96,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 8,
-                align: "center",
-            })
+            .text(
+                this.scale.width / 2,
+                200,
+                "Choose your Character",
+                mainMenuText({ fontSize: "69px", wordWrapWidth: 1500 }),
+            )
             .setOrigin(0.5)
             .setDepth(100);
 
@@ -54,13 +57,8 @@ export class NewGame extends Scene {
             this.nameChoiceBoard.add(
                 this.add
                     .text(0, index * 80, name, {
-                        fontFamily: "Arial Black",
-                        fontSize: 48,
-                        color: "#ffffff",
-                        stroke: "#000000",
-                        strokeThickness: 8,
-                        align: "center",
-                        backgroundColor: index === 0 ? "white" : "",
+                        backgroundColor: index === 0 ? "#ECA127" : "",
+                        ...largeText({}),
                     })
                     .setOrigin(0.5)
                     .setDepth(100)
@@ -71,14 +69,12 @@ export class NewGame extends Scene {
         });
 
         this.submitButton = this.add
-            .text(this.scale.width / 2, 850, "Let's Go!", {
-                fontFamily: "Arial Black",
-                fontSize: 96,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 8,
-                align: "center",
-            })
+            .text(
+                this.scale.width / 2,
+                850,
+                "Begin Sweepin'",
+                mainMenuText({ fontSize: "69px" }),
+            )
             .setOrigin(0.5)
             .setDepth(100);
         this.submitButton.setInteractive();
@@ -95,7 +91,7 @@ export class NewGame extends Scene {
         this.nameChoiceBoard.list.forEach(
             (textElement: Phaser.GameObjects.Text) => {
                 if (textElement.name === name) {
-                    textElement.setBackgroundColor("white");
+                    textElement.setBackgroundColor("#ECA127");
                 } else {
                     textElement.setBackgroundColor("transparent");
                 }
