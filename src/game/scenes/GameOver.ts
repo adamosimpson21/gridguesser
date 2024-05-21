@@ -2,6 +2,7 @@ import { EventBus } from "../EventBus";
 import { Scene } from "phaser";
 import { SCENES } from "@/game/types/scenes";
 import { createBackground } from "@/game/functions/background";
+import { largeText } from "@/game/types/textStyleConstructor";
 
 export class GameOver extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -20,25 +21,14 @@ export class GameOver extends Scene {
         this.background = createBackground(this);
 
         this.gameOverText = this.add
-            .text(800, 400, "Game Over", {
-                fontFamily: "Arial Black",
-                fontSize: 64,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 8,
-                align: "center",
-            })
+            .text(800, 400, "Game Over", largeText({}))
             .setOrigin(0.5)
             .setDepth(100);
 
         this.restartGameText = this.add
             .text(800, 600, "Go To Main Menu", {
-                fontFamily: "Arial Black",
-                fontSize: 32,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 8,
-                align: "center",
+                ...largeText({}),
+                backgroundColor: "white",
             })
             .setOrigin(0.5)
             .setDepth(100);

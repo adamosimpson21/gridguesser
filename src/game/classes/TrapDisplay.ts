@@ -4,6 +4,7 @@ import { SCENES } from "@/game/types/scenes";
 import { GameState } from "@/game/classes/GameState";
 import { EventBus } from "@/game/EventBus";
 import { PLAYER_EVENTS } from "@/game/types/events";
+import { headingText, paragraphText } from "@/game/types/textStyleConstructor";
 
 export default class TrapDisplay {
     public scene: Phaser.Scene;
@@ -31,32 +32,35 @@ export default class TrapDisplay {
         this.dialogBox = scene.add.container(250, 250);
         this.dialogBox.add(
             scene.add
-                .image(0, 0, "white_screen")
-                .setDisplaySize(500, 500)
-                .setAlpha(0.8)
+                .image(-50, -100, "clipboard")
+                .setDisplaySize(600, 600)
+                .setAlpha(1)
                 .setOrigin(0, 0),
         );
 
-        this.dialogDescriptionText = scene.add.text(0, 0, trap.description, {
-            wordWrap: { width: 500, useAdvancedWrap: true },
-            fontSize: 32,
-            color: "black",
-        });
+        this.dialogDescriptionText = scene.add.text(
+            0,
+            0,
+            trap.description,
+            paragraphText({ wordWrapWidth: 500 }),
+        );
         this.dialogBox.add(this.dialogDescriptionText);
 
-        this.riskyButton = scene.add.text(0, 300, this.trap.options[0].text, {
-            wordWrap: { width: 500, useAdvancedWrap: true },
-            fontSize: 32,
-            color: "black",
-        });
+        this.riskyButton = scene.add.text(
+            0,
+            300,
+            this.trap.options[0].text,
+            paragraphText({ wordWrapWidth: 500 }),
+        );
         this.riskyButton.setInteractive();
         this.riskyButton.on("pointerdown", this.riskyAction, this);
 
-        this.safeButton = scene.add.text(0, 400, this.trap.options[1].text, {
-            wordWrap: { width: 500, useAdvancedWrap: true },
-            fontSize: 32,
-            color: "black",
-        });
+        this.safeButton = scene.add.text(
+            0,
+            400,
+            this.trap.options[1].text,
+            paragraphText({ wordWrapWidth: 500 }),
+        );
         this.safeButton.setInteractive();
         this.safeButton.on("pointerdown", this.safeAction, this);
 
@@ -99,10 +103,9 @@ export default class TrapDisplay {
 
     makeCloseButton() {
         this.closeButton = this.scene.add
-            .text(0, 500, "Back to Sweepin'", {
-                backgroundColor: "white",
-                fontSize: 64,
-                color: "black",
+            .text(0, 400, "Back to Sweepin'", {
+                ...headingText({ wordWrapWidth: 500 }),
+                backgroundColor: "lightgray",
             })
             .setInteractive()
             .on("pointerdown", this.closeTrap, this);
@@ -116,7 +119,6 @@ export default class TrapDisplay {
             const severity = effect[1];
             switch (effect[0]) {
                 case "gold":
-                    console.log("you are here 2", effect);
                     if (typeof severity === "number" && severity > 0) {
                         EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, severity, true);
                     } else {
@@ -124,7 +126,6 @@ export default class TrapDisplay {
                     }
                     break;
                 case "health":
-                    console.log("you are here 3", effect);
                     if (typeof severity === "number" && severity > 0) {
                         EventBus.emit(PLAYER_EVENTS.GAIN_HP, severity, true);
                     } else {

@@ -107,7 +107,6 @@ export default class BossFightGrid extends FightGrid {
         this.trashBG.on(
             "pointerdown",
             () => {
-                console.log("doing the thing");
                 this.scene.tweens.add({
                     targets: this.endGameBoard,
                     y: 800,

@@ -12,8 +12,6 @@ export const changeInputScrollWheel = (
     const currentIndex = GameState.fightInputTypes.indexOf(
         GameState.currentFightInputType,
     );
-    console.log("fight input types:", GameState.fightInputTypes);
-    console.log("current type:", GameState.currentFightInputType);
     let nextIndex = currentIndex;
     let resolved = false;
     do {

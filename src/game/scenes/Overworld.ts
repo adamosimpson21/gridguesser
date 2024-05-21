@@ -34,6 +34,7 @@ export class Overworld extends Scene {
         this.load.image("player", "assets/overworld/janitor.png");
         this.load.image("carpet_lines", "assets/overworld/carpetLines.png");
         this.load.image("room_cleaned", "assets/overworld/roomCleaned.png");
+        this.load.image("clipboard", "assets/hud/longClipboard.png");
     }
 
     create() {

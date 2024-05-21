@@ -283,7 +283,6 @@ export default class FightGridCell {
         if (offset > 0) {
             offset++;
         }
-        console.log("lying offset:", offset);
         return offset;
     }
 
