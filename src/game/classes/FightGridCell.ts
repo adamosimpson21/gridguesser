@@ -278,11 +278,12 @@ export default class FightGridCell {
     }
 
     generateLyingOffset() {
-        let offset = Phaser.Math.Between(-2, 2);
+        let offset = Phaser.Math.Between(-2, 1);
         // offset is a -2, -1, 1, 2
         if (offset > 0) {
             offset++;
         }
+        console.log("lying offset:", offset);
         return offset;
     }
 

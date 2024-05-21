@@ -15,6 +15,9 @@ import {
     FIGHT_INPUT_TYPES,
 } from "@/game/types/fightConstants";
 import { getInputInstanceUsesAvailable } from "@/game/functions/getInputUsesAvailable";
+import { headingText } from "@/game/types/textStyleConstructor";
+import { Simulate } from "react-dom/test-utils";
+import input = Simulate.input;
 
 class GameStateClass {
     // stores information about current run
@@ -123,13 +126,13 @@ class GameStateClass {
             }
         });
         EventBus.on(FIGHT_EVENTS.CHANGE_INPUT_TYPE, (newInputType: string) => {
-            // validate user has uses of input
-            if (getInputInstanceUsesAvailable(newInputType) != 0) {
-                this.currentFightInputType = newInputType;
-            }
+            this.updateFightInputType(newInputType);
         });
         EventBus.on(FIGHT_EVENTS.FIGHT_WON, (isBoss: boolean) => {
             this.fightWon(isBoss);
+        });
+        EventBus.on(FIGHT_EVENTS.ADD_INPUT_TYPE, (inputType: string) => {
+            this.fightInputTypes.push(inputType);
         });
     }
 
@@ -142,14 +145,12 @@ class GameStateClass {
         // adds this button to current active scene
         const currentScenes = scene.scene.systems.game.scene.getScenes(true);
         this.GameOverBtn = currentScenes[0].add
-            .text(scene.scale.width / 2 - 200, 200, "Oh no! Game Over 😭😭😭", {
-                fontFamily: "Arial Black",
-                fontSize: 38,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 8,
-                align: "center",
-            })
+            .text(
+                scene.scale.width / 2 - 200,
+                200,
+                "Oh no! Game Over 😭😭😭",
+                headingText({}),
+            )
             .setOrigin(0.5)
             .setDepth(100);
         this.GameOverBtn.setInteractive();
@@ -218,10 +219,13 @@ class GameStateClass {
         this.instanceUmbrellaNum = this.umbrellaNum;
         this.instanceTowerNum = this.towerNum;
         this.instanceBlockNum = this.blockNum;
+        EventBus.emit(GAME_EVENTS.RESET_FIGHT_INPUT_MENU);
     }
 
     updateFightInputType(fightInputType: string) {
-        this.currentFightInputType = fightInputType;
+        if (getInputInstanceUsesAvailable(fightInputType) != 0) {
+            this.currentFightInputType = fightInputType;
+        }
     }
     // setLevel(level: number) {
     //     this.level = level;

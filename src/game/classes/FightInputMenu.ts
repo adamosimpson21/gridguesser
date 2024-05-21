@@ -102,7 +102,10 @@ export default class FightInputMenu {
             );
         });
         EventBus.on(FIGHT_EVENTS.ADD_INPUT_TYPE, (newInputType: string) => {
-            this.createInputKey(newInputType, GameState.fightInputTypes.length);
+            this.createInputKey(
+                newInputType,
+                GameState.fightInputTypes.length - 1,
+            );
         });
         EventBus.on(FIGHT_EVENTS.CHANGE_INPUT_TYPE, (newInput: string) => {
             if (getInputInstanceUsesAvailable(newInput) != 0) {
@@ -195,9 +198,8 @@ export default class FightInputMenu {
 
         EventBus.on(GAME_EVENTS.RESET_FIGHT_INPUT_MENU, () => {
             this.populateInputBoard();
+            this.resetInputUses();
         });
-
-        EventBus.on(FIGHT_EVENTS.FIGHT_WON, () => this.resetInputUses(), this);
     }
 
     populateInputBoard() {
@@ -205,10 +207,9 @@ export default class FightInputMenu {
     }
 
     resetInputUses() {
-        console.log("resetting input uses");
         this.inputBoard.list.forEach((inputText: Phaser.GameObjects.Text) => {
             if (inputText.name.slice(-4) === "_NUM") {
-                const inputType = inputText.name.slice(0, 4);
+                const inputType = inputText.name.slice(0, -4);
                 if (inputType === FIGHT_INPUT_TYPES.REMOVE_TRASH) {
                     inputText.setText(`${GameState.instanceRemoveTrashNum}`);
                 } else if (inputType === FIGHT_INPUT_TYPES.REMOVE_BOMB) {
