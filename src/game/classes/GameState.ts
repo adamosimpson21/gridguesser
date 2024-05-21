@@ -243,6 +243,8 @@ class GameStateClass {
         this.overworldBuffs++;
         this.overworldTraps++;
         this.fightGoldReward += 2;
+        this.lyingTileNum++;
+        this.trashTileNum++;
     }
 
     fightWon(isBoss: boolean) {
