@@ -182,21 +182,20 @@ export default class ShopItem {
             .setText(itemToAssign.icon)
             .setPosition(0, this.tooltipName.displayHeight + 8);
         // this.description.setText(itemToAssign.description);
-        this.tooltipDescription
-            .setText(itemToAssign.description)
-            .setPosition(
-                0,
-                this.tooltipImage.y + this.tooltipImage.displayHeight + 8,
-            );
-        this.cost.setText(`$${itemToAssign.cost}`);
         this.tooltipCost
             .setText(`$${itemToAssign.cost}`)
             .setPosition(
                 0,
-                this.tooltipDescription.y +
-                    this.tooltipDescription.displayHeight +
-                    8,
+                this.tooltipImage.y + this.tooltipImage.displayHeight + 8,
             );
+        this.tooltipDescription
+            .setText(itemToAssign.description)
+            .setPosition(
+                0,
+                this.tooltipCost.y + this.tooltipCost.displayHeight + 8,
+            );
+        this.cost.setText(`$${itemToAssign.cost}`);
+
         this.numPadImage.setText(itemToAssign.icon);
         this.numPadImage.setInteractive();
         this.numPadImage.on("pointerdown", this.onClick, this);

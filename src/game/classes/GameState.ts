@@ -155,6 +155,7 @@ class GameStateClass {
         this.GameOverBtn.setInteractive();
         this.GameOverBtn.on("pointerdown", () => {
             scene.scene.stop(SCENES.Fight);
+            scene.scene.stop(SCENES.BossFight);
             scene.scene.start(SCENES.GameOver);
         });
     }
@@ -206,6 +207,8 @@ class GameStateClass {
             GAME_CONSTANTS.startingFightFlawlessGoldReward;
 
         this.fightBossGoldReward = GAME_CONSTANTS.startingFightBossGoldReward;
+
+        EventBus.emit(GAME_EVENTS.RESET_FIGHT_INPUT_MENU);
     }
 
     resetFightConstants() {

@@ -20,6 +20,7 @@ import {
 } from "@/game/types/fightConstants";
 import { KEY_ITEMS, keyItemType } from "@/game/types/keyItems";
 import { getInputUsesAvailable } from "@/game/functions/getInputUsesAvailable";
+import { headingText } from "@/game/types/textStyleConstructor";
 
 export default class BossFightGrid extends FightGrid {
     constructor(
@@ -72,16 +73,17 @@ export default class BossFightGrid extends FightGrid {
                         80,
                         300,
                         `Clean Sweep! $${GameState.fightFlawlessGoldReward} extra`,
-                        {
-                            fontSize: 38,
-                            color: "black",
-                            wordWrap: {
-                                width: 350,
-                                useAdvancedWrap: true,
-                            },
-                        },
+                        headingText({
+                            wordWrapWidth: 350,
+                            lineSpacing: 24,
+                            fontSize: "24px",
+                        }),
                     )
                     .setDepth(3),
+            );
+
+            this.returnButtonSubtext.setText(
+                `$${GameState.fightGoldReward} + $${GameState.fightFlawlessGoldReward} earned`,
             );
         }
 
@@ -90,6 +92,8 @@ export default class BossFightGrid extends FightGrid {
             GameState.fightGoldReward + GameState.fightBossGoldReward,
             true,
         );
+
+        EventBus.emit(FIGHT_EVENTS.FIGHT_WON, true);
 
         this.scene.tweens.add({
             targets: this.endGameBoard,
@@ -100,26 +104,30 @@ export default class BossFightGrid extends FightGrid {
             y: 600,
         });
 
-        this.returnButton.on("pointerdown", () => {
-            this.scene.tweens.add({
-                targets: this.endGameBoard,
-                y: 800,
-            });
-            this.scene.tweens.add({
-                targets: [this.endGameTrashCan, this.endGameTrashCanOver],
-                y: 0,
-            });
-            this.scene.time.addEvent({
-                delay: 1000,
-                loop: false,
-                callback: () => {
-                    EventBus.emit(FIGHT_EVENTS.FIGHT_WON, true);
-                    this.scene.scene.stop(SCENES.Overworld);
-                    this.scene.transitionScene(SCENES.Overworld);
-                },
-                callbackScope: this,
-            });
-        });
+        this.trashBG.on(
+            "pointerdown",
+            () => {
+                console.log("doing the thing");
+                this.scene.tweens.add({
+                    targets: this.endGameBoard,
+                    y: 800,
+                });
+                this.scene.tweens.add({
+                    targets: [this.endGameTrashCan, this.endGameTrashCanOver],
+                    y: 0,
+                });
+                this.scene.time.addEvent({
+                    delay: 1000,
+                    loop: false,
+                    callback: () => {
+                        this.scene.scene.stop(SCENES.Overworld);
+                        this.scene.transitionScene(SCENES.Overworld);
+                    },
+                    callbackScope: this,
+                });
+            },
+            this,
+        );
     }
 
     createBossEndModal(flawless: boolean) {
@@ -165,7 +173,10 @@ export default class BossFightGrid extends FightGrid {
                 const keyToAdd =
                     totalKeysAvailable[
                         Math.floor(
-                            Phaser.Math.Between(0, totalKeysAvailable.length),
+                            Phaser.Math.Between(
+                                0,
+                                totalKeysAvailable.length - 1,
+                            ),
                         )
                     ];
                 if (!threeKeys.includes(keyToAdd)) {

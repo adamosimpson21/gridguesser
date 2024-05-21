@@ -1,6 +1,6 @@
 import { EventBus } from "@/game/EventBus";
 import { GAME_EVENTS, PLAYER_EVENTS, UI_EVENTS } from "@/game/types/events";
-import { shopItemType } from "@/game/types/shopItems";
+import { shopItemType, testingItems } from "@/game/types/shopItems";
 import { GameState } from "@/game/classes/GameState";
 import { GAME_CONSTANTS } from "@/game/types/gameConstants";
 export class PlayerClass {
@@ -104,22 +104,34 @@ export class PlayerClass {
         this.gold = GAME_CONSTANTS.startingGold;
         this.luck = GAME_CONSTANTS.startingLuck;
         this.upgrades = [];
-        EventBus.emit(UI_EVENTS.UPDATE_HEALTH, this.hp, this.maxHp, true);
-        EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, true);
+        EventBus.emit(UI_EVENTS.UPDATE_HEALTH, this.hp, this.maxHp, 0, true);
+        EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, 0, true);
         EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, this.upgrades, true);
     }
 
     updateUpgrades(upgrade: shopItemType, gained: boolean, silent?: boolean) {
         if (gained) {
             this.upgrades.push(upgrade);
-            EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, this.upgrades, silent);
+            EventBus.emit(
+                UI_EVENTS.UPDATE_UPGRADES,
+                this.upgrades,
+                upgrade,
+                gained,
+                silent,
+            );
         } else {
             const index = this.upgrades.findIndex(
                 (item) => item.id === upgrade.id,
             );
             if (index !== -1) {
                 this.upgrades = this.upgrades.splice(index, 1);
-                EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, this.upgrades, silent);
+                EventBus.emit(
+                    UI_EVENTS.UPDATE_UPGRADES,
+                    this.upgrades,
+                    upgrade,
+                    gained,
+                    silent,
+                );
             }
         }
     }
@@ -130,31 +142,35 @@ export class PlayerClass {
     }
 
     updateHp(hp?: number, maxHp?: number, silent?: boolean) {
-        // console.log("hp, maxhp, silent", hp, maxHp, silent);
+        const prevHp = this.hp;
         let hpToUpdate = hp || this.hp;
+        // cover corner case where hp === 0
         if (hp === 0) {
             hpToUpdate = hp;
         }
         let maxHpToUpdate = maxHp || this.hp;
+        // cover corner case where maxHp === 0
         if (maxHp === 0) {
             maxHpToUpdate = maxHp;
         }
+        // if maxhp is somehow 0 or negative, let them live
         if (maxHpToUpdate <= 0) {
             maxHpToUpdate = 1;
         }
         if (hpToUpdate <= 0) {
             EventBus.emit(GAME_EVENTS.GAME_OVER);
-            // hpToUpdate = 0;
         } else if (hpToUpdate >= maxHpToUpdate) {
             hpToUpdate = maxHpToUpdate;
         }
 
         this.hp = hpToUpdate;
         this.maxHp = maxHpToUpdate;
+        const hpChange = this.hp - prevHp;
         EventBus.emit(
             UI_EVENTS.UPDATE_HEALTH,
             hpToUpdate,
             maxHpToUpdate,
+            hpChange,
             silent,
         );
     }
@@ -169,6 +185,11 @@ export class PlayerClass {
 
         this.gold = goldToUpdate;
 
-        EventBus.emit(UI_EVENTS.UPDATE_GOLD, goldToUpdate, silent);
+        EventBus.emit(
+            UI_EVENTS.UPDATE_GOLD,
+            goldToUpdate,
+            goldDifference,
+            silent,
+        );
     }
 }

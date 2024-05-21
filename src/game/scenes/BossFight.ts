@@ -53,11 +53,11 @@ export class BossFight extends Scene {
 
         this.background = createBackground(this);
 
-        const gridWidth = Math.floor(GameState.fightGridWidth * 1.5);
-        const gridHeight = Math.floor(GameState.fightGridHeight * 1.5);
+        const gridWidth = Math.floor(GameState.fightGridWidth * 1.25);
+        const gridHeight = Math.floor(GameState.fightGridHeight * 1.25);
         // testing nerf
-        // const numBombs = Math.floor(GameState.bombNum * 2);
-        const numBombs = Math.floor(GameState.bombNum);
+        const numBombs = Math.floor(GameState.bombNum * 2);
+        // const numBombs = Math.floor(GameState.bombNum);
         this.grid = new BossFightGrid(this, gridWidth, gridHeight, numBombs);
 
         this.input.setDefaultCursor(

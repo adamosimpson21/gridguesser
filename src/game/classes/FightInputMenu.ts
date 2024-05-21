@@ -16,6 +16,7 @@ import {
 } from "@/game/functions/getInputUsesAvailable";
 import { translateNumberToString } from "@/game/functions/translateNumberToString";
 import { changeInputScrollWheel } from "@/game/functions/changeInputScrollWheel";
+import { KEY_ITEMS } from "@/game/types/keyItems";
 
 export default class FightInputMenu {
     public availableInputs: string[];
@@ -191,10 +192,38 @@ export default class FightInputMenu {
                 });
             }
         });
+
+        EventBus.on(GAME_EVENTS.RESET_FIGHT_INPUT_MENU, () => {
+            this.populateInputBoard();
+        });
+
+        EventBus.on(FIGHT_EVENTS.FIGHT_WON, () => this.resetInputUses(), this);
     }
 
     populateInputBoard() {
         GameState.fightInputTypes.forEach(this.createInputKey, this);
+    }
+
+    resetInputUses() {
+        console.log("resetting input uses");
+        this.inputBoard.list.forEach((inputText: Phaser.GameObjects.Text) => {
+            if (inputText.name.slice(-4) === "_NUM") {
+                const inputType = inputText.name.slice(0, 4);
+                if (inputType === FIGHT_INPUT_TYPES.REMOVE_TRASH) {
+                    inputText.setText(`${GameState.instanceRemoveTrashNum}`);
+                } else if (inputType === FIGHT_INPUT_TYPES.REMOVE_BOMB) {
+                    inputText.setText(`${GameState.instanceRemoveBombNum}`);
+                } else if (inputType === FIGHT_INPUT_TYPES.REMOVE_LIES) {
+                    inputText.setText(`${GameState.instanceRemoveLyingNum}`);
+                } else if (inputType === FIGHT_INPUT_TYPES.UMBRELLA) {
+                    inputText.setText(`${GameState.instanceUmbrellaNum}`);
+                } else if (inputType === FIGHT_INPUT_TYPES.TOWER) {
+                    inputText.setText(`${GameState.instanceTowerNum}`);
+                } else if (inputType === FIGHT_INPUT_TYPES.BLOCK) {
+                    inputText.setText(`${GameState.instanceBlockNum}`);
+                }
+            }
+        });
     }
 
     hideInputHint() {
@@ -217,10 +246,11 @@ export default class FightInputMenu {
     }
 
     createInputKey(input: string, index: number) {
+        const displayName = KEY_ITEMS[input].name;
         const inputIcon = this.scene.make.text({
             x: 28,
             y: index * 64 - 20,
-            text: `${UppercaseFirst(input.toLowerCase())}`,
+            text: `${displayName}`,
             style: {
                 color:
                     GameState.currentFightInputType === input

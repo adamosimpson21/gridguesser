@@ -1,4 +1,19 @@
 export const KEY_ITEMS: { [key: string]: keyItemType } = {
+    REVEAL: {
+        id: "REVEAL",
+        name: "Reveal",
+        description: "Reveals a spot",
+    },
+    FLAG: {
+        id: "FLAG",
+        name: "Caution",
+        description: "Creates a caution sign",
+    },
+    QUERY: {
+        id: "QUERY",
+        name: "Curiosity",
+        description: "Questions a spot",
+    },
     REMOVE_TRASH: {
         id: "REMOVE_TRASH",
         name: "Remove Trash",

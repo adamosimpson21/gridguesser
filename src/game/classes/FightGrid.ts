@@ -44,7 +44,7 @@ export default class FightGrid extends GameObject {
     public endGameTrashCan: Phaser.GameObjects.Image;
     public endGameTrashCanOver: Phaser.GameObjects.Image;
     public returnButton: Phaser.GameObjects.Text;
-    private returnButtonSubtext: Phaser.GameObjects.Text;
+    public returnButtonSubtext: Phaser.GameObjects.Text;
 
     constructor(scene: Fight, width: number, height: number, bombs: number) {
         super(scene, "fightGrid");
@@ -156,7 +156,7 @@ export default class FightGrid extends GameObject {
             style: headingText({
                 wordWrapWidth: 350,
                 align: "left",
-                lineSpacing: 24,
+                lineSpacing: 20,
             }),
         });
 

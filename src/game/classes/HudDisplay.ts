@@ -1,11 +1,17 @@
 import { Scene } from "phaser";
 import { EventBus } from "@/game/EventBus";
-import { SCENE_EVENTS, UI_EVENTS } from "@/game/types/events";
-import { shopItemType } from "@/game/types/shopItems";
+import {
+    GAME_EVENTS,
+    PLAYER_EVENTS,
+    SCENE_EVENTS,
+    UI_EVENTS,
+} from "@/game/types/events";
+import { shopItemType, testingItems } from "@/game/types/shopItems";
 import { GameState } from "@/game/classes/GameState";
 import FightInputMenu from "@/game/classes/FightInputMenu";
 import { Hud } from "@/game/scenes/Hud";
 import { headingText, paragraphText } from "@/game/types/textStyleConstructor";
+import { addTooltip, TOOLTIP_CONSTANTS } from "@/game/functions/addTooltip";
 
 export default class HudDisplay {
     public scene: Hud;
@@ -16,7 +22,7 @@ export default class HudDisplay {
     public nameDisplay: Phaser.GameObjects.Text;
     public hpDisplay: Phaser.GameObjects.Text;
     public goldDisplay: Phaser.GameObjects.Text;
-    public upgradeDisplay: Phaser.GameObjects.Text;
+    public upgradeDisplay: Phaser.GameObjects.Container;
     public height: number;
     public width: number;
     public hudBoard: Phaser.GameObjects.Container;
@@ -79,15 +85,13 @@ export default class HudDisplay {
         this.goldDisplay = this.scene.add.text(
             this.xOffset,
             this.yOffset + this.lineHeight * 1,
-            `$ ${gold} `,
+            `$${gold} `,
             headingText({}),
         );
 
-        this.upgradeDisplay = this.scene.add.text(
+        this.upgradeDisplay = this.scene.add.container(
             this.xOffset,
             this.yOffset + this.lineHeight * 4,
-            "",
-            headingText({}),
         );
 
         this.hudBoard.add(this.clipboard);
@@ -102,28 +106,62 @@ export default class HudDisplay {
         EventBus.on(SCENE_EVENTS.POPULATE_FIGHT, () => {
             this.fightInputDisplay.show();
         });
+
+        // testingItems.forEach((upgrade) => {
+        //     EventBus.emit(PLAYER_EVENTS.GAIN_UPGRADE, upgrade);
+        // });
     }
 
     create() {
         EventBus.on(UI_EVENTS.UPDATE_NAME, (name: string) => {
             this.nameDisplay.setText(name);
         });
-        EventBus.on(UI_EVENTS.UPDATE_GOLD, (gold: number, silent?: boolean) => {
-            this.goldDisplay.setText(`$ ${gold} `);
-            if (!silent) {
-                EventBus.emit(
-                    UI_EVENTS.DISPLAY_MESSAGE,
-                    {
-                        type: UI_EVENTS.UPDATE_GOLD,
-                        message: `New money amount $${gold}`,
-                    },
-                    "5000",
-                );
-            }
-        });
+        EventBus.on(
+            UI_EVENTS.UPDATE_GOLD,
+            (gold: number, goldDifference: number, silent?: boolean) => {
+                this.goldDisplay.setText(`$${gold} `);
+                if (!silent) {
+                    const goldChangeTween = this.scene.make
+                        .text({
+                            x: 0,
+                            y: 0,
+                            text: `${goldDifference}`,
+                            style: headingText({ fontSize: "40px" }),
+                        })
+                        .setPosition(
+                            this.goldDisplay.x + 30,
+                            this.goldDisplay.y + 30,
+                        );
+
+                    if (goldDifference >= 0) {
+                        // gain life
+                        goldChangeTween.setColor("green");
+                    } else {
+                        // lose life
+                        goldChangeTween.setColor("red");
+                    }
+                    this.hudBoard.add(goldChangeTween);
+                    this.scene.tweens.add({
+                        targets: goldChangeTween,
+                        y: goldDifference >= 0 ? "-=75" : "+=75",
+                        alpha: 0,
+                        duration: 3500,
+                    });
+                    // EventBus.emit(
+                    //     UI_EVENTS.DISPLAY_MESSAGE,
+                    //     {
+                    //         type: UI_EVENTS.UPDATE_GOLD,
+                    //         message: `New money amount $${gold}`,
+                    //     },
+                    //     "5000",
+                    // );
+                }
+            },
+        );
         EventBus.on(
             UI_EVENTS.UPDATE_HEALTH,
-            (hp: number, maxHp: number, silent?: boolean) => {
+            (hp: number, maxHp: number, hpChange: number, silent?: boolean) => {
+                // low hp warning
                 if (
                     hp <=
                     GameState.bombIntensity - GameState.playerDamageReduction
@@ -133,34 +171,155 @@ export default class HudDisplay {
                     this.hpDisplay.setStyle({ color: "black" });
                 }
                 this.hpDisplay.setText(`Health: ${hp}/${maxHp}`);
+
                 if (!silent) {
-                    EventBus.emit(
-                        UI_EVENTS.DISPLAY_MESSAGE,
-                        {
-                            type: UI_EVENTS.UPDATE_HEALTH,
-                            message: `New HP amount ${hp}`,
-                        },
-                        "5000",
-                    );
+                    const hpChangeTween = this.scene.make
+                        .text({
+                            x: 0,
+                            y: 0,
+                            text: `${hpChange}`,
+                            style: headingText({ fontSize: "40px" }),
+                        })
+                        .setPosition(
+                            this.hpDisplay.x + 150,
+                            this.hpDisplay.y + 30,
+                        );
+
+                    if (hpChange >= 0) {
+                        // gain life
+                        hpChangeTween.setColor("green");
+                    } else {
+                        // lose life
+                        hpChangeTween.setColor("red");
+                    }
+                    this.hudBoard.add(hpChangeTween);
+                    this.scene.tweens.add({
+                        targets: hpChangeTween,
+                        y: hpChange >= 0 ? "-=75" : "+=75",
+                        alpha: 0,
+                        duration: 3500,
+                    });
                 }
+
+                // if (!silent) {
+                //     EventBus.emit(
+                //         UI_EVENTS.DISPLAY_MESSAGE,
+                //         {
+                //             type: UI_EVENTS.UPDATE_HEALTH,
+                //             message: `New HP amount ${hp}`,
+                //         },
+                //         "5000",
+                //     );
+                // }
             },
         );
         EventBus.on(
             UI_EVENTS.UPDATE_UPGRADES,
-            (upgrades: shopItemType[], silent?: boolean) => {
-                this.upgradeDisplay.setText(
-                    `${upgrades.map((obj) => obj.icon).join(" ")}`,
+            (
+                upgrades: shopItemType[],
+                upgrade: shopItemType,
+                gained: boolean,
+                silent?: boolean,
+            ) => {
+                const upgradeTweenText = this.scene.make
+                    .text({
+                        x: ((upgrades.length - 1) % 6) * 56 + 30,
+                        y:
+                            Math.floor((upgrades.length - 1) / 6) * 48 +
+                            this.upgradeDisplay.displayHeight / 2,
+                        text: upgrade.icon,
+                        style: headingText({}),
+                    })
+                    .setOrigin(0.5, 0.5);
+                this.upgradeDisplay.add(upgradeTweenText);
+
+                const upgradeTooltipInnerObject = this.scene.add.container(
+                    TOOLTIP_CONSTANTS.X_OFFSET,
+                    TOOLTIP_CONSTANTS.Y_OFFSET,
                 );
-                if (!silent) {
-                    EventBus.emit(
-                        UI_EVENTS.DISPLAY_MESSAGE,
+                const tooltipName = this.scene.make.text({
+                    x: 0,
+                    y: 0,
+                    text: upgrade.name,
+                    style: paragraphText({
+                        wordWrapWidth: TOOLTIP_CONSTANTS.BASE_WIDTH,
+                        align: "left",
+                    }),
+                });
+                const tooltipImage = this.scene.make.text({
+                    x: 0,
+                    y: tooltipName.displayHeight + 8,
+                    text: upgrade.icon,
+                    style: paragraphText({
+                        wordWrapWidth: TOOLTIP_CONSTANTS.BASE_WIDTH,
+                        fontSize: "32px",
+                        align: "left",
+                    }),
+                });
+                const tooltipCost = this.scene.make.text({
+                    x: 0,
+                    y: tooltipImage.y + tooltipImage.displayHeight + 8,
+                    text: `$${upgrade.cost}`,
+                    style: paragraphText({
+                        align: "left",
+                        wordWrapWidth: TOOLTIP_CONSTANTS.BASE_WIDTH,
+                    }),
+                });
+                const tooltipDescription = this.scene.make.text({
+                    x: 0,
+                    y: tooltipCost.y + tooltipCost.displayHeight + 8,
+                    text: upgrade.description,
+                    style: paragraphText({
+                        wordWrapWidth: TOOLTIP_CONSTANTS.BASE_WIDTH,
+                        align: "left",
+                    }),
+                });
+
+                upgradeTooltipInnerObject.add([
+                    tooltipName,
+                    tooltipDescription,
+                    tooltipCost,
+                    tooltipImage,
+                ]);
+                addTooltip(this.scene, upgradeTweenText, {
+                    innerObject: upgradeTooltipInnerObject,
+                });
+
+                const upgradeTween = this.scene.tweens.chain({
+                    targets: upgradeTweenText,
+                    tweens: [
                         {
-                            type: UI_EVENTS.UPDATE_UPGRADES,
-                            message: `New Upgrade`,
+                            duration: 250,
+                            scaleX: 2,
+                            scaleY: 2,
                         },
-                        "5000",
-                    );
-                }
+                        {
+                            duration: 250,
+                            angle: 45,
+                        },
+                        {
+                            duration: 500,
+                            angle: -45,
+                        },
+                        {
+                            duration: 250,
+                            angle: 0,
+                        },
+                        {
+                            duration: 500,
+                            scaleX: 1,
+                            scaleY: 1,
+                        },
+                    ],
+                });
+
+                // upgradeTween.on("complete", () => {
+                //     // this.upgradeDisplay.setText(
+                //     //     `${upgrades.map((obj) => obj.icon).join(" ")}`,
+                //     // );
+                //
+                //     upgradeTweenText.setAlpha(0);
+                // });
             },
         );
     }

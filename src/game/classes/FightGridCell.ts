@@ -532,7 +532,6 @@ export default class FightGridCell {
         if (this.trash) {
             textToSet = "🚮";
         } else if (this.lying) {
-            console.log("in lying, offset:", this.lyingOffset, this.index);
             if (this.value + this.lyingOffset <= 0) {
                 textToSet = "0️⃣";
             } else if (this.value + this.lyingOffset > 9) {
@@ -540,7 +539,6 @@ export default class FightGridCell {
             } else {
                 textToSet = values[this.value + this.lyingOffset].toString();
             }
-            console.log("textToSet:", textToSet);
         } else {
             if (values[this.value]) {
                 textToSet = values[this.value].toString();
