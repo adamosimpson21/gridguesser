@@ -7,6 +7,7 @@ import { FIGHT_EVENTS, GAME_EVENTS, SCENE_EVENTS } from "@/game/types/events";
 import FightInputMenu from "@/game/classes/FightInputMenu";
 import { createBackground } from "@/game/functions/background";
 import { changeInputScrollWheel } from "@/game/functions/changeInputScrollWheel";
+import { cameraFadeIn } from "@/game/functions/transitionScene";
 
 export class Fight extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -63,7 +64,7 @@ export class Fight extends Scene {
         this.grid = new FightGrid(this, gridWidth, gridHeight, numBombs);
         GameState.resetFightConstants();
 
-        this.camera.fadeIn(500, 0, 0, 0);
+        cameraFadeIn(this);
 
         EventBus.emit("current-scene-ready", this);
 
@@ -78,41 +79,6 @@ export class Fight extends Scene {
                 EventBus.emit(SCENE_EVENTS.LEAVE_FIGHT);
             },
             this,
-        );
-
-        // scroll wheel to change input type
-        // this.input.on(
-        //     "gameobjectwheel",
-        //     (
-        //         pointer: Phaser.Input.Pointer,
-        //         gameObj: Phaser.GameObjects.GameObject,
-        //         deltaX: number,
-        //         deltaY: number,
-        //     ) => {
-        //         if (deltaY > 0) {
-        //         } else {
-        //         }
-        //     },
-        // );
-    }
-
-    // transitionScene(scene: string) {
-    //     this.camera.fadeOut(1000, 0, 0, 0);
-    //     this.camera.once(
-    //         Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
-    //         (cam: any) => {
-    //             this.scene.start(scene);
-    //         },
-    //     );
-    // }
-
-    transitionScene(scene: string) {
-        this.camera.fadeOut(1000, 0, 0, 0);
-        this.camera.once(
-            Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
-            (cam: any) => {
-                this.scene.start(scene);
-            },
         );
     }
 }

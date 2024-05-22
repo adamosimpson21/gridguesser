@@ -21,6 +21,10 @@ import {
 import { KEY_ITEMS, keyItemType } from "@/game/types/keyItems";
 import { getInputUsesAvailable } from "@/game/functions/getInputUsesAvailable";
 import { headingText } from "@/game/types/textStyleConstructor";
+import {
+    transitionScene,
+    transitionSceneToOverworldFromBoss,
+} from "@/game/functions/transitionScene";
 
 export default class BossFightGrid extends FightGrid {
     constructor(
@@ -49,7 +53,7 @@ export default class BossFightGrid extends FightGrid {
                     delay: 1000,
                     loop: false,
                     callback: () => {
-                        this.scene.transitionScene(SCENES.GameWon);
+                        transitionScene(this.scene, SCENES.GameWon);
                     },
                     callbackScope: this,
                 });
@@ -126,8 +130,7 @@ export default class BossFightGrid extends FightGrid {
                     delay: 1000,
                     loop: false,
                     callback: () => {
-                        this.scene.scene.stop(SCENES.Overworld);
-                        this.scene.transitionScene(SCENES.Overworld);
+                        transitionSceneToOverworldFromBoss(this.scene);
                     },
                     callbackScope: this,
                 });

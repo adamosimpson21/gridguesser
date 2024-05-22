@@ -19,6 +19,7 @@ import {
 import { changeInputScrollWheel } from "@/game/functions/changeInputScrollWheel";
 import { flavorConstants } from "@/game/types/flavorConstants";
 import { headingText, paragraphText } from "@/game/types/textStyleConstructor";
+import { transitionSceneToOverworld } from "@/game/functions/transitionScene";
 
 export default class FightGrid extends GameObject {
     public scene: Fight;
@@ -174,8 +175,7 @@ export default class FightGrid extends GameObject {
                 delay: 1000,
                 loop: false,
                 callback: () => {
-                    this.scene.scene.stop(SCENES.Fight);
-                    this.scene.scene.resume(SCENES.Overworld);
+                    transitionSceneToOverworld(this.scene);
                 },
                 callbackScope: this,
             });

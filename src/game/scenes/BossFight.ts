@@ -128,29 +128,28 @@ export class BossFight extends Scene {
             introText.setAlpha(0);
             introButton.setAlpha(0);
 
-            // const advancedMechanicUnlocked =
-            //     GAME_CONSTANTS.advancedMechanics[
-            //         Math.floor(
-            //             Phaser.Math.Between(
-            //                 0,
-            //                 GAME_CONSTANTS.advancedMechanics.length - 1,
-            //             ),
-            //         )
-            //     ];
-            const advancedMechanicUnlocked = "fightCanHaveMultiBombTiles";
+            const advancedMechanicUnlocked =
+                GAME_CONSTANTS.advancedMechanics[
+                    Math.floor(
+                        Phaser.Math.Between(
+                            0,
+                            GAME_CONSTANTS.advancedMechanics.length - 1,
+                        ),
+                    )
+                ];
             switch (advancedMechanicUnlocked) {
-                // case "fightCanHaveTrashTiles":
-                //     GameState.fightCanHaveTrashTiles = true;
-                //     break;
-                // case "fightCanHaveLyingTiles":
-                //     GameState.fightCanHaveLyingTiles = true;
-                //     break;
+                case "fightCanHaveTrashTiles":
+                    GameState.fightCanHaveTrashTiles = true;
+                    break;
+                case "fightCanHaveLyingTiles":
+                    GameState.fightCanHaveLyingTiles = true;
+                    break;
                 case "fightCanHaveMultiBombTiles":
                     GameState.fightCanHaveMultiBombTiles = true;
                     break;
-                // case "bombCounterCanLie":
-                //     GameState.bombCounterCanLie = true;
-                //     break;
+                case "bombCounterCanLie":
+                    GameState.bombCounterCanLie = true;
+                    break;
 
                 default:
                     break;
