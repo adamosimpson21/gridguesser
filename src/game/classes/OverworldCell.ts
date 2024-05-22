@@ -5,6 +5,7 @@ import { OVERWORLD_CONSTANTS } from "@/game/types/overworldConstants";
 import { trapType } from "@/game/types/trapConstants";
 import { EventBus } from "@/game/EventBus";
 import { SCENE_EVENTS } from "@/game/types/events";
+import { transitionScene } from "@/game/functions/transitionScene";
 
 export default class OverworldCell {
     public grid: any;
@@ -225,7 +226,7 @@ export default class OverworldCell {
                     this.show();
                     break;
                 case 2:
-                    this.grid.scene.transitionScene(SCENES.Fight);
+                    transitionScene(this.grid.scene, SCENES.Fight);
                     EventBus.emit(SCENE_EVENTS.ENTER_FIGHT);
                     this.setTileToVisited(1000);
                     this.show();
@@ -233,19 +234,22 @@ export default class OverworldCell {
                 case 5:
                 case 6:
                     this.show();
-                    this.grid.scene.scene
-                        .launch(SCENES.TrapOverlay, this.typeInfo)
-                        .pause(SCENES.Overworld);
+                    transitionScene(
+                        this.grid.scene,
+                        SCENES.TrapOverlay,
+                        true,
+                        this.typeInfo,
+                    );
                     this.setTileToVisited(3000);
                     break;
                 case 3:
-                    this.grid.scene.transitionScene(SCENES.Shop);
+                    transitionScene(this.grid.scene, SCENES.Shop);
                     this.setTileToVisited(1000);
                     this.show();
                     break;
                 case 4:
                     this.setTileToVisited(1000);
-                    this.grid.scene.transitionScene(SCENES.BossFight);
+                    transitionScene(this.grid.scene, SCENES.BossFight);
                     EventBus.emit(SCENE_EVENTS.ENTER_FIGHT);
                     this.show();
                     break;

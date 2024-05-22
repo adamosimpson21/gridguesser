@@ -10,6 +10,10 @@ import {
     mainMenuText,
     paragraphText,
 } from "@/game/types/textStyleConstructor";
+import {
+    cameraFadeIn,
+    transitionScene,
+} from "@/game/functions/transitionScene";
 
 export class NewGame extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -30,6 +34,7 @@ export class NewGame extends Scene {
         this.camera.setBackgroundColor(0x00000);
 
         this.background = createBackground(this);
+        cameraFadeIn(this);
 
         EventBus.emit("current-scene-ready", this);
 
@@ -83,7 +88,7 @@ export class NewGame extends Scene {
     submit() {
         EventBus.emit(GAME_EVENTS.RESET);
         EventBus.emit(PLAYER_EVENTS.CHANGE_NAME, this.nameChoice);
-        this.scene.start(SCENES.Overworld);
+        transitionScene(this, SCENES.Overworld);
     }
 
     updateNameBoard(name: string) {

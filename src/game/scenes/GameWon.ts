@@ -2,6 +2,10 @@ import { EventBus } from "../EventBus";
 import { Scene } from "phaser";
 import { SCENES } from "@/game/types/scenes";
 import { createBackground } from "@/game/functions/background";
+import {
+    cameraFadeIn,
+    transitionScene,
+} from "@/game/functions/transitionScene";
 
 export class GameWon extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -14,6 +18,7 @@ export class GameWon extends Scene {
     create() {
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0xff0000);
+        cameraFadeIn(this);
 
         this.background = createBackground(this);
 
@@ -50,11 +55,7 @@ export class GameWon extends Scene {
         this.scene.stop(SCENES.Fight);
         this.scene.stop(SCENES.Overworld);
         this.scene.stop(SCENES.Shop);
-        this.scene.stop(SCENES.Hud);
-        this.scene.switch(SCENES.MainMenu);
-    }
-
-    changeScene() {
-        this.scene.start(SCENES.MainMenu);
+        // this.scene.stop(SCENES.Hud);
+        transitionScene(this, SCENES.MainMenu);
     }
 }

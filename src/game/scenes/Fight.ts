@@ -55,6 +55,7 @@ export class Fight extends Scene {
 
         this.background = createBackground(this);
         this.background.setInteractive();
+        cameraFadeIn(this);
 
         this.background.on("wheel", changeInputScrollWheel);
 

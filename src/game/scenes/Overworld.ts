@@ -7,6 +7,7 @@ import EventDisplay from "@/game/classes/EventDisplay";
 import { GAME_EVENTS } from "@/game/types/events";
 import { GameState } from "../classes/GameState";
 import { createBackground } from "@/game/functions/background";
+import { cameraFadeIn } from "@/game/functions/transitionScene";
 
 export class Overworld extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -42,6 +43,7 @@ export class Overworld extends Scene {
         this.camera.setBackgroundColor(0x00000);
 
         this.background = createBackground(this);
+        cameraFadeIn(this);
 
         const gridWidth = GameState.overworldGridWidth;
         const gridHeight = GameState.overworldGridHeight;
@@ -75,13 +77,13 @@ export class Overworld extends Scene {
             this,
         );
     }
-    transitionScene(scene: string, data?: any) {
-        this.camera.fadeOut(1000, 0, 0, 0);
-        this.camera.once(
-            Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
-            (cam: any) => {
-                this.scene.launch(scene, data).pause(SCENES.Overworld);
-            },
-        );
-    }
+    // transitionScene(scene: string, data?: any) {
+    //     this.camera.fadeOut(1000, 0, 0, 0);
+    //     this.camera.once(
+    //         Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+    //         (cam: any) => {
+    //             this.scene.launch(scene, data).pause(SCENES.Overworld);
+    //         },
+    //     );
+    // }
 }

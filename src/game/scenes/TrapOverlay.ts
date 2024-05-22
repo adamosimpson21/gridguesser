@@ -5,6 +5,7 @@ import { EventBus } from "@/game/EventBus";
 import { Scene } from "phaser";
 import { trapType } from "@/game/types/trapConstants";
 import TrapDisplay from "@/game/classes/TrapDisplay";
+import { cameraFadeIn } from "@/game/functions/transitionScene";
 
 export class TrapOverlay extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -30,6 +31,7 @@ export class TrapOverlay extends Scene {
             .image(this.scale.width / 2, this.scale.height / 2, "black_screen")
             .setAlpha(0.66);
         EventBus.emit("current-scene-ready", this);
+        cameraFadeIn(this);
         this.trapDisplay = new TrapDisplay(this, this.trap);
     }
 }

@@ -3,6 +3,10 @@ import { Scene } from "phaser";
 import { SCENES } from "@/game/types/scenes";
 import { createBackground } from "@/game/functions/background";
 import { largeText } from "@/game/types/textStyleConstructor";
+import {
+    cameraFadeIn,
+    transitionScene,
+} from "@/game/functions/transitionScene";
 
 export class GameOver extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -17,6 +21,7 @@ export class GameOver extends Scene {
     create() {
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0xff0000);
+        cameraFadeIn(this);
 
         this.background = createBackground(this);
 
@@ -38,6 +43,6 @@ export class GameOver extends Scene {
         EventBus.emit("current-scene-ready", this);
     }
     resetToMainMenu() {
-        this.scene.switch(SCENES.MainMenu);
+        transitionScene(this, SCENES.MainMenu);
     }
 }

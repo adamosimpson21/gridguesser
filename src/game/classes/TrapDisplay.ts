@@ -5,6 +5,7 @@ import { GameState } from "@/game/classes/GameState";
 import { EventBus } from "@/game/EventBus";
 import { PLAYER_EVENTS } from "@/game/types/events";
 import { headingText, paragraphText } from "@/game/types/textStyleConstructor";
+import { transitionSceneToOverworld } from "@/game/functions/transitionScene";
 
 export default class TrapDisplay {
     public scene: Phaser.Scene;
@@ -72,8 +73,7 @@ export default class TrapDisplay {
     }
 
     closeTrap() {
-        this.scene.scene.stop(SCENES.TrapOverlay);
-        this.scene.scene.resume(SCENES.Overworld);
+        transitionSceneToOverworld(this.scene);
     }
 
     riskyAction() {

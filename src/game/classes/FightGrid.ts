@@ -424,7 +424,11 @@ export default class FightGrid extends GameObject {
                 bombs.push(cell);
 
                 // if it's the fight boss, force one multi-bomb tile
-                if (GameState.level === 1 && !hasUsedForcedMultibomb) {
+                if (
+                    GameState.level === 1 &&
+                    !hasUsedForcedMultibomb &&
+                    GameState.fightCanHaveMultiBombTiles
+                ) {
                     cell.bombNum++;
                     qty--;
                     bombs.push(cell);

@@ -4,6 +4,10 @@ import { EventBus } from "../EventBus";
 import { SCENES } from "@/game/types/scenes";
 import { createBackground } from "@/game/functions/background";
 import { mainMenuText } from "@/game/types/textStyleConstructor";
+import {
+    cameraFadeIn,
+    transitionScene,
+} from "@/game/functions/transitionScene";
 
 export class MainMenu extends Scene {
     background: GameObjects.Image;
@@ -28,6 +32,7 @@ export class MainMenu extends Scene {
             .setDisplaySize(1400, 400)
             .setOrigin(0.5)
             .setDepth(100);
+        cameraFadeIn(this);
 
         this.overworldButton = this.add
             .text(
@@ -40,7 +45,7 @@ export class MainMenu extends Scene {
             .setDepth(100);
         this.overworldButton.setInteractive();
         this.overworldButton.on("pointerdown", () =>
-            this.scene.start(SCENES.NewGame),
+            transitionScene(this, SCENES.NewGame),
         );
 
         this.tutorialButton = this.add

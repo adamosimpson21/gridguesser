@@ -9,6 +9,7 @@ import FightInputMenu from "@/game/classes/FightInputMenu";
 import { Fight } from "@/game/scenes/Fight";
 import { createBackground } from "@/game/functions/background";
 import { GAME_CONSTANTS } from "@/game/types/gameConstants";
+import { cameraFadeIn } from "@/game/functions/transitionScene";
 
 export class BossFight extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -56,6 +57,7 @@ export class BossFight extends Scene {
     create() {
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0x00000);
+        cameraFadeIn(this);
 
         this.background = createBackground(this);
 

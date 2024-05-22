@@ -10,6 +10,7 @@ import { CELL_TYPES } from "@/game/types/cells";
 import ShopItem from "@/game/classes/ShopItem";
 import { GameState } from "@/game/classes/GameState";
 import { headingText } from "@/game/types/textStyleConstructor";
+import { transitionSceneToOverworld } from "@/game/functions/transitionScene";
 
 export default class ShopGrid {
     public scene: Shop;
@@ -63,8 +64,7 @@ export default class ShopGrid {
         this.generateShop();
     }
     handleReturnButton() {
-        this.scene.scene.stop(SCENES.Shop);
-        this.scene.scene.resume(SCENES.Overworld);
+        transitionSceneToOverworld(this.scene);
     }
 
     createCells() {
