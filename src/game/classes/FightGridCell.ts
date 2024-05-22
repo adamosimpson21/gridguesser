@@ -163,11 +163,17 @@ export default class FightGridCell {
 
     useReveal() {
         // chording
-        if (this.open && this.value > 0 && !this.trash && !this.lying) {
+        if (this.open && this.value > 0 && !this.trash) {
             const numFlagged =
                 this.grid.getAdjacentCellFlaggedAndBombedNumber(this);
-            if (this.value === numFlagged) {
-                this.grid.chordFill(this.x, this.y);
+            if (this.lying) {
+                if (this.value + this.lyingOffset === numFlagged) {
+                    this.grid.chordFill(this.x, this.y);
+                }
+            } else {
+                if (this.value === numFlagged) {
+                    this.grid.chordFill(this.x, this.y);
+                }
             }
         }
         if (this.query) {
@@ -286,7 +292,7 @@ export default class FightGridCell {
     generateLyingOffset() {
         let offset = Phaser.Math.Between(-2, 1);
         // offset is a -2, -1, 1, 2
-        if (offset > 0) {
+        if (offset >= 0) {
             offset++;
         }
         return offset;
