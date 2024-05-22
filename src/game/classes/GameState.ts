@@ -250,6 +250,7 @@ class GameStateClass {
         this.fightGoldReward += 2;
         this.lyingTileNum++;
         this.trashTileNum++;
+        this.bombCounterCanLiePercent += 5;
     }
 
     fightWon(isBoss: boolean) {
