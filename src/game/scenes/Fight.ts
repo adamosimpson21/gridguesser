@@ -45,6 +45,7 @@ export class Fight extends Scene {
         this.load.image("towel_cover", "/assets/fight/yellowSquare.png");
         this.load.image("brown_square", "/assets/fight/brownSquare.png");
         this.load.image("ladder", "/assets/fight/ladder.png");
+        this.load.image("dust_bunny_2", "/assets/ideas/dustBunny128.png");
     }
 
     create() {

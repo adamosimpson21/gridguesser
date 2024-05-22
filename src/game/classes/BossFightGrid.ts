@@ -55,6 +55,13 @@ export default class BossFightGrid extends FightGrid {
                 });
             });
         } else {
+            if (GameState.level === 1) {
+                //unleash all advanced mechanics
+                GameState.fightCanHaveTrashTiles = true;
+                GameState.fightCanHaveLyingTiles = true;
+                GameState.fightCanHaveMultiBombTiles = true;
+                GameState.bombCounterCanLie = true;
+            }
             this.createBossEndModal(flawless);
         }
     }

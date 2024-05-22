@@ -29,6 +29,7 @@ export default class FightGridCell {
     public queryOverlay: any;
     public specialOverlayContainer: any;
     public isBlock: boolean;
+    public hasBeenChorded: boolean;
     constructor(grid: any, index: number, x: number, y: number) {
         this.grid = grid;
 
@@ -46,6 +47,7 @@ export default class FightGridCell {
         this.trash = false;
         this.lying = false;
         this.isBlock = false;
+        this.hasBeenChorded = false;
         this.lyingOffset = this.generateLyingOffset();
 
         //  0 = empty, 1,2,3,4,5,6,7,8 = number of adjacent bombs
@@ -163,16 +165,23 @@ export default class FightGridCell {
 
     useReveal() {
         // chording
-        if (this.open && this.value > 0 && !this.trash) {
+        if (
+            this.open &&
+            this.value > 0 &&
+            !this.trash &&
+            !this.hasBeenChorded
+        ) {
             const numFlagged =
                 this.grid.getAdjacentCellFlaggedAndBombedNumber(this);
             if (this.lying) {
                 if (this.value + this.lyingOffset === numFlagged) {
                     this.grid.chordFill(this.x, this.y);
+                    this.hasBeenChorded = true;
                 }
             } else {
                 if (this.value === numFlagged) {
                     this.grid.chordFill(this.x, this.y);
+                    this.hasBeenChorded = true;
                 }
             }
         }

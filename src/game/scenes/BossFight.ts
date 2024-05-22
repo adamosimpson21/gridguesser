@@ -8,6 +8,7 @@ import BossFightGrid from "@/game/classes/BossFightGrid";
 import FightInputMenu from "@/game/classes/FightInputMenu";
 import { Fight } from "@/game/scenes/Fight";
 import { createBackground } from "@/game/functions/background";
+import { GAME_CONSTANTS } from "@/game/types/gameConstants";
 
 export class BossFight extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -33,6 +34,10 @@ export class BossFight extends Scene {
                 frameHeight: 64,
             },
         );
+        this.load.spritesheet("fightTiles", "/assets/fight/fightTileSS.png", {
+            frameWidth: 128,
+            frameHeight: 128,
+        });
         this.load.image("black_screen", "/assets/blackScreen.png");
         this.load.image("enemy1", "/assets/fight/dustBunny.png");
         this.load.image("clipboard", "/assets/hud/longClipboard.png");
@@ -45,6 +50,7 @@ export class BossFight extends Scene {
         this.load.image("towel_cover", "/assets/fight/yellowSquare.png");
         this.load.image("brown_square", "/assets/fight/brownSquare.png");
         this.load.image("ladder", "/assets/fight/ladder.png");
+        this.load.image("dust_bunny_2", "/assets/ideas/dustBunny128.png");
     }
 
     create() {
@@ -121,6 +127,34 @@ export class BossFight extends Scene {
             background.setAlpha(0);
             introText.setAlpha(0);
             introButton.setAlpha(0);
+
+            // const advancedMechanicUnlocked =
+            //     GAME_CONSTANTS.advancedMechanics[
+            //         Math.floor(
+            //             Phaser.Math.Between(
+            //                 0,
+            //                 GAME_CONSTANTS.advancedMechanics.length - 1,
+            //             ),
+            //         )
+            //     ];
+            const advancedMechanicUnlocked = "fightCanHaveMultiBombTiles";
+            switch (advancedMechanicUnlocked) {
+                // case "fightCanHaveTrashTiles":
+                //     GameState.fightCanHaveTrashTiles = true;
+                //     break;
+                // case "fightCanHaveLyingTiles":
+                //     GameState.fightCanHaveLyingTiles = true;
+                //     break;
+                case "fightCanHaveMultiBombTiles":
+                    GameState.fightCanHaveMultiBombTiles = true;
+                    break;
+                // case "bombCounterCanLie":
+                //     GameState.bombCounterCanLie = true;
+                //     break;
+
+                default:
+                    break;
+            }
         });
     }
 }

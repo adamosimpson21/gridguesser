@@ -44,12 +44,14 @@ export const GAME_CONSTANTS = {
     startingTrashTileNum: 1,
     startingLyingTileNum: 1,
     startingUmbrellaSize: 3,
+    startingBombCounterCanLiePercent: 5,
     startingTowersize: 5,
     startingBlockSize: 2,
     advancedMechanics: [
         "fightCanHaveTrashTiles",
         "fightCanHaveLyingTiles",
         "fightCanHaveMultiBombTiles",
+        "bombCounterCanLie",
     ],
 };
 

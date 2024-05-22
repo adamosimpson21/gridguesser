@@ -42,6 +42,7 @@ class GameStateClass {
     public fightCanHaveTrashTiles: boolean;
     public fightCanHaveLyingTiles: boolean;
     public fightCanHaveMultiBombTiles: boolean;
+    public bombCounterCanLie: boolean;
     public GameOverBtn: Phaser.GameObjects.Text;
     public fightInputTypes: string[];
     public currentFightInputType: string;
@@ -66,6 +67,7 @@ class GameStateClass {
     public towerSize: number;
     public blockSize: number;
     public bombNumFightIncrement: number;
+    public bombCounterCanLiePercent: number;
 
     constructor() {
         this.isPlaying = true;
@@ -187,6 +189,7 @@ class GameStateClass {
         this.fightCanHaveLyingTiles = FIGHT_CONSTANTS.CAN_HAVE_LYING_TILES;
         this.fightCanHaveMultiBombTiles =
             FIGHT_CONSTANTS.CAN_HAVE_MULTI_BOMB_TILES;
+        this.bombCounterCanLie = FIGHT_CONSTANTS.BOMB_COUNTER_CAN_LIE;
         this.playerDamageReduction = 0;
         this.fightInputTypes = GAME_CONSTANTS.startingFightInputTypes;
         this.currentFightInputType = FIGHT_INPUT_TYPES.REVEAL;
@@ -201,6 +204,8 @@ class GameStateClass {
         this.blockSize = GAME_CONSTANTS.startingBlockSize;
         this.trashTileNum = GAME_CONSTANTS.startingTrashTileNum;
         this.lyingTileNum = GAME_CONSTANTS.startingLyingTileNum;
+        this.bombCounterCanLiePercent =
+            GAME_CONSTANTS.startingBombCounterCanLiePercent;
 
         this.resetFightConstants();
 

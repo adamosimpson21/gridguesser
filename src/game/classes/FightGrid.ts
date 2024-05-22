@@ -1,4 +1,4 @@
-import { Scene } from "phaser";
+import { Game, Scene } from "phaser";
 import FightGridCell from "./FightGridCell";
 import {
     FIGHT_EVENTS,
@@ -112,7 +112,7 @@ export default class FightGrid extends GameObject {
             .image({
                 x: 78,
                 y: 10,
-                key: "enemy1",
+                key: "dust_bunny_2",
             })
             .setOrigin(0, 0)
             .setDisplaySize(64, 64);
@@ -225,6 +225,19 @@ export default class FightGrid extends GameObject {
     }
 
     updateBombs(diff: number) {
+        if (GameState.bombCounterCanLie) {
+            // luck chance
+            if (
+                GameState.bombCounterCanLiePercent - GameState.player.luck >
+                Phaser.Math.Between(1, 100)
+            ) {
+                if (Phaser.Math.Between(0, 1)) {
+                    diff++;
+                } else {
+                    diff--;
+                }
+            }
+        }
         this.bombsCounter -= diff;
         this.bombsCounterText.setText(`${this.bombsCounter.toString()}`);
     }
@@ -390,6 +403,7 @@ export default class FightGrid extends GameObject {
         let qty = this.bombQty;
         let trashQuantity = GameState.trashTileNum;
         let lyingQuantity = GameState.lyingTileNum;
+        let hasUsedForcedMultibomb = false;
 
         const bombs = [];
 
@@ -406,10 +420,16 @@ export default class FightGrid extends GameObject {
             ) {
                 // if (!(cell.bombNum > 0) && cell.index !== startIndex)
                 cell.bombNum++;
-
                 qty--;
-
                 bombs.push(cell);
+
+                // if it's the fight boss, force one multi-bomb tile
+                if (GameState.level === 1 && !hasUsedForcedMultibomb) {
+                    cell.bombNum++;
+                    qty--;
+                    bombs.push(cell);
+                    hasUsedForcedMultibomb = true;
+                }
             }
         } while (
             qty > 0 &&
