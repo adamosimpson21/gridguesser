@@ -51,12 +51,18 @@ export default class FightGridCell {
         //  0 = empty, 1,2,3,4,5,6,7,8 = number of adjacent bombs
         this.value = 0;
 
-        this.tile = grid.scene.make.text({
-            x: grid.offset.x + x * FIGHT_CONSTANTS.TILE_WIDTH,
-            y: grid.offset.y + y * FIGHT_CONSTANTS.TILE_HEIGHT,
-            text: "🔲",
-            style: { fontSize: `${FIGHT_CONSTANTS.TILE_HEIGHT}px` },
-        });
+        this.tile = grid.scene.make
+            .image({
+                x: grid.offset.x + x * FIGHT_CONSTANTS.TILE_WIDTH,
+                y: grid.offset.y + y * FIGHT_CONSTANTS.TILE_HEIGHT,
+                key: "fightTiles",
+                frame: 11,
+            })
+            .setOrigin(0, 0)
+            .setDisplaySize(
+                FIGHT_CONSTANTS.TILE_WIDTH,
+                FIGHT_CONSTANTS.TILE_HEIGHT,
+            );
 
         this.specialOverlayContainer = this.grid.scene.add.container(
             grid.offset.x + x * FIGHT_CONSTANTS.TILE_WIDTH,
@@ -110,7 +116,7 @@ export default class FightGridCell {
 
         this.value = 0;
 
-        this.tile.setText("🔲");
+        this.tile.setFrame(11);
     }
 
     onPointerDown(pointer: any) {
@@ -244,11 +250,11 @@ export default class FightGridCell {
                 }
                 this.grid.checkWinState();
             } else {
-                this.tile.setText("🟥");
+                this.tile.setFrame(13);
                 angryShakeTween(this.tile, this.grid.scene).on(
                     "complete",
                     (tween: any, targets: any) => {
-                        this.tile.setText("🔲");
+                        this.tile.setFrame(11);
                     },
                 );
             }
@@ -258,7 +264,7 @@ export default class FightGridCell {
     removeLies() {
         if (GameState.instanceRemoveLyingNum > 0) {
             if (!this.lying) {
-                this.tile.setText("🟥");
+                this.tile.setFrame(14);
                 angryShakeTween(this.tile, this.grid.scene).on(
                     "complete",
                     (tween: any, targets: any) => {
@@ -331,7 +337,7 @@ export default class FightGridCell {
                         cell.bombNum = 0;
                         cell.isBlock = true;
                         cell.value = 0;
-                        cell.tile.setText("");
+                        cell.tile.setFrame(10);
                         cell.flagOverlay.setFrame(21);
                     }
                 });
@@ -503,11 +509,11 @@ export default class FightGridCell {
     reveal() {
         if (this.exploded) {
             this.flagOverlay.setFrame(this.bombNum + 10);
-            this.tile.setText("🟧");
+            this.tile.setFrame(13);
         } else if (!(this.bombNum > 0) && this.flagNum > 0) {
-            this.tile.setText("🍕");
+            this.tile.setFrame(22);
         } else if (this.bombNum > 0) {
-            this.tile.setText("🐼");
+            this.tile.setFrame(21);
         } else {
             this.show();
         }
@@ -528,22 +534,26 @@ export default class FightGridCell {
             "🔟",
         ];
 
-        let textToSet = "" as string;
+        let frameToSet = 10;
         if (this.trash) {
-            textToSet = "🚮";
+            frameToSet = 24;
         } else if (this.lying) {
             if (this.value + this.lyingOffset <= 0) {
-                textToSet = "0️⃣";
+                frameToSet = 0;
             } else if (this.value + this.lyingOffset > 9) {
-                textToSet = values[9].toString();
+                frameToSet = 21;
             } else {
-                textToSet = values[this.value + this.lyingOffset].toString();
+                frameToSet = this.value + this.lyingOffset;
             }
         } else {
-            if (values[this.value]) {
-                textToSet = values[this.value].toString();
+            if (this.value < 9) {
+                if (this.value === 0) {
+                    frameToSet = 10;
+                } else {
+                    frameToSet = this.value;
+                }
             } else {
-                textToSet = this.value.toString();
+                frameToSet = 21;
             }
         }
         if (!shouldNotAnimate) {
@@ -568,13 +578,13 @@ export default class FightGridCell {
                 ],
             });
             bumpTween.on("complete", (tween: any, targets: any) => {
-                this.tile.setText(textToSet);
+                this.tile.setFrame(frameToSet);
                 this.tile.setY(
                     this.grid.offset.y + this.y * FIGHT_CONSTANTS.TILE_HEIGHT,
                 );
             });
         } else {
-            this.tile.setText(textToSet);
+            this.tile.setFrame(frameToSet);
         }
 
         this.open = true;

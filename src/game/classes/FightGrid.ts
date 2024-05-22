@@ -635,7 +635,7 @@ export default class FightGrid extends GameObject {
                     // chord flagged animation
                     const xyDirection =
                         this.getXYDirectionFromAdjacantCellIndex(index);
-                    adjacentCell.tile.setText("🟩");
+                    adjacentCell.tile.setFrame(12);
                     const yRaiseIndex = 3;
                     const chordFillTween = this.scene.tweens.chain({
                         targets: adjacentCell.tile,
@@ -666,7 +666,7 @@ export default class FightGrid extends GameObject {
                         ],
                     });
                     chordFillTween.on("complete", () => {
-                        adjacentCell.tile.setText("🔲");
+                        adjacentCell.tile.setFrame(11);
                     });
                 }
             });

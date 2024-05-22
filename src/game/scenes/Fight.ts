@@ -32,6 +32,10 @@ export class Fight extends Scene {
                 frameHeight: 64,
             },
         );
+        this.load.spritesheet("fightTiles", "/assets/fight/fightTileSS.png", {
+            frameWidth: 128,
+            frameHeight: 128,
+        });
         this.load.image("trash_bag", "/assets/fight/trashBag.png");
         this.load.image("enemy1", "/assets/fight/dustBunny.png");
         this.load.image("clipboard", "/assets/hud/longClipboard.png");
