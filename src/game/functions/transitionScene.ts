@@ -1,4 +1,7 @@
 import { SCENES } from "@/game/types/scenes";
+import OverworldLegend from "@/game/classes/OverworldLegend";
+import { EventBus } from "@/game/EventBus";
+import { SCENE_EVENTS } from "@/game/types/events";
 
 export const transitionScene = (
     transitionFromScene: Phaser.Scene,
@@ -12,6 +15,7 @@ export const transitionScene = (
             Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
             (cam: any) => {
                 if (transitionFromScene.scene.key === SCENES.Overworld) {
+                    EventBus.emit(SCENE_EVENTS.LEAVE_OVERWORLD);
                     transitionFromScene.scene
                         .launch(transitionToScene, data)
                         .pause(SCENES.Overworld);
@@ -22,6 +26,7 @@ export const transitionScene = (
         );
     } else {
         if (transitionFromScene.scene.key === SCENES.Overworld) {
+            EventBus.emit(SCENE_EVENTS.LEAVE_OVERWORLD);
             transitionFromScene.scene
                 .launch(transitionToScene, data)
                 .pause(SCENES.Overworld);
@@ -39,6 +44,7 @@ export const transitionSceneToOverworld = (
     transitionFromScene.cameras.main.once(
         Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
         (cam: any) => {
+            EventBus.emit(SCENE_EVENTS.ENTER_OVERWORLD);
             transitionFromScene.scene.resume(SCENES.Overworld);
             transitionFromScene.scene.stop(transitionFromScene.scene.key);
         },
@@ -56,6 +62,7 @@ export const transitionSceneToOverworldFromBoss = (
             transitionFromScene.scene.stop(transitionFromScene.scene.key);
             transitionFromScene.scene.stop(SCENES.Overworld);
             transitionFromScene.scene.start(SCENES.Overworld);
+            EventBus.emit(SCENE_EVENTS.ENTER_OVERWORLD);
         },
     );
 };

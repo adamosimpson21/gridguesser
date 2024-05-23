@@ -5,10 +5,12 @@ import HudDisplay from "@/game/classes/HudDisplay";
 import { EventBus } from "@/game/EventBus";
 import { GAME_EVENTS } from "@/game/types/events";
 import { GAME_CONSTANTS } from "@/game/types/gameConstants";
+import OverworldLegend from "@/game/classes/OverworldLegend";
 export class Hud extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
     public eventDisplay: EventDisplay | undefined;
     public HudDisplay: HudDisplay | undefined;
+    public OverworldLegend: OverworldLegend;
 
     constructor() {
         super(SCENES.Hud);
@@ -22,6 +24,12 @@ export class Hud extends Scene {
             frameWidth: 64,
             frameHeight: 64,
         });
+        this.load.image("red_border", "/assets/overworld/redBorder.png");
+        this.load.image("orange_border", "/assets/overworld/orangeBorder.png");
+        this.load.image("green_border", "/assets/overworld/greenBorder.png");
+        this.load.image("yellow_border", "/assets/overworld/yellowBorder.png");
+        this.load.image("purple_border", "/assets/overworld/purpleBorder.png");
+        this.load.image("white_border", "/assets/overworld/whiteBorder.png");
     }
 
     create() {
@@ -33,6 +41,7 @@ export class Hud extends Scene {
             GAME_CONSTANTS.startingGold,
             GAME_CONSTANTS.startingMaxHp,
         );
+        this.OverworldLegend = new OverworldLegend(this);
 
         this.eventDisplay = new EventDisplay(this);
         EventBus.emit("current-scene-ready", this);

@@ -2,7 +2,7 @@ import { Scene } from "phaser";
 import { SCENES } from "@/game/types/scenes";
 import { EventBus } from "@/game/EventBus";
 import { GameState } from "@/game/classes/GameState";
-import { GAME_EVENTS, PLAYER_EVENTS } from "@/game/types/events";
+import { GAME_EVENTS, PLAYER_EVENTS, SCENE_EVENTS } from "@/game/types/events";
 import { NAME_CHOICES } from "@/game/types/gameConstants";
 import { createBackground } from "@/game/functions/background";
 import {
@@ -90,6 +90,7 @@ export class NewGame extends Scene {
     submit() {
         EventBus.emit(GAME_EVENTS.RESET);
         EventBus.emit(PLAYER_EVENTS.CHANGE_NAME, this.nameChoice);
+        EventBus.emit(SCENE_EVENTS.ENTER_OVERWORLD);
         transitionScene(this, SCENES.Overworld);
     }
 
