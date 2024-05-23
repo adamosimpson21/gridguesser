@@ -23,7 +23,7 @@ export class BossFight extends Scene {
     public removeTrashUses: number;
     public removeBombUses: number;
     public removeLyingUses: number;
-    private titleText: Phaser.GameObjects.Text;
+    public titleText: Phaser.GameObjects.Text;
 
     constructor() {
         super(SCENES.BossFight);

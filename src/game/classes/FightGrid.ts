@@ -20,6 +20,7 @@ import { changeInputScrollWheel } from "@/game/functions/changeInputScrollWheel"
 import { flavorConstants } from "@/game/types/flavorConstants";
 import { headingText, paragraphText } from "@/game/types/textStyleConstructor";
 import { transitionSceneToOverworld } from "@/game/functions/transitionScene";
+import { BossFight } from "@/game/scenes/BossFight";
 
 export default class FightGrid extends GameObject {
     public scene: Fight;
