@@ -8,6 +8,8 @@ import { GAME_EVENTS } from "@/game/types/events";
 import { GameState } from "../classes/GameState";
 import { createBackground } from "@/game/functions/background";
 import { cameraFadeIn } from "@/game/functions/transitionScene";
+import { Settings } from "@/game/scenes/Settings";
+import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
 
 export class Overworld extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -76,6 +78,8 @@ export class Overworld extends Scene {
             },
             this,
         );
+
+        addPauseOverlay(this);
     }
     // transitionScene(scene: string, data?: any) {
     //     this.camera.fadeOut(1000, 0, 0, 0);

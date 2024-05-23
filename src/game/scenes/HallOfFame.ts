@@ -6,6 +6,7 @@ import {
     cameraFadeIn,
     transitionScene,
 } from "@/game/functions/transitionScene";
+import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
 
 export class HallOfFame extends Scene {
     private background: any;
@@ -16,6 +17,7 @@ export class HallOfFame extends Scene {
     create() {
         this.background = createBackground(this);
         cameraFadeIn(this);
+        addPauseOverlay(this);
         const returnButton = this.add
             .text(
                 this.scale.width / 2,

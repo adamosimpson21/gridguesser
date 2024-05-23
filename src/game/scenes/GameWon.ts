@@ -6,6 +6,7 @@ import {
     cameraFadeIn,
     transitionScene,
 } from "@/game/functions/transitionScene";
+import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
 
 export class GameWon extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -19,6 +20,7 @@ export class GameWon extends Scene {
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0xff0000);
         cameraFadeIn(this);
+        addPauseOverlay(this);
 
         this.background = createBackground(this);
 

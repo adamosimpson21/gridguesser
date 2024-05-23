@@ -8,6 +8,7 @@ import FightInputMenu from "@/game/classes/FightInputMenu";
 import { createBackground } from "@/game/functions/background";
 import { changeInputScrollWheel } from "@/game/functions/changeInputScrollWheel";
 import { cameraFadeIn } from "@/game/functions/transitionScene";
+import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
 
 export class Fight extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -56,6 +57,7 @@ export class Fight extends Scene {
         this.background = createBackground(this);
         this.background.setInteractive();
         cameraFadeIn(this);
+        addPauseOverlay(this);
 
         this.background.on("wheel", changeInputScrollWheel);
 
@@ -64,8 +66,6 @@ export class Fight extends Scene {
         const numBombs = GameState.bombNum;
         this.grid = new FightGrid(this, gridWidth, gridHeight, numBombs);
         GameState.resetFightConstants();
-
-        cameraFadeIn(this);
 
         EventBus.emit("current-scene-ready", this);
 

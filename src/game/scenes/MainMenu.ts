@@ -8,6 +8,7 @@ import {
     cameraFadeIn,
     transitionScene,
 } from "@/game/functions/transitionScene";
+import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
 
 export class MainMenu extends Scene {
     background: GameObjects.Image;
@@ -33,6 +34,7 @@ export class MainMenu extends Scene {
             .setOrigin(0.5)
             .setDepth(100);
         cameraFadeIn(this);
+        addPauseOverlay(this);
 
         this.overworldButton = this.add
             .text(

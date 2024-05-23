@@ -14,6 +14,7 @@ import {
     cameraFadeIn,
     transitionScene,
 } from "@/game/functions/transitionScene";
+import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
 
 export class NewGame extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -35,6 +36,7 @@ export class NewGame extends Scene {
 
         this.background = createBackground(this);
         cameraFadeIn(this);
+        addPauseOverlay(this);
 
         EventBus.emit("current-scene-ready", this);
 

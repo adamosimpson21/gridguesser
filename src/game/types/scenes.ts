@@ -13,4 +13,5 @@ export const SCENES = {
     GameWon: "Game Won",
     TrapOverlay: "TrapOverlay",
     HallOfFame: "HallOfFame",
+    Settings: "Settings",
 };

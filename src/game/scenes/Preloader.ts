@@ -41,6 +41,10 @@ export class Preloader extends Scene {
             GameState.hasLocalStorage = true;
         }
 
-        this.scene.launch(SCENES.MainMenu).launch(SCENES.Hud).remove();
+        this.scene
+            .launch(SCENES.Overworld)
+            .launch(SCENES.Settings)
+            .launch(SCENES.Hud)
+            .remove();
     }
 }
