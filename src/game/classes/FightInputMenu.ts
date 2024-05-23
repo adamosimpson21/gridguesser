@@ -6,7 +6,7 @@ import {
 } from "@/game/types/fightConstants";
 import { Fight } from "@/game/scenes/Fight";
 import { EventBus } from "@/game/EventBus";
-import { FIGHT_EVENTS, GAME_EVENTS } from "@/game/types/events";
+import { FIGHT_EVENTS, GAME_EVENTS, SCENE_EVENTS } from "@/game/types/events";
 import { BossFight } from "@/game/scenes/BossFight";
 import { Hud } from "@/game/scenes/Hud";
 import UppercaseFirst = Phaser.Utils.String.UppercaseFirst;
@@ -17,6 +17,7 @@ import {
 import { translateNumberToString } from "@/game/functions/translateNumberToString";
 import { changeInputScrollWheel } from "@/game/functions/changeInputScrollWheel";
 import { KEY_ITEMS } from "@/game/types/keyItems";
+import { SettingsManager } from "@/game/classes/SettingsManager";
 
 export default class FightInputMenu {
     public availableInputs: string[];
@@ -55,7 +56,9 @@ export default class FightInputMenu {
             frame: 0,
         });
 
-        this.hideInputHint();
+        if (!SettingsManager.inputHint) {
+            this.hideInputHint();
+        }
 
         this.scene.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
             this.inputHint.setPosition(pointer.x, pointer.y);
@@ -65,6 +68,9 @@ export default class FightInputMenu {
             this.inputBoard.list.forEach((input: Phaser.GameObjects.Text) => {
                 input.removeInteractive();
             });
+        });
+        EventBus.on(SCENE_EVENTS.LEAVE_FIGHT, () => {
+            this.hideInputHint();
         });
         EventBus.on(FIGHT_EVENTS.USE_LIMITED_INPUT, (inputTypeUse: string) => {
             this.inputBoard.list.forEach(
@@ -114,7 +120,11 @@ export default class FightInputMenu {
                         this.scene.input.setDefaultCursor(
                             "url(/assets/cursors/broomSm.cur), pointer",
                         );
-                        this.hideInputHint();
+                        if (SettingsManager.inputHint) {
+                            this.showInputHint(4, 3);
+                        } else {
+                            this.hideInputHint();
+                        }
                         break;
 
                     case FIGHT_INPUT_TYPES.FLAG:
