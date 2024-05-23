@@ -9,6 +9,7 @@ import { createBackground } from "@/game/functions/background";
 import { changeInputScrollWheel } from "@/game/functions/changeInputScrollWheel";
 import { cameraFadeIn } from "@/game/functions/transitionScene";
 import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
+import { mainMenuText } from "@/game/types/textStyleConstructor";
 
 export class Fight extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -20,6 +21,7 @@ export class Fight extends Scene {
     public removeTrashUses: number;
     public removeBombUses: number;
     public removeLyingUses: number;
+    private titleText: Phaser.GameObjects.Text;
 
     constructor() {
         super(SCENES.Fight);
@@ -66,6 +68,13 @@ export class Fight extends Scene {
         const numBombs = GameState.bombNum;
         this.grid = new FightGrid(this, gridWidth, gridHeight, numBombs);
         GameState.resetFightConstants();
+
+        this.titleText = this.make.text({
+            x: this.scale.width / 2 - 500,
+            y: 50,
+            text: "Clean this dusty Room",
+            style: mainMenuText({}),
+        });
 
         EventBus.emit("current-scene-ready", this);
 
