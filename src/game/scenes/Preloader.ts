@@ -2,6 +2,7 @@ import { Scene } from "phaser";
 import { SCENES } from "@/game/types/scenes";
 import { EventBus } from "@/game/EventBus";
 import { SCENE_EVENTS } from "@/game/types/events";
+import { GameState } from "@/game/classes/GameState";
 
 export class Preloader extends Scene {
     constructor() {
@@ -36,6 +37,10 @@ export class Preloader extends Scene {
         //  this one works, don't delete it or mess with it plz
         // this.scene.start(SCENES.MainMenu).launch(SCENES.Hud);
         //
+        if (localStorage) {
+            GameState.hasLocalStorage = true;
+        }
+
         this.scene.launch(SCENES.MainMenu).launch(SCENES.Hud).remove();
     }
 }

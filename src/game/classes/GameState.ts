@@ -68,11 +68,13 @@ class GameStateClass {
     public blockSize: number;
     public bombNumFightIncrement: number;
     public bombCounterCanLiePercent: number;
+    public hasLocalStorage: boolean;
 
     constructor() {
         this.isPlaying = true;
         this.player = new PlayerClass();
         this.create();
+        this.hasLocalStorage = false;
 
         EventBus.on(GAME_EVENTS.INCREMENT_LEVEL, () => this.incrementLevel());
         EventBus.on(GAME_EVENTS.RESET, () => this.reset(), this);
