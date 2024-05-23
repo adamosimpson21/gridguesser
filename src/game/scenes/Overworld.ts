@@ -10,6 +10,8 @@ import { createBackground } from "@/game/functions/background";
 import { cameraFadeIn } from "@/game/functions/transitionScene";
 import { Settings } from "@/game/scenes/Settings";
 import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
+import { MainMenu } from "@/game/scenes/MainMenu";
+import { mainMenuText } from "@/game/types/textStyleConstructor";
 
 export class Overworld extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -18,6 +20,7 @@ export class Overworld extends Scene {
     private overworldGrid: OverworldGrid;
     public Hud: HudDisplay;
     public eventDisplay: EventDisplay;
+    private titleText: Phaser.GameObjects.Text;
     constructor() {
         super(SCENES.Overworld);
     }
@@ -61,6 +64,13 @@ export class Overworld extends Scene {
             numShops,
             numBuffs,
             numTraps,
+        });
+
+        this.titleText = this.make.text({
+            x: this.scale.width / 2 - 130,
+            y: 50,
+            text: "Lobby",
+            style: mainMenuText({}),
         });
 
         EventBus.emit("current-scene-ready", this);

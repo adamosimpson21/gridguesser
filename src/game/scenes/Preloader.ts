@@ -42,8 +42,8 @@ export class Preloader extends Scene {
         }
 
         this.scene
-            .launch(SCENES.Overworld)
-            .launch(SCENES.Settings)
+            .launch(SCENES.MainMenu)
+            // .launch(SCENES.Settings)
             .launch(SCENES.Hud)
             .remove();
     }
