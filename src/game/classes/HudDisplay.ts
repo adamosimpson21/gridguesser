@@ -106,6 +106,9 @@ export default class HudDisplay {
         EventBus.on(SCENE_EVENTS.POPULATE_FIGHT, () => {
             this.fightInputDisplay.show();
         });
+        EventBus.on(GAME_EVENTS.RESET, () => {
+            this.upgradeDisplay.removeAll(true);
+        });
 
         // testingItems.forEach((upgrade) => {
         //     EventBus.emit(PLAYER_EVENTS.GAIN_UPGRADE, upgrade);

@@ -44,6 +44,10 @@ export class Hud extends Scene {
         this.OverworldLegend = new OverworldLegend(this);
 
         this.eventDisplay = new EventDisplay(this);
+        // EventBus.on(GAME_EVENTS.RESET, () => {
+        //     this.eventDisplay = new EventDisplay(this);
+        // });
+
         EventBus.emit("current-scene-ready", this);
     }
 }

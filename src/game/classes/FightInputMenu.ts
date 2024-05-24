@@ -37,16 +37,9 @@ export default class FightInputMenu {
 
         this.inputBoard = scene.add.container(x, y);
 
-        // this.background = this.scene.add
-        //     .image(-75, -90, "key_ring")
-        //     .setOrigin(0, 0)
-        //     .setDisplaySize(390, 300);
-
-        // this.inputBoard.add(this.background);
         this.populateInputBoard();
 
         // initially hidden
-        // hide hidden for testing purposes
         this.hide();
 
         this.inputHint = this.scene.make.image({
@@ -71,6 +64,17 @@ export default class FightInputMenu {
         });
         EventBus.on(SCENE_EVENTS.LEAVE_FIGHT, () => {
             this.hideInputHint();
+        });
+        EventBus.on(SCENE_EVENTS.ENTER_FIGHT, () => {
+            if (SettingsManager.inputHint) {
+                this.inputHint
+                    .setFrame(4)
+                    .setDisplaySize(
+                        FIGHT_CONSTANTS.TILE_WIDTH * 3,
+                        FIGHT_CONSTANTS.TILE_HEIGHT * 3,
+                    )
+                    .setAlpha(0.4);
+            }
         });
         EventBus.on(FIGHT_EVENTS.USE_LIMITED_INPUT, (inputTypeUse: string) => {
             this.inputBoard.list.forEach(
@@ -207,8 +211,9 @@ export default class FightInputMenu {
         });
 
         EventBus.on(GAME_EVENTS.RESET_FIGHT_INPUT_MENU, () => {
+            this.inputBoard.removeAll(true);
             this.populateInputBoard();
-            this.resetInputUses();
+            // this.resetInputUses();
         });
     }
 
