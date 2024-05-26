@@ -47,7 +47,6 @@ export default class HudDisplay {
         this.hp = hp;
         this.maxHp = maxHp;
         this.gold = gold;
-        this.create();
         this.width = 420;
         this.height = this.scene.scale.height;
         this.xOffset = 40;
@@ -66,6 +65,8 @@ export default class HudDisplay {
             this.height / 2,
             "clipboard",
         );
+
+        console.log("creating displays");
 
         this.nameDisplay = this.scene.add.text(
             this.xOffset,
@@ -109,19 +110,13 @@ export default class HudDisplay {
         EventBus.on(GAME_EVENTS.RESET, () => {
             this.upgradeDisplay.removeAll(true);
         });
-
-        // testingItems.forEach((upgrade) => {
-        //     EventBus.emit(PLAYER_EVENTS.GAIN_UPGRADE, upgrade);
-        // });
-    }
-
-    create() {
         EventBus.on(UI_EVENTS.UPDATE_NAME, (name: string) => {
             this.nameDisplay.setText(name);
         });
         EventBus.on(
             UI_EVENTS.UPDATE_GOLD,
             (gold: number, goldDifference: number, silent?: boolean) => {
+                console.log("updating gold", gold);
                 this.goldDisplay.setText(`$${gold} `);
                 if (!silent) {
                     const goldChangeTween = this.scene.make
@@ -164,6 +159,7 @@ export default class HudDisplay {
         EventBus.on(
             UI_EVENTS.UPDATE_HEALTH,
             (hp: number, maxHp: number, hpChange: number, silent?: boolean) => {
+                console.log("updating hp", hp);
                 // low hp warning
                 if (
                     hp <=
@@ -315,14 +311,6 @@ export default class HudDisplay {
                         },
                     ],
                 });
-
-                // upgradeTween.on("complete", () => {
-                //     // this.upgradeDisplay.setText(
-                //     //     `${upgrades.map((obj) => obj.icon).join(" ")}`,
-                //     // );
-                //
-                //     upgradeTweenText.setAlpha(0);
-                // });
             },
         );
     }

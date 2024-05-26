@@ -3,6 +3,8 @@ import { SCENES } from "@/game/types/scenes";
 import { EventBus } from "@/game/EventBus";
 import { SCENE_EVENTS } from "@/game/types/events";
 import { GameState } from "@/game/classes/GameState";
+import { LocalStorageManager } from "@/game/classes/LocalStorageManager";
+import { SETTING_CONSTANTS } from "@/game/types/settingConstants";
 
 export class Preloader extends Scene {
     constructor() {
@@ -41,10 +43,23 @@ export class Preloader extends Scene {
             GameState.hasLocalStorage = true;
         }
 
-        this.scene
-            .launch(SCENES.MainMenu)
-            // .launch(SCENES.Settings)
-            .launch(SCENES.Hud)
-            .remove();
+        const previousCurrentScenes = LocalStorageManager.getItem(
+            SETTING_CONSTANTS.currentActiveScenes,
+        );
+        const previousCurrentActiveScene = LocalStorageManager.getItem(
+            SETTING_CONSTANTS.currentScene,
+        );
+        if (previousCurrentScenes && previousCurrentActiveScene) {
+            previousCurrentScenes.forEach((sceneKey: string) => {
+                this.scene.launch(sceneKey);
+            });
+            this.scene.remove();
+        } else {
+            this.scene
+                .launch(SCENES.MainMenu)
+                // .launch(SCENES.Settings)
+                .launch(SCENES.Hud)
+                .remove();
+        }
     }
 }

@@ -229,7 +229,7 @@ export default class FightGrid extends GameObject {
         if (GameState.bombCounterCanLie) {
             // luck chance
             if (
-                GameState.bombCounterCanLiePercent - GameState.player.luck >
+                GameState.bombCounterCanLiePercent - GameState.luck >
                 Phaser.Math.Between(1, 100)
             ) {
                 if (Phaser.Math.Between(0, 1)) {

@@ -9,32 +9,33 @@ import { Hud } from "@/game/scenes/Hud";
 import { OVERWORLD_CONSTANTS } from "@/game/types/overworldConstants";
 import { TRAPS } from "@/game/types/trapConstants";
 import { random } from "nanoid";
+import { Overworld } from "@/game/scenes/Overworld";
 
 export default class OverworldGrid {
-    private scene: Phaser.Scene;
-    private width: number;
-    private height: number;
-    private size: number;
-    private offset: Phaser.Math.Vector2;
-    private timeCounter: number;
-    private bombQty: number;
-    private bombsCounter: number;
-    private playing: boolean;
-    private populated: boolean;
-    private timer: Phaser.Time.TimerEvent;
-    private state: number;
-    private data: any[];
-    private board: Phaser.GameObjects.Container;
-    private numBosses: number;
-    private numFights: number;
-    private numShops: number;
-    private numBuffs: number;
-    private numTraps: number;
+    public scene: Overworld;
+    public width: number;
+    public height: number;
+    public size: number;
+    public offset: Phaser.Math.Vector2;
+    public timeCounter: number;
+    public bombQty: number;
+    public bombsCounter: number;
+    public playing: boolean;
+    public populated: boolean;
+    public timer: Phaser.Time.TimerEvent;
+    public state: number;
+    public data: OverworldCell[][] | [];
+    public board: Phaser.GameObjects.Container;
+    public numBosses: number;
+    public numFights: number;
+    public numShops: number;
+    public numBuffs: number;
+    public numTraps: number;
     public Hud: Hud;
     public eventDisplay: EventDisplay;
     public playerImage: Phaser.GameObjects.Image;
     constructor(
-        scene: Scene,
+        scene: Overworld,
         width: number,
         height: number,
         {
@@ -143,6 +144,38 @@ export default class OverworldGrid {
         }
     }
 
+    createSkeleton() {
+        // console.log("this.data", this.data);
+        const cellSkeleton = this.data.map((row, index) => {
+            return row.map((cell, index) => {
+                return cell.createSkeleton();
+            });
+        });
+
+        return {
+            cellSkeleton: cellSkeleton,
+            height: this.height,
+            width: this.width,
+        };
+    }
+
+    rehydrateFromSkeleton(skeleton: any) {
+        Object.entries(skeleton).forEach((keyValue: [string, any]) => {
+            // the battery is out of the smoke detector
+            if (keyValue[0] === "cellSkeleton") {
+                keyValue[1].map((row: OverworldCell[], xIndex: number) => {
+                    row.map((cell: OverworldCell, yIndex: number) => {
+                        this.data[xIndex][yIndex].rehydrateFromSkeleton(cell);
+                        // OverworldCell.rehydrateFromSkeleton(keyValue[1]);
+                        // cell.grid = this;
+                    });
+                });
+            } else {
+                (this as any)[keyValue[0]] = keyValue[1];
+            }
+        });
+    }
+
     createBackground() {
         const board = this.board;
         const factory = this.scene.add;
@@ -164,7 +197,9 @@ export default class OverworldGrid {
         const centerX = Math.floor(this.width / 2);
         const centerY = Math.floor(this.height / 2);
         const homeCell = this.getCellXY(centerX, centerY);
-        homeCell.value = 1;
+        if (homeCell) {
+            homeCell.value = 1;
+        }
 
         // Boss
         const bossWall = Phaser.Math.Between(0, 1);
@@ -173,16 +208,24 @@ export default class OverworldGrid {
         let bossCell;
         if (bossWall < 0.25) {
             bossCell = this.getCellXY(0, 0);
-            bossCell.value = 4;
+            if (bossCell) {
+                bossCell.value = 4;
+            }
         } else if (bossWall < 0.5) {
             bossCell = this.getCellXY(this.width - 1, this.height - 1);
-            bossCell.value = 4;
+            if (bossCell) {
+                bossCell.value = 4;
+            }
         } else if (bossWall < 0.75) {
             bossCell = this.getCellXY(this.width - 1, 0);
-            bossCell.value = 4;
+            if (bossCell) {
+                bossCell.value = 4;
+            }
         } else {
             bossCell = this.getCellXY(0, this.height - 1);
-            bossCell.value = 4;
+            if (bossCell) {
+                bossCell.value = 4;
+            }
         }
 
         this.populateCell(2, this.numFights);
@@ -234,7 +277,9 @@ export default class OverworldGrid {
         this.playing = true;
         this.populated = true;
         this.state = 1;
-        homeCell.show();
+        if (homeCell) {
+            homeCell.show();
+        }
 
         // testing reveal
         // this.data.forEach((row) => {
@@ -294,86 +339,106 @@ export default class OverworldGrid {
 
     paintNeighborBorders(cell: OverworldCell) {
         const orthogonalCells = this.getOrthogonalCells(cell);
-        let borderImgToPaint: string;
+        let frame: number;
         if (cell.value === 2) {
-            borderImgToPaint = "orange_border";
+            frame = 2;
         } else if (cell.value === 4) {
-            borderImgToPaint = "red_border";
+            frame = 1;
         } else if (cell.value === 5 || cell.value === 6) {
-            borderImgToPaint = "yellow_border";
+            frame = 3;
         } else if (cell.value === 3) {
-            borderImgToPaint = "green_border";
+            frame = 4;
         } else {
-            borderImgToPaint = "white_border";
+            frame = 7;
         }
 
         // cell above
         if (orthogonalCells[0]) {
             const cellAbove = orthogonalCells[0];
-            const borderBottom = this.scene.add
-                .image(
-                    cellAbove.x * OVERWORLD_CONSTANTS.TILE_WIDTH,
-                    cellAbove.y * OVERWORLD_CONSTANTS.TILE_HEIGHT -
-                        cellAbove.borderSize / 2 +
-                        OVERWORLD_CONSTANTS.TILE_HEIGHT / 2,
-                    borderImgToPaint,
-                )
-                .setAlpha(0)
-                .setDisplaySize(OVERWORLD_CONSTANTS.TILE_WIDTH, 4);
-            cellAbove.borderBottom = borderBottom;
-            this.board.add(borderBottom);
+            if (cellAbove.borderBottom) {
+                cellAbove.borderBottom.setFrame(frame);
+            } else {
+                const borderBottom = this.scene.add
+                    .image(
+                        cellAbove.x * OVERWORLD_CONSTANTS.TILE_WIDTH,
+                        cellAbove.y * OVERWORLD_CONSTANTS.TILE_HEIGHT -
+                            cellAbove.borderSize / 2 +
+                            OVERWORLD_CONSTANTS.TILE_HEIGHT / 2,
+                        "overworldBorders",
+                        frame,
+                    )
+                    .setAlpha(0)
+                    .setDisplaySize(OVERWORLD_CONSTANTS.TILE_WIDTH, 4);
+                cellAbove.borderBottom = borderBottom;
+                this.board.add(borderBottom);
+            }
         }
         // left
         if (orthogonalCells[1]) {
             const cellLeft = orthogonalCells[1];
-            const borderRight = this.scene.add
-                .image(
-                    cellLeft.x * OVERWORLD_CONSTANTS.TILE_WIDTH -
-                        cellLeft.borderSize / 2 +
-                        OVERWORLD_CONSTANTS.TILE_WIDTH / 2,
-                    cellLeft.y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
-                    borderImgToPaint,
-                )
-                .setDisplaySize(OVERWORLD_CONSTANTS.TILE_HEIGHT, 4)
-                .setAngle(90)
-                .setAlpha(0);
-            cellLeft.borderRight = borderRight;
-            this.board.add(borderRight);
+            if (cellLeft.borderRight) {
+                cellLeft.borderRight.setFrame(frame);
+            } else {
+                const borderRight = this.scene.add
+                    .image(
+                        cellLeft.x * OVERWORLD_CONSTANTS.TILE_WIDTH -
+                            cellLeft.borderSize / 2 +
+                            OVERWORLD_CONSTANTS.TILE_WIDTH / 2,
+                        cellLeft.y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
+                        "overworldBorders",
+                        frame,
+                    )
+                    .setDisplaySize(OVERWORLD_CONSTANTS.TILE_HEIGHT, 4)
+                    .setAngle(90)
+                    .setAlpha(0);
+                cellLeft.borderRight = borderRight;
+                this.board.add(borderRight);
+            }
         }
 
         // right
         if (orthogonalCells[2]) {
             const cellRight = orthogonalCells[2];
-            const borderLeft = this.scene.add
-                .image(
-                    cellRight.x * OVERWORLD_CONSTANTS.TILE_WIDTH +
-                        cellRight.borderSize / 2 -
-                        OVERWORLD_CONSTANTS.TILE_WIDTH / 2,
-                    cellRight.y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
-                    borderImgToPaint,
-                )
-                .setDisplaySize(OVERWORLD_CONSTANTS.TILE_HEIGHT, 4)
-                .setAngle(90)
-                .setAlpha(0);
-            cellRight.borderLeft = borderLeft;
-            this.board.add(borderLeft);
+            if (cellRight.borderLeft) {
+                cellRight.borderLeft.setFrame(frame);
+            } else {
+                const borderLeft = this.scene.add
+                    .image(
+                        cellRight.x * OVERWORLD_CONSTANTS.TILE_WIDTH +
+                            cellRight.borderSize / 2 -
+                            OVERWORLD_CONSTANTS.TILE_WIDTH / 2,
+                        cellRight.y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
+                        "overworldBorders",
+                        frame,
+                    )
+                    .setDisplaySize(OVERWORLD_CONSTANTS.TILE_HEIGHT, 4)
+                    .setAngle(90)
+                    .setAlpha(0);
+                cellRight.borderLeft = borderLeft;
+                this.board.add(borderLeft);
+            }
         }
 
         // bottom
         if (orthogonalCells[3]) {
             const cellBottom = orthogonalCells[3];
-            const borderTop = this.scene.add
-                .image(
-                    cellBottom.x * OVERWORLD_CONSTANTS.TILE_WIDTH,
-                    cellBottom.y * OVERWORLD_CONSTANTS.TILE_HEIGHT +
-                        cellBottom.borderSize / 2 -
-                        OVERWORLD_CONSTANTS.TILE_HEIGHT / 2,
-                    borderImgToPaint,
-                )
-                .setAlpha(0)
-                .setDisplaySize(OVERWORLD_CONSTANTS.TILE_WIDTH, 4);
-            cellBottom.borderTop = borderTop;
-            this.board.add(borderTop);
+            if (cellBottom.borderTop) {
+                cellBottom.borderTop.setFrame(frame);
+            } else {
+                const borderTop = this.scene.add
+                    .image(
+                        cellBottom.x * OVERWORLD_CONSTANTS.TILE_WIDTH,
+                        cellBottom.y * OVERWORLD_CONSTANTS.TILE_HEIGHT +
+                            cellBottom.borderSize / 2 -
+                            OVERWORLD_CONSTANTS.TILE_HEIGHT / 2,
+                        "overworldBorders",
+                        frame,
+                    )
+                    .setAlpha(0)
+                    .setDisplaySize(OVERWORLD_CONSTANTS.TILE_WIDTH, 4);
+                cellBottom.borderTop = borderTop;
+                this.board.add(borderTop);
+            }
         }
     }
 

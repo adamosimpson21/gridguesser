@@ -2,6 +2,8 @@ import { SCENES } from "@/game/types/scenes";
 import OverworldLegend from "@/game/classes/OverworldLegend";
 import { EventBus } from "@/game/EventBus";
 import { SCENE_EVENTS } from "@/game/types/events";
+import { SettingsManager } from "@/game/classes/SettingsManager";
+import { Overworld } from "@/game/scenes/Overworld";
 
 export const transitionScene = (
     transitionFromScene: Phaser.Scene,
@@ -19,8 +21,16 @@ export const transitionScene = (
                     transitionFromScene.scene
                         .launch(transitionToScene, data)
                         .pause(SCENES.Overworld);
+                    SettingsManager.updateLocalStorageCurrentScene(
+                        transitionFromScene,
+                        transitionToScene,
+                    );
                 } else {
                     transitionFromScene.scene.start(transitionToScene, data);
+                    SettingsManager.updateLocalStorageCurrentScene(
+                        transitionFromScene,
+                        transitionToScene,
+                    );
                 }
             },
         );
@@ -30,8 +40,16 @@ export const transitionScene = (
             transitionFromScene.scene
                 .launch(transitionToScene, data)
                 .pause(SCENES.Overworld);
+            SettingsManager.updateLocalStorageCurrentScene(
+                transitionFromScene,
+                transitionToScene,
+            );
         } else {
             transitionFromScene.scene.start(transitionToScene, data);
+            SettingsManager.updateLocalStorageCurrentScene(
+                transitionFromScene,
+                transitionToScene,
+            );
         }
     }
 };
@@ -47,6 +65,10 @@ export const transitionSceneToOverworld = (
             EventBus.emit(SCENE_EVENTS.ENTER_OVERWORLD);
             transitionFromScene.scene.resume(SCENES.Overworld);
             transitionFromScene.scene.stop(transitionFromScene.scene.key);
+            SettingsManager.updateLocalStorageCurrentScene(
+                transitionFromScene,
+                SCENES.Overworld,
+            );
         },
     );
 };
@@ -62,8 +84,25 @@ export const transitionSceneToOverworldFromBoss = (
             transitionFromScene.scene.stop(transitionFromScene.scene.key);
             transitionFromScene.scene.stop(SCENES.Overworld);
             transitionFromScene.scene.start(SCENES.Overworld);
+            SettingsManager.updateLocalStorageCurrentScene(
+                transitionFromScene,
+                SCENES.Overworld,
+            );
             EventBus.emit(SCENE_EVENTS.ENTER_OVERWORLD);
         },
+    );
+};
+
+export const abandonRunTransitionScene = (
+    transitionFromScene: Phaser.Scene,
+    data?: any,
+) => {
+    transitionFromScene.scene.stop(transitionFromScene.scene.key);
+    transitionFromScene.scene.stop(SCENES.Overworld);
+    transitionFromScene.scene.start(SCENES.MainMenu).launch(SCENES.Hud);
+    SettingsManager.updateLocalStorageCurrentScene(
+        transitionFromScene,
+        SCENES.MainMenu,
     );
 };
 

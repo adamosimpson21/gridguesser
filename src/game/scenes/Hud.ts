@@ -6,6 +6,7 @@ import { EventBus } from "@/game/EventBus";
 import { GAME_EVENTS } from "@/game/types/events";
 import { GAME_CONSTANTS } from "@/game/types/gameConstants";
 import OverworldLegend from "@/game/classes/OverworldLegend";
+import { GameState } from "../classes/GameState";
 export class Hud extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
     public eventDisplay: EventDisplay | undefined;
@@ -36,17 +37,14 @@ export class Hud extends Scene {
         this.camera = this.cameras.main;
         this.HudDisplay = new HudDisplay(
             this,
-            GAME_CONSTANTS.startingName,
-            GAME_CONSTANTS.startingHp,
-            GAME_CONSTANTS.startingGold,
-            GAME_CONSTANTS.startingMaxHp,
+            GameState.name,
+            GameState.hp,
+            GameState.gold,
+            GameState.maxHp,
         );
         this.OverworldLegend = new OverworldLegend(this);
 
         this.eventDisplay = new EventDisplay(this);
-        // EventBus.on(GAME_EVENTS.RESET, () => {
-        //     this.eventDisplay = new EventDisplay(this);
-        // });
 
         EventBus.emit("current-scene-ready", this);
     }

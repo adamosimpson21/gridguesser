@@ -219,10 +219,7 @@ export default class ShopItem {
 
     playerCanUseItemCheck(item: shopItemType): boolean {
         const itemEffect = item.effect;
-        if (
-            itemEffect.heal >= 0 &&
-            GameState.player.hp === GameState.player.maxHp
-        ) {
+        if (itemEffect.heal >= 0 && GameState.hp === GameState.maxHp) {
             EventBus.emit(
                 UI_EVENTS.DISPLAY_MESSAGE,
                 {
@@ -232,7 +229,7 @@ export default class ShopItem {
                 3000,
             );
             return false;
-        } else if (item.singleton && GameState.player.upgrades.includes(item)) {
+        } else if (item.singleton && GameState.upgrades.includes(item)) {
             EventBus.emit(
                 UI_EVENTS.DISPLAY_MESSAGE,
                 {
@@ -254,7 +251,7 @@ export default class ShopItem {
                     EventBus.emit(PLAYER_EVENTS.GAIN_HP, itemEffect.heal);
                     break;
                 case "healEqualToHp":
-                    EventBus.emit(PLAYER_EVENTS.GAIN_HP, GameState.player.hp);
+                    EventBus.emit(PLAYER_EVENTS.GAIN_HP, GameState.hp);
                     break;
                 case "maxHp":
                     EventBus.emit(
@@ -265,8 +262,7 @@ export default class ShopItem {
                     break;
                 case "maxHpPercent":
                     const severity = Math.ceil(
-                        GameState.player.maxHp *
-                            (itemEffect.maxHpPercent / 100),
+                        GameState.maxHp * (itemEffect.maxHpPercent / 100),
                     );
                     EventBus.emit(
                         PLAYER_EVENTS.GAIN_MAX_HP,
@@ -277,7 +273,7 @@ export default class ShopItem {
                 case "maxHpDouble":
                     EventBus.emit(
                         PLAYER_EVENTS.GAIN_MAX_HP,
-                        GameState.player.maxHp,
+                        GameState.maxHp,
                         0,
                     );
                     break;
@@ -310,7 +306,7 @@ export default class ShopItem {
                     });
                     break;
                 case "luckAdd":
-                    GameState.player.luck += itemEffect.luckAdd;
+                    GameState.luck += itemEffect.luckAdd;
                     EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
                         type: UI_MESSAGE_TYPES.SUCCESS,
                         message: "Up all night to get Lucky 🌟",
@@ -346,7 +342,7 @@ export default class ShopItem {
         if (this.type && this.item && this.available) {
             if (this.item?.effect) {
                 // check if player has money to  buy item
-                if (this.item.cost > GameState.player.gold) {
+                if (this.item.cost > GameState.gold) {
                     EventBus.emit(
                         UI_EVENTS.DISPLAY_MESSAGE,
                         {

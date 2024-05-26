@@ -80,7 +80,7 @@ export default class TrapDisplay {
         const rngCall = Phaser.Math.FloatBetween(0, 1);
         // player luck is usually between -1 and 1, trap luck factor is between 0 and 1, rngcall is between 0 and 1
         if (
-            GameState.player.luck * this.trap.luckFactor + rngCall >
+            GameState.luck * this.trap.luckFactor + rngCall >
             this.trap.options[0].outcomes[0].chance / 100
         ) {
             this.parseOutcome(this.trap.options[0].outcomes[0]);
@@ -148,7 +148,9 @@ export default class TrapDisplay {
                     }
                     break;
                 case "luck":
-                    GameState.player.luck += severity;
+                    if (typeof severity === "number") {
+                        GameState.luck += severity;
+                    }
                     break;
                 case "item":
                     EventBus.emit(PLAYER_EVENTS.LOSE_UPGRADE, severity, true);

@@ -31,7 +31,8 @@
         "phaser": "^3.80.1",
         "phaser-plugin-scene-watcher": "^6.0.0",
         "react": "^18",
-        "react-dom": "^18"
+        "react-dom": "^18",
+        "uuid": "^9.0.1"
     },
     "devDependencies": {
         "@types/node": "^20",

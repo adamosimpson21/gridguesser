@@ -5,6 +5,11 @@ import { SettingsManager } from "@/game/classes/SettingsManager";
 import { LocalStorageManager } from "@/game/classes/LocalStorageManager";
 import { paragraphText } from "@/game/types/textStyleConstructor";
 import { SETTING_CONSTANTS } from "@/game/types/settingConstants";
+import { GAME_EVENTS } from "@/game/types/events";
+import {
+    abandonRunTransitionScene,
+    transitionScene,
+} from "@/game/functions/transitionScene";
 
 export class Settings extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -54,6 +59,7 @@ export class Settings extends Scene {
         this.createVolume();
         this.createInputHint();
         this.createMobileControls();
+        this.createGoToMainMenuButton();
 
         EventBus.emit("current-scene-ready", this);
     }
@@ -138,5 +144,35 @@ export class Settings extends Scene {
 
         this.controlContainer.add(mobileControlsText);
         this.controlContainer.add(mobileControlsCheckbox);
+    }
+
+    createGoToMainMenuButton() {
+        const abandonRunText = this.make.text({
+            x: 0,
+            y: 300,
+            text: `Abandon Run:`,
+            style: paragraphText({}),
+        });
+        const abandonRunSymbol = this.make.text({
+            x: 250,
+            y: 300,
+            text: "☠",
+            style: paragraphText({}),
+        });
+        abandonRunText.setInteractive();
+        abandonRunText.on("pointerdown", () => {
+            // this.scene.stop();
+            EventBus.emit(GAME_EVENTS.ABANDON_RUN);
+            abandonRunTransitionScene(this);
+        });
+        abandonRunSymbol.setInteractive();
+        abandonRunSymbol.on("pointerdown", () => {
+            // this.scene.stop();
+            EventBus.emit(GAME_EVENTS.ABANDON_RUN);
+            abandonRunTransitionScene(this);
+        });
+
+        this.controlContainer.add(abandonRunText);
+        this.controlContainer.add(abandonRunSymbol);
     }
 }

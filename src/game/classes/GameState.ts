@@ -7,24 +7,20 @@ import {
 } from "@/game/types/events";
 import { shopItemType } from "@/game/types/shopItems";
 import { Scene } from "phaser";
-import { SCENES } from "@/game/types/scenes";
-import { PlayerClass } from "@/game/classes/Player";
 import { GAME_CONSTANTS } from "@/game/types/gameConstants";
 import {
     FIGHT_CONSTANTS,
     FIGHT_INPUT_TYPES,
 } from "@/game/types/fightConstants";
 import { getInputInstanceUsesAvailable } from "@/game/functions/getInputUsesAvailable";
-import { headingText } from "@/game/types/textStyleConstructor";
-import { Simulate } from "react-dom/test-utils";
-import input = Simulate.input;
+import { LocalStorageManager } from "@/game/classes/LocalStorageManager";
+import { SETTING_CONSTANTS } from "@/game/types/settingConstants";
 
-class GameStateClass {
+export class GameStateClass {
     // stores information about current run
     public level: number;
     public bombIntensity: number;
     public isPlaying: boolean;
-    public player: any;
     public bombNum: number;
     public overworldGridWidth: number;
     public overworldGridHeight: number;
@@ -43,7 +39,7 @@ class GameStateClass {
     public fightCanHaveLyingTiles: boolean;
     public fightCanHaveMultiBombTiles: boolean;
     public bombCounterCanLie: boolean;
-    public GameOverBtn: Phaser.GameObjects.Text;
+    // public GameOverBtn: Phaser.GameObjects.Text;
     public fightInputTypes: string[];
     public currentFightInputType: string;
     public removeTrashNum: number;
@@ -69,12 +65,20 @@ class GameStateClass {
     public bombNumFightIncrement: number;
     public bombCounterCanLiePercent: number;
     public hasLocalStorage: boolean;
+    public name: string;
+    public hp: number;
+    public gold: number;
+    public maxHp: number;
+    public upgrades: shopItemType[];
 
     constructor() {
         this.isPlaying = true;
-        this.player = new PlayerClass();
         this.create();
         this.hasLocalStorage = false;
+
+        if (LocalStorageManager.getItem(SETTING_CONSTANTS.hasActiveCampaign)) {
+            this.hydrateGameState();
+        }
 
         EventBus.on(GAME_EVENTS.INCREMENT_LEVEL, () => this.incrementLevel());
         EventBus.on(GAME_EVENTS.RESET, () => this.reset(), this);
@@ -138,39 +142,253 @@ class GameStateClass {
         EventBus.on(FIGHT_EVENTS.ADD_INPUT_TYPE, (inputType: string) => {
             this.fightInputTypes.push(inputType);
         });
+        EventBus.on(GAME_EVENTS.ABANDON_RUN, () => {
+            console.log("in abandon run");
+            LocalStorageManager.removeCurrentCampaignItem();
+            LocalStorageManager.setItem(
+                SETTING_CONSTANTS.hasActiveCampaign,
+                false,
+            );
+            EventBus.emit(GAME_EVENTS.RESET);
+        });
+        EventBus.on(
+            GAME_EVENTS.GAME_OVER,
+            () => {
+                LocalStorageManager.removeCurrentCampaignItem();
+                LocalStorageManager.setItem(
+                    SETTING_CONSTANTS.hasActiveCampaign,
+                    false,
+                );
+            },
+            this,
+        );
+        EventBus.on(PLAYER_EVENTS.CHANGE_NAME, (name: string) => {
+            this.name = name;
+            EventBus.emit(UI_EVENTS.UPDATE_NAME, name);
+        });
+        EventBus.on(
+            PLAYER_EVENTS.GAIN_HP,
+            (severity: number, silent?: boolean) => {
+                this.updateHp(this.hp + severity, this.maxHp, silent);
+            },
+        );
+        EventBus.on(
+            PLAYER_EVENTS.LOSE_HP,
+            (severity: number, silent?: boolean) => {
+                let damageAfterReduction =
+                    severity - GameState.playerDamageReduction;
+                if (damageAfterReduction <= 0) {
+                    severity = 0;
+                    silent = true;
+                } else {
+                    severity = damageAfterReduction;
+                }
+                this.updateHp(this.hp - severity, this.maxHp, silent);
+            },
+        );
+        EventBus.on(
+            PLAYER_EVENTS.GAIN_GOLD,
+            (severity: number, silent?: boolean) => {
+                this.updateGold(severity, silent);
+            },
+        );
+        EventBus.on(
+            PLAYER_EVENTS.LOSE_GOLD,
+            (severity: number, silent?: boolean) => {
+                this.updateGold(-severity, silent);
+            },
+        );
+        EventBus.on(
+            PLAYER_EVENTS.GAIN_MAX_HP,
+            (severity: number, addHp: number, silent?: boolean) => {
+                this.updateHp(this.hp + addHp, this.maxHp + severity, silent);
+            },
+        );
+        EventBus.on(
+            PLAYER_EVENTS.LOSE_MAX_HP,
+            (severity: number, silent?: boolean) => {
+                this.updateHp(
+                    this.hp - severity,
+                    this.maxHp - severity,
+                    silent,
+                );
+            },
+        );
+        EventBus.on(
+            PLAYER_EVENTS.GAIN_UPGRADE,
+            (upgrade: shopItemType, silent?: boolean) => {
+                this.updateUpgrades(upgrade, true, silent);
+            },
+        );
+        EventBus.on(
+            PLAYER_EVENTS.LOSE_UPGRADE,
+            (upgrade: shopItemType, silent?: boolean) => {
+                this.updateUpgrades(upgrade, false, silent);
+            },
+        );
+        EventBus.on(
+            PLAYER_EVENTS.HIT_BOMB,
+            (numBombs: number, silent?: boolean) => {
+                this.hitBomb(numBombs, silent);
+            },
+        );
     }
 
     create() {
         this.reset();
     }
 
-    gameOver(scene: Scene) {
+    updateHp(hp?: number, maxHp?: number, silent?: boolean) {
+        const prevHp = this.hp;
+        let hpToUpdate = hp || this.hp;
+        // cover corner case where hp === 0
+        if (hp === 0) {
+            hpToUpdate = hp;
+        }
+        let maxHpToUpdate = maxHp || this.hp;
+        // cover corner case where maxHp === 0
+        if (maxHp === 0) {
+            maxHpToUpdate = maxHp;
+        }
+        // if maxhp is somehow 0 or negative, let them live
+        if (maxHpToUpdate <= 0) {
+            maxHpToUpdate = 1;
+        }
+        if (hpToUpdate <= 0) {
+            EventBus.emit(GAME_EVENTS.GAME_OVER);
+        } else if (hpToUpdate >= maxHpToUpdate) {
+            hpToUpdate = maxHpToUpdate;
+        }
+
+        this.hp = hpToUpdate;
+        this.maxHp = maxHpToUpdate;
+        const hpChange = this.hp - prevHp;
+        EventBus.emit(
+            UI_EVENTS.UPDATE_HEALTH,
+            hpToUpdate,
+            maxHpToUpdate,
+            hpChange,
+            silent,
+        );
+    }
+
+    updateGold(goldDifference: number, silent?: boolean) {
+        let goldToUpdate = goldDifference;
+        if (goldDifference + this.gold >= 0) {
+            goldToUpdate = this.gold + goldDifference;
+        } else {
+            goldToUpdate = 0;
+        }
+
+        this.gold = goldToUpdate;
+
+        EventBus.emit(
+            UI_EVENTS.UPDATE_GOLD,
+            goldToUpdate,
+            goldDifference,
+            silent,
+        );
+    }
+
+    createGameOverButton(scene: Scene) {
         this.isPlaying = false;
         // adds this button to current active scene
         const currentScenes = scene.scene.systems.game.scene.getScenes(true);
-        this.GameOverBtn = currentScenes[0].add
-            .text(
-                scene.scale.width / 2 - 200,
-                200,
-                "Oh no! Game Over 😭😭😭",
-                headingText({}),
-            )
-            .setOrigin(0.5)
-            .setDepth(100);
-        this.GameOverBtn.setInteractive();
-        this.GameOverBtn.on("pointerdown", () => {
-            scene.scene.stop(SCENES.Fight);
-            scene.scene.stop(SCENES.BossFight);
-            scene.scene.start(SCENES.GameOver);
-        });
+        LocalStorageManager.setItem(SETTING_CONSTANTS.hasActiveCampaign, false);
+        // this.GameOverBtn = currentScenes[0].add
+        //     .text(
+        //         scene.scale.width / 2 - 200,
+        //         200,
+        //         "Oh no! Game Over 😭😭😭",
+        //         headingText({}),
+        //     )
+        //     .setOrigin(0.5)
+        //     .setDepth(100);
+        // this.GameOverBtn.setInteractive();
+        // this.GameOverBtn.on("pointerdown", () => {
+        //     scene.scene.stop(SCENES.Fight);
+        //     scene.scene.stop(SCENES.BossFight);
+        //     scene.scene.start(SCENES.GameOver);
+        // });
     }
 
     reset() {
         this.initializeNewGameConstants();
         this.isPlaying = true;
+        LocalStorageManager.setItem(SETTING_CONSTANTS.hasActiveCampaign, true);
+    }
+
+    hitBomb(numBombs: number, silent?: boolean) {
+        const bombDamage = GameState.bombIntensity * numBombs;
+        EventBus.emit(PLAYER_EVENTS.LOSE_HP, bombDamage, silent);
+    }
+
+    hydrateGameState() {
+        const serializedCampaign = LocalStorageManager.getCurrentCampaignItem();
+        if (serializedCampaign?.gameState) {
+            console.log("hydrating game state:", serializedCampaign.gameState);
+            Object.entries(serializedCampaign?.gameState).forEach(
+                (row: [string, any]) => {
+                    (this as any)[row[0]] = row[1];
+                },
+            );
+
+            EventBus.emit(UI_EVENTS.UPDATE_NAME, this.name);
+            EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, true);
+            EventBus.emit(
+                UI_EVENTS.UPDATE_HEALTH,
+                this.hp,
+                this.maxHp,
+                0,
+                true,
+            );
+            this.upgrades.forEach((upgrade) => {
+                EventBus.emit(
+                    UI_EVENTS.UPDATE_UPGRADES,
+                    this.upgrades,
+                    upgrade,
+                    true,
+                    true,
+                );
+            });
+            console.log("game state emitting events");
+        }
+    }
+
+    updateUpgrades(upgrade: shopItemType, gained: boolean, silent?: boolean) {
+        if (gained) {
+            this.upgrades.push(upgrade);
+            EventBus.emit(
+                UI_EVENTS.UPDATE_UPGRADES,
+                this.upgrades,
+                upgrade,
+                gained,
+                silent,
+            );
+        } else {
+            const index = this.upgrades.findIndex(
+                (item) => item.id === upgrade.id,
+            );
+            if (index !== -1) {
+                this.upgrades = this.upgrades.splice(index, 1);
+                EventBus.emit(
+                    UI_EVENTS.UPDATE_UPGRADES,
+                    this.upgrades,
+                    upgrade,
+                    gained,
+                    silent,
+                );
+            }
+        }
     }
 
     initializeNewGameConstants() {
+        this.name = GAME_CONSTANTS.startingName;
+        this.hp = GAME_CONSTANTS.startingHp;
+        this.maxHp = GAME_CONSTANTS.startingMaxHp;
+        this.gold = GAME_CONSTANTS.startingGold;
+        this.luck = GAME_CONSTANTS.startingLuck;
+        this.upgrades = [];
         this.level = GAME_CONSTANTS.startingLevel;
         this.bombIntensity = GAME_CONSTANTS.startingBombIntensity;
         this.bombNum = GAME_CONSTANTS.startingBombNum;
@@ -217,6 +435,9 @@ class GameStateClass {
         this.fightBossGoldReward = GAME_CONSTANTS.startingFightBossGoldReward;
 
         EventBus.emit(GAME_EVENTS.RESET_FIGHT_INPUT_MENU);
+        EventBus.emit(UI_EVENTS.UPDATE_HEALTH, this.hp, this.maxHp, 0, true);
+        EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, 0, true);
+        EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, this.upgrades, true);
     }
 
     resetFightConstants() {
