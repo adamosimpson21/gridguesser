@@ -1,9 +1,11 @@
 import { SCENES } from "@/game/types/scenes";
 import OverworldLegend from "@/game/classes/OverworldLegend";
 import { EventBus } from "@/game/EventBus";
-import { SCENE_EVENTS } from "@/game/types/events";
+import { GAME_EVENTS, SCENE_EVENTS } from "@/game/types/events";
 import { SettingsManager } from "@/game/classes/SettingsManager";
 import { Overworld } from "@/game/scenes/Overworld";
+import { LocalStorageManager } from "@/game/classes/LocalStorageManager";
+import { SETTING_CONSTANTS } from "@/game/types/settingConstants";
 
 export const transitionScene = (
     transitionFromScene: Phaser.Scene,
@@ -91,6 +93,29 @@ export const transitionSceneToOverworldFromBoss = (
             EventBus.emit(SCENE_EVENTS.ENTER_OVERWORLD);
         },
     );
+};
+
+export const transitionSceneRehydrateCampaign = (
+    transitionFromScene: Phaser.Scene,
+) => {
+    const activeScenes = LocalStorageManager.getItem(
+        SETTING_CONSTANTS.currentActiveScenes,
+    );
+    if (activeScenes.length > 0) {
+        activeScenes.forEach((sceneToStart: string) => {
+            if (sceneToStart !== SCENES.Hud) {
+                transitionFromScene.scene.start(sceneToStart);
+            }
+        });
+        EventBus.emit(GAME_EVENTS.LOAD_CAMPAIGN);
+        SettingsManager.updateLocalStorageCurrentScene(
+            transitionFromScene,
+            SCENES.Overworld,
+        );
+    } else {
+        transitionFromScene.scene.start(SCENES.MainMenu);
+    }
+    transitionFromScene.scene.stop();
 };
 
 export const abandonRunTransitionScene = (

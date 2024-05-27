@@ -53,11 +53,13 @@ export default class BossFightGrid extends FightGrid {
                     delay: 1000,
                     loop: false,
                     callback: () => {
+                        EventBus.emit(GAME_EVENTS.GAME_WON);
                         transitionScene(this.scene, SCENES.GameWon);
                     },
                     callbackScope: this,
                 });
             });
+            this.createBossEndModal(flawless);
         } else {
             if (GameState.level === 1) {
                 //unleash all advanced mechanics

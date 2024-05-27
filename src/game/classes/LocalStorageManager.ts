@@ -40,7 +40,6 @@ class LocalStorageManagerClass {
 
     setCurrentCampaignItem(value: currentCampaignDetails) {
         if (localStorage) {
-            console.log("seting campaign item:", value);
             localStorage.setItem(
                 JSON.stringify(SETTING_CONSTANTS.currentCampaignDetails),
                 JSON.stringify(value),

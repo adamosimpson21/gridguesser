@@ -1,10 +1,11 @@
 import { Scene } from "phaser";
 import { SCENES } from "@/game/types/scenes";
 import { EventBus } from "@/game/EventBus";
-import { SCENE_EVENTS } from "@/game/types/events";
+import { GAME_EVENTS, SCENE_EVENTS } from "@/game/types/events";
 import { GameState } from "@/game/classes/GameState";
 import { LocalStorageManager } from "@/game/classes/LocalStorageManager";
 import { SETTING_CONSTANTS } from "@/game/types/settingConstants";
+import { Overworld } from "@/game/scenes/Overworld";
 
 export class Preloader extends Scene {
     constructor() {
@@ -43,23 +44,33 @@ export class Preloader extends Scene {
             GameState.hasLocalStorage = true;
         }
 
-        const previousCurrentScenes = LocalStorageManager.getItem(
-            SETTING_CONSTANTS.currentActiveScenes,
-        );
-        const previousCurrentActiveScene = LocalStorageManager.getItem(
-            SETTING_CONSTANTS.currentScene,
-        );
-        if (previousCurrentScenes && previousCurrentActiveScene) {
-            previousCurrentScenes.forEach((sceneKey: string) => {
-                this.scene.launch(sceneKey);
-            });
-            this.scene.remove();
-        } else {
-            this.scene
-                .launch(SCENES.MainMenu)
-                // .launch(SCENES.Settings)
-                .launch(SCENES.Hud)
-                .remove();
-        }
+        // const previousCurrentScenes = LocalStorageManager.getItem(
+        //     SETTING_CONSTANTS.currentActiveScenes,
+        // );
+        // const previousCurrentActiveScene = LocalStorageManager.getItem(
+        //     SETTING_CONSTANTS.currentScene,
+        // );
+        // const hasActiveCampaign = LocalStorageManager.getItem(
+        //     SETTING_CONSTANTS.hasActiveCampaign,
+        // );
+        // if (previousCurrentScenes.length > 0 && previousCurrentActiveScene) {
+        //     console.log("in preloader, loading scenes:", previousCurrentScenes);
+        //     previousCurrentScenes.forEach((sceneKey: string) => {
+        //         this.scene.launch(sceneKey);
+        //     });
+        //     if (
+        //         hasActiveCampaign &&
+        //         LocalStorageManager.getCurrentCampaignItem()
+        //     ) {
+        //         EventBus.emit(GAME_EVENTS.LOAD_CAMPAIGN);
+        //     }
+        //     this.scene.remove();
+        // } else {
+        this.scene
+            .launch(SCENES.MainMenu)
+            // .launch(SCENES.Settings)
+            .launch(SCENES.Hud)
+            .remove();
+        // }
     }
 }

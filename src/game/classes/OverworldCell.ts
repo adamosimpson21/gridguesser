@@ -294,7 +294,8 @@ export default class OverworldCell {
         this.open = true;
         // console.log("this.grid.scene", this.grid.scene);
         // do not save during home because
-        if (this.grid.scene.overworldGrid) {
+        // this saves many times, could introduce bugs later
+        if (this.grid.scene.overworldGrid && this.value !== 1) {
             this.grid.scene.saveCurrentCampaignDetails();
         }
     }

@@ -7,7 +7,10 @@ import EventDisplay from "@/game/classes/EventDisplay";
 import { GAME_EVENTS } from "@/game/types/events";
 import { GameState } from "../classes/GameState";
 import { createBackground } from "@/game/functions/background";
-import { cameraFadeIn } from "@/game/functions/transitionScene";
+import {
+    cameraFadeIn,
+    transitionScene,
+} from "@/game/functions/transitionScene";
 import { Settings } from "@/game/scenes/Settings";
 import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
 import { MainMenu } from "@/game/scenes/MainMenu";
@@ -24,9 +27,14 @@ export class Overworld extends Scene {
     public Hud: HudDisplay;
     public eventDisplay: EventDisplay;
     public titleText: Phaser.GameObjects.Text;
+    public shouldLoadData: boolean;
 
     constructor() {
         super(SCENES.Overworld);
+    }
+
+    init({ shouldLoadData }: { shouldLoadData: boolean }) {
+        this.shouldLoadData = shouldLoadData || false;
     }
 
     preload() {
@@ -58,6 +66,7 @@ export class Overworld extends Scene {
 
         this.background = createBackground(this);
         cameraFadeIn(this);
+        addPauseOverlay(this);
 
         const gridWidth = GameState.overworldGridWidth;
         const gridHeight = GameState.overworldGridHeight;
@@ -82,33 +91,34 @@ export class Overworld extends Scene {
             style: mainMenuText({}),
         });
 
-        EventBus.emit("current-scene-ready", this);
-
-        EventBus.on(
-            GAME_EVENTS.GAME_OVER,
-            () => GameState.createGameOverButton(this),
-            this,
-        );
-
         this.events.on(
             Phaser.Scenes.Events.RESUME,
             () => {
                 this.camera.fadeIn(500, 0, 0, 0);
-                SettingsManager.saveCurrentCampaignDetails(
-                    this.overworldGrid.createSkeleton(),
-                );
             },
             this,
         );
 
-        addPauseOverlay(this);
-
         this.loadCurrentCampaignDetails();
-        this.saveCurrentCampaignDetails();
+        if (this.shouldLoadData) {
+            this.loadCurrentCampaignDetails();
+        }
+        EventBus.on(GAME_EVENTS.GAME_OVER, () => {
+            transitionScene(this, SCENES.GameOver, true);
+        });
+
+        EventBus.on(GAME_EVENTS.RESET, () => {
+            transitionScene(this, SCENES.MainMenu, true);
+            this.scene.stop(SCENES.Fight);
+            this.scene.stop(SCENES.BossFight);
+            this.scene.stop(SCENES.TrapOverlay);
+            this.scene.stop(SCENES.Shop);
+        });
+
+        EventBus.emit("current-scene-ready", this);
     }
 
     saveCurrentCampaignDetails() {
-        // console.log("in save campaign details", this.overworldGrid);
         if (LocalStorageManager.getItem(SETTING_CONSTANTS.hasActiveCampaign)) {
             SettingsManager.saveCurrentCampaignDetails(
                 this.overworldGrid.createSkeleton(),
@@ -127,10 +137,6 @@ export class Overworld extends Scene {
             currentCampaignItem.overworldGrid.height ===
                 GameState.overworldGridHeight
         ) {
-            // console.log(
-            //     "you are loading campaign details",
-            //     currentCampaignItem,
-            // );
             this.overworldGrid.rehydrateFromSkeleton(
                 currentCampaignItem.overworldGrid,
             );
@@ -141,17 +147,4 @@ export class Overworld extends Scene {
             });
         }
     }
-
-    // simplifyGrid(){
-    //
-    // }
-    // transitionScene(scene: string, data?: any) {
-    //     this.camera.fadeOut(1000, 0, 0, 0);
-    //     this.camera.once(
-    //         Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
-    //         (cam: any) => {
-    //             this.scene.launch(scene, data).pause(SCENES.Overworld);
-    //         },
-    //     );
-    // }
 }

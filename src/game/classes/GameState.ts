@@ -81,7 +81,6 @@ export class GameStateClass {
         }
 
         EventBus.on(GAME_EVENTS.INCREMENT_LEVEL, () => this.incrementLevel());
-        EventBus.on(GAME_EVENTS.RESET, () => this.reset(), this);
         EventBus.on(FIGHT_EVENTS.USE_LIMITED_INPUT, (inputType: string) => {
             if (inputType === FIGHT_INPUT_TYPES.REMOVE_BOMB) {
                 GameState.instanceRemoveBombNum--;
@@ -142,6 +141,13 @@ export class GameStateClass {
         EventBus.on(FIGHT_EVENTS.ADD_INPUT_TYPE, (inputType: string) => {
             this.fightInputTypes.push(inputType);
         });
+        EventBus.on(
+            GAME_EVENTS.START_NEW_GAME,
+            () => {
+                this.startNewGame();
+            },
+            this,
+        );
         EventBus.on(GAME_EVENTS.ABANDON_RUN, () => {
             console.log("in abandon run");
             LocalStorageManager.removeCurrentCampaignItem();
@@ -154,6 +160,9 @@ export class GameStateClass {
         EventBus.on(
             GAME_EVENTS.GAME_OVER,
             () => {
+                console.log(
+                    "removing current campaign item and setting active campaign as false",
+                );
                 LocalStorageManager.removeCurrentCampaignItem();
                 LocalStorageManager.setItem(
                     SETTING_CONSTANTS.hasActiveCampaign,
@@ -162,6 +171,16 @@ export class GameStateClass {
             },
             this,
         );
+        EventBus.on(GAME_EVENTS.GAME_WON, () => {
+            LocalStorageManager.setItem(
+                SETTING_CONSTANTS.hasActiveCampaign,
+                false,
+            );
+            LocalStorageManager.removeCurrentCampaignItem();
+        });
+        EventBus.on(GAME_EVENTS.LOAD_CAMPAIGN, () => {
+            this.hydrateGameState();
+        });
         EventBus.on(PLAYER_EVENTS.CHANGE_NAME, (name: string) => {
             this.name = name;
             EventBus.emit(UI_EVENTS.UPDATE_NAME, name);
@@ -235,7 +254,7 @@ export class GameStateClass {
     }
 
     create() {
-        this.reset();
+        this.initializeNewGameConstants();
     }
 
     updateHp(hp?: number, maxHp?: number, silent?: boolean) {
@@ -312,7 +331,10 @@ export class GameStateClass {
         // });
     }
 
-    reset() {
+    reset() {}
+
+    startNewGame() {
+        LocalStorageManager.removeCurrentCampaignItem();
         this.initializeNewGameConstants();
         this.isPlaying = true;
         LocalStorageManager.setItem(SETTING_CONSTANTS.hasActiveCampaign, true);
@@ -326,7 +348,6 @@ export class GameStateClass {
     hydrateGameState() {
         const serializedCampaign = LocalStorageManager.getCurrentCampaignItem();
         if (serializedCampaign?.gameState) {
-            console.log("hydrating game state:", serializedCampaign.gameState);
             Object.entries(serializedCampaign?.gameState).forEach(
                 (row: [string, any]) => {
                     (this as any)[row[0]] = row[1];
@@ -351,7 +372,6 @@ export class GameStateClass {
                     true,
                 );
             });
-            console.log("game state emitting events");
         }
     }
 
@@ -434,10 +454,10 @@ export class GameStateClass {
 
         this.fightBossGoldReward = GAME_CONSTANTS.startingFightBossGoldReward;
 
-        EventBus.emit(GAME_EVENTS.RESET_FIGHT_INPUT_MENU);
-        EventBus.emit(UI_EVENTS.UPDATE_HEALTH, this.hp, this.maxHp, 0, true);
-        EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, 0, true);
-        EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, this.upgrades, true);
+        // EventBus.emit(GAME_EVENTS.RESET_FIGHT_INPUT_MENU);
+        // EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, 0, true);
+        // EventBus.emit(UI_EVENTS.UPDATE_HEALTH, this.hp, this.maxHp, 0, true);
+        // EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, this.upgrades, true);
     }
 
     resetFightConstants() {

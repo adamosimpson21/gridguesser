@@ -7,6 +7,8 @@ import {
     transitionScene,
 } from "@/game/functions/transitionScene";
 import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
+import { mainMenuText } from "@/game/types/textStyleConstructor";
+import { GAME_EVENTS } from "@/game/types/events";
 
 export class GameWon extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -25,28 +27,17 @@ export class GameWon extends Scene {
         this.background = createBackground(this);
 
         this.gameOverText = this.add
-            .text(512, 384, "🏆🏆🏆🏆🏆 Game Won. You Win! 🥳🥳🥳🥳🥳", {
-                fontFamily: "Arial Black",
-                fontSize: 48,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 8,
-                align: "center",
-            })
-            .setOrigin(0.5)
-            .setDepth(100);
+            .text(
+                712,
+                384,
+                "🏆🏆🏆🏆🏆 Game Won. You Win! 🥳🥳🥳🥳🥳",
+                mainMenuText({ wordWrapWidth: 1500 }),
+            )
+            .setOrigin(0.5);
 
         this.gameOverText = this.add
-            .text(512, 484, "Go To Main Menu", {
-                fontFamily: "Arial Black",
-                fontSize: 32,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 8,
-                align: "center",
-            })
-            .setOrigin(0.5)
-            .setDepth(100);
+            .text(712, 684, "Go To Main Menu", mainMenuText({}))
+            .setOrigin(0.5);
         this.gameOverText.setInteractive();
         this.gameOverText.on("pointerdown", () => this.resetToMainMenu());
 
@@ -54,10 +45,7 @@ export class GameWon extends Scene {
     }
 
     resetToMainMenu() {
-        this.scene.stop(SCENES.Fight);
-        this.scene.stop(SCENES.Overworld);
-        this.scene.stop(SCENES.Shop);
-        // this.scene.stop(SCENES.Hud);
-        transitionScene(this, SCENES.MainMenu);
+        this.scene.stop();
+        EventBus.emit(GAME_EVENTS.RESET);
     }
 }

@@ -175,7 +175,6 @@ class SettingsManagerClass {
     }
 
     saveCurrentCampaignDetails(overworldGridData: any) {
-        console.log("saving gamestate:", GameState);
         LocalStorageManager.setCurrentCampaignItem({
             ascension: 0,
             gameState: GameState,

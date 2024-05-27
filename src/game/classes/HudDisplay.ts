@@ -66,8 +66,6 @@ export default class HudDisplay {
             "clipboard",
         );
 
-        console.log("creating displays");
-
         this.nameDisplay = this.scene.add.text(
             this.xOffset,
             this.yOffset,
@@ -107,7 +105,7 @@ export default class HudDisplay {
         EventBus.on(SCENE_EVENTS.POPULATE_FIGHT, () => {
             this.fightInputDisplay.show();
         });
-        EventBus.on(GAME_EVENTS.RESET, () => {
+        EventBus.on(GAME_EVENTS.START_NEW_GAME, () => {
             this.upgradeDisplay.removeAll(true);
         });
         EventBus.on(UI_EVENTS.UPDATE_NAME, (name: string) => {
@@ -117,6 +115,7 @@ export default class HudDisplay {
             UI_EVENTS.UPDATE_GOLD,
             (gold: number, goldDifference: number, silent?: boolean) => {
                 console.log("updating gold", gold);
+                console.log("huddisplay:", this);
                 this.goldDisplay.setText(`$${gold} `);
                 if (!silent) {
                     const goldChangeTween = this.scene.make

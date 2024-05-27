@@ -1,4 +1,3 @@
-import { PlayerClass } from "@/game/classes/Player";
 import { GameStateClass } from "@/game/classes/GameState";
 import { Overworld } from "@/game/scenes/Overworld";
 import OverworldGrid from "@/game/classes/OverworldGrid";

@@ -8,43 +8,77 @@ import {
     transitionScene,
 } from "@/game/functions/transitionScene";
 import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
+import { GAME_EVENTS } from "@/game/types/events";
 
 export class GameOver extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
     gameOverText: Phaser.GameObjects.Text;
     restartGameText: Phaser.GameObjects.Text;
+    gameOverFrame: Phaser.GameObjects.Image;
+    private gameOverContainer: Phaser.GameObjects.Container;
 
     constructor() {
         super(SCENES.GameOver);
     }
 
+    preload() {
+        this.load.image("black_screen", "/assets/blackScreen.png");
+        this.load.image("clipboard", "/assets/hud/longClipboard.png");
+    }
+
     create() {
         this.camera = this.cameras.main;
-        this.camera.setBackgroundColor(0xff0000);
-        cameraFadeIn(this);
-        addPauseOverlay(this);
 
-        this.background = createBackground(this);
+        this.background = this.make
+            .image({ x: 0, y: 0, key: "black_screen" })
+            .setAlpha(0.5, 0.5)
+            .setOrigin(0, 0)
+            .setDisplaySize(this.scale.width, this.scale.height);
+
+        this.gameOverContainer = this.add.container(
+            this.scale.width / 2 - 325,
+            this.scale.height / 2 - 225,
+        );
+
+        this.gameOverFrame = this.make
+            .image({
+                x: -100,
+                y: -100,
+                key: "clipboard",
+            })
+            .setDisplaySize(800, 600)
+            .setOrigin(0, 0);
+        this.gameOverFrame.setInteractive();
+        this.gameOverFrame.on("pointerdown", () => {
+            this.resetToMainMenu();
+        });
 
         this.gameOverText = this.add
-            .text(800, 400, "Game Over", largeText({}))
-            .setOrigin(0.5)
-            .setDepth(100);
+            .text(300, 100, "Game Over", largeText({}))
+            .setOrigin(0.5);
 
         this.restartGameText = this.add
-            .text(800, 600, "Go To Main Menu", {
+            .text(300, 300, "Go To Main Menu", {
                 ...largeText({}),
                 backgroundColor: "white",
             })
-            .setOrigin(0.5)
-            .setDepth(100);
+            .setOrigin(0.5);
         this.restartGameText.setInteractive();
         this.restartGameText.on("pointerdown", () => this.resetToMainMenu());
+
+        this.gameOverContainer.add(this.gameOverFrame);
+        this.gameOverContainer.add(this.gameOverText);
+        this.gameOverContainer.add(this.restartGameText);
+
+        EventBus.on(GAME_EVENTS.LOAD_CAMPAIGN, () => {
+            console.log("game over hears load campaign");
+        });
 
         EventBus.emit("current-scene-ready", this);
     }
     resetToMainMenu() {
-        transitionScene(this, SCENES.MainMenu);
+        this.scene.stop();
+        EventBus.emit(GAME_EVENTS.RESET);
     }
 }

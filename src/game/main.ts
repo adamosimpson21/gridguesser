@@ -45,7 +45,6 @@ const config: Phaser.Types.Core.GameConfig = {
         Preloader,
         Overworld,
         TrapOverlay,
-        GameOver,
         GameWon,
         Shop,
         Fight,
@@ -54,6 +53,7 @@ const config: Phaser.Types.Core.GameConfig = {
         HallOfFame,
         NewGame,
         MainMenu,
+        GameOver,
         Settings,
     ],
 };

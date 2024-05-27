@@ -88,10 +88,10 @@ export class NewGame extends Scene {
         this.submitButton.on("pointerdown", () => this.submit());
     }
     submit() {
-        EventBus.emit(GAME_EVENTS.RESET);
+        transitionScene(this, SCENES.Overworld);
+        EventBus.emit(GAME_EVENTS.START_NEW_GAME);
         EventBus.emit(PLAYER_EVENTS.CHANGE_NAME, this.nameChoice);
         EventBus.emit(SCENE_EVENTS.ENTER_OVERWORLD);
-        transitionScene(this, SCENES.Overworld);
     }
 
     updateNameBoard(name: string) {
