@@ -67,10 +67,10 @@ export class MainMenu extends Scene {
             .setDepth(100);
         this.continueRunButton.setInteractive();
         this.continueRunButton.on("pointerdown", () => {
-            transitionScene(this, SCENES.Overworld, true, {
+            transitionSceneRehydrateCampaign(this, {
                 shouldLoadData: true,
             });
-            // EventBus.emit(GAME_EVENTS.LOAD_CAMPAIGN);
+            EventBus.emit(GAME_EVENTS.LOAD_CAMPAIGN);
         });
 
         if (

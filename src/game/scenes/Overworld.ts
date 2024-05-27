@@ -4,7 +4,7 @@ import OverworldGrid from "../classes/OverworldGrid";
 import HudDisplay from "@/game/classes/HudDisplay";
 import { SCENES } from "@/game/types/scenes";
 import EventDisplay from "@/game/classes/EventDisplay";
-import { GAME_EVENTS } from "@/game/types/events";
+import { FIGHT_EVENTS, GAME_EVENTS } from "@/game/types/events";
 import { GameState } from "../classes/GameState";
 import { createBackground } from "@/game/functions/background";
 import {
@@ -99,7 +99,7 @@ export class Overworld extends Scene {
             this,
         );
 
-        this.loadCurrentCampaignDetails();
+        // this.loadCurrentCampaignDetails();
         if (this.shouldLoadData) {
             this.loadCurrentCampaignDetails();
         }
@@ -112,7 +112,12 @@ export class Overworld extends Scene {
             this.scene.stop(SCENES.Fight);
             this.scene.stop(SCENES.BossFight);
             this.scene.stop(SCENES.TrapOverlay);
+            this.scene.stop(SCENES.Settings);
             this.scene.stop(SCENES.Shop);
+        });
+
+        EventBus.on(FIGHT_EVENTS.FIGHT_WON, () => {
+            this.saveCurrentCampaignDetails();
         });
 
         EventBus.emit("current-scene-ready", this);

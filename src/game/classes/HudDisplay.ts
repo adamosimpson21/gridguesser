@@ -15,10 +15,6 @@ import { addTooltip, TOOLTIP_CONSTANTS } from "@/game/functions/addTooltip";
 
 export default class HudDisplay {
     public scene: Hud;
-    public name: string;
-    public hp: number;
-    public gold: number;
-    public maxHp: number;
     public nameDisplay: Phaser.GameObjects.Text;
     public hpDisplay: Phaser.GameObjects.Text;
     public goldDisplay: Phaser.GameObjects.Text;
@@ -35,26 +31,13 @@ export default class HudDisplay {
     public strokeWidth: number;
     public fightInputDisplay: FightInputMenu;
 
-    constructor(
-        scene: Hud,
-        name: string,
-        hp: number,
-        gold: number,
-        maxHp: number,
-    ) {
+    constructor(scene: Hud) {
         this.scene = scene;
-        this.name = name;
-        this.hp = hp;
-        this.maxHp = maxHp;
-        this.gold = gold;
         this.width = 420;
         this.height = this.scene.scale.height;
         this.xOffset = 40;
         this.yOffset = 160;
         this.lineHeight = 60;
-        this.fontSize = "36px";
-        this.font = "Courier";
-        this.strokeWidth = 5;
 
         this.hudBoard = this.scene.add.container(1500, 0);
 
@@ -69,7 +52,14 @@ export default class HudDisplay {
         this.nameDisplay = this.scene.add.text(
             this.xOffset,
             this.yOffset,
-            `Name: ${this.name}`,
+            `Name: ${GameState.name}`,
+            headingText({}),
+        );
+
+        this.goldDisplay = this.scene.add.text(
+            this.xOffset,
+            this.yOffset + this.lineHeight * 1,
+            `$${GameState.gold} `,
             headingText({}),
         );
 
@@ -77,14 +67,7 @@ export default class HudDisplay {
             this.xOffset,
             this.yOffset + this.lineHeight * 2,
             // `Health: ${new Array(maxHp).fill("♥").join(" ")}`,
-            `Health: ${hp}/${maxHp}`,
-            headingText({}),
-        );
-
-        this.goldDisplay = this.scene.add.text(
-            this.xOffset,
-            this.yOffset + this.lineHeight * 1,
-            `$${gold} `,
+            `Health: ${GameState.hp}/${GameState.maxHp}`,
             headingText({}),
         );
 
@@ -114,9 +97,8 @@ export default class HudDisplay {
         EventBus.on(
             UI_EVENTS.UPDATE_GOLD,
             (gold: number, goldDifference: number, silent?: boolean) => {
-                console.log("updating gold", gold);
-                console.log("huddisplay:", this);
                 this.goldDisplay.setText(`$${gold} `);
+                // this.goldDisplay.setText(`$glod `);
                 if (!silent) {
                     const goldChangeTween = this.scene.make
                         .text({
@@ -158,17 +140,17 @@ export default class HudDisplay {
         EventBus.on(
             UI_EVENTS.UPDATE_HEALTH,
             (hp: number, maxHp: number, hpChange: number, silent?: boolean) => {
-                console.log("updating hp", hp);
                 // low hp warning
                 if (
                     hp <=
                     GameState.bombIntensity - GameState.playerDamageReduction
                 ) {
-                    this.hpDisplay.setStyle({ color: "red" });
+                    this.hpDisplay.setColor("red");
                 } else {
-                    this.hpDisplay.setStyle({ color: "black" });
+                    this.hpDisplay.setColor("black");
                 }
                 this.hpDisplay.setText(`Health: ${hp}/${maxHp}`);
+                // this.hpDisplay.setText(`Health: hps`);
 
                 if (!silent) {
                     const hpChangeTween = this.scene.make

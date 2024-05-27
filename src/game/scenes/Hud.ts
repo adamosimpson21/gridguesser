@@ -35,17 +35,9 @@ export class Hud extends Scene {
 
     create() {
         this.camera = this.cameras.main;
-        this.HudDisplay = new HudDisplay(
-            this,
-            GameState.name,
-            GameState.hp,
-            GameState.gold,
-            GameState.maxHp,
-        );
+        this.HudDisplay = new HudDisplay(this);
         this.OverworldLegend = new OverworldLegend(this);
-
         this.eventDisplay = new EventDisplay(this);
-
         EventBus.emit("current-scene-ready", this);
     }
 }

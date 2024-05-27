@@ -76,10 +76,6 @@ export class GameStateClass {
         this.create();
         this.hasLocalStorage = false;
 
-        if (LocalStorageManager.getItem(SETTING_CONSTANTS.hasActiveCampaign)) {
-            this.hydrateGameState();
-        }
-
         EventBus.on(GAME_EVENTS.INCREMENT_LEVEL, () => this.incrementLevel());
         EventBus.on(FIGHT_EVENTS.USE_LIMITED_INPUT, (inputType: string) => {
             if (inputType === FIGHT_INPUT_TYPES.REMOVE_BOMB) {
@@ -149,7 +145,6 @@ export class GameStateClass {
             this,
         );
         EventBus.on(GAME_EVENTS.ABANDON_RUN, () => {
-            console.log("in abandon run");
             LocalStorageManager.removeCurrentCampaignItem();
             LocalStorageManager.setItem(
                 SETTING_CONSTANTS.hasActiveCampaign,
@@ -160,9 +155,6 @@ export class GameStateClass {
         EventBus.on(
             GAME_EVENTS.GAME_OVER,
             () => {
-                console.log(
-                    "removing current campaign item and setting active campaign as false",
-                );
                 LocalStorageManager.removeCurrentCampaignItem();
                 LocalStorageManager.setItem(
                     SETTING_CONSTANTS.hasActiveCampaign,
@@ -309,27 +301,27 @@ export class GameStateClass {
         );
     }
 
-    createGameOverButton(scene: Scene) {
-        this.isPlaying = false;
-        // adds this button to current active scene
-        const currentScenes = scene.scene.systems.game.scene.getScenes(true);
-        LocalStorageManager.setItem(SETTING_CONSTANTS.hasActiveCampaign, false);
-        // this.GameOverBtn = currentScenes[0].add
-        //     .text(
-        //         scene.scale.width / 2 - 200,
-        //         200,
-        //         "Oh no! Game Over 😭😭😭",
-        //         headingText({}),
-        //     )
-        //     .setOrigin(0.5)
-        //     .setDepth(100);
-        // this.GameOverBtn.setInteractive();
-        // this.GameOverBtn.on("pointerdown", () => {
-        //     scene.scene.stop(SCENES.Fight);
-        //     scene.scene.stop(SCENES.BossFight);
-        //     scene.scene.start(SCENES.GameOver);
-        // });
-    }
+    // createGameOverButton(scene: Scene) {
+    //     this.isPlaying = false;
+    //     // adds this button to current active scene
+    //     const currentScenes = scene.scene.systems.game.scene.getScenes(true);
+    //     LocalStorageManager.setItem(SETTING_CONSTANTS.hasActiveCampaign, false);
+    //     // this.GameOverBtn = currentScenes[0].add
+    //     //     .text(
+    //     //         scene.scale.width / 2 - 200,
+    //     //         200,
+    //     //         "Oh no! Game Over 😭😭😭",
+    //     //         headingText({}),
+    //     //     )
+    //     //     .setOrigin(0.5)
+    //     //     .setDepth(100);
+    //     // this.GameOverBtn.setInteractive();
+    //     // this.GameOverBtn.on("pointerdown", () => {
+    //     //     scene.scene.stop(SCENES.Fight);
+    //     //     scene.scene.stop(SCENES.BossFight);
+    //     //     scene.scene.start(SCENES.GameOver);
+    //     // });
+    // }
 
     reset() {}
 
@@ -350,12 +342,21 @@ export class GameStateClass {
         if (serializedCampaign?.gameState) {
             Object.entries(serializedCampaign?.gameState).forEach(
                 (row: [string, any]) => {
+                    if (row[0] === "hp") {
+                        console.log("hp:", row[1]);
+                    }
                     (this as any)[row[0]] = row[1];
                 },
             );
 
+            console.log(
+                "name, gold, hp in game state",
+                this.name,
+                this.gold,
+                this.hp,
+            );
             EventBus.emit(UI_EVENTS.UPDATE_NAME, this.name);
-            EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, true);
+            EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, 0, true);
             EventBus.emit(
                 UI_EVENTS.UPDATE_HEALTH,
                 this.hp,
@@ -455,9 +456,10 @@ export class GameStateClass {
         this.fightBossGoldReward = GAME_CONSTANTS.startingFightBossGoldReward;
 
         // EventBus.emit(GAME_EVENTS.RESET_FIGHT_INPUT_MENU);
-        // EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, 0, true);
-        // EventBus.emit(UI_EVENTS.UPDATE_HEALTH, this.hp, this.maxHp, 0, true);
-        // EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, this.upgrades, true);
+        EventBus.emit(UI_EVENTS.UPDATE_NAME, this.name);
+        EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, 0, true);
+        EventBus.emit(UI_EVENTS.UPDATE_HEALTH, this.hp, this.maxHp, 0, true);
+        EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, this.upgrades, true);
     }
 
     resetFightConstants() {

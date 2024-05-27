@@ -97,6 +97,7 @@ export const transitionSceneToOverworldFromBoss = (
 
 export const transitionSceneRehydrateCampaign = (
     transitionFromScene: Phaser.Scene,
+    data: any,
 ) => {
     const activeScenes = LocalStorageManager.getItem(
         SETTING_CONSTANTS.currentActiveScenes,
@@ -105,9 +106,11 @@ export const transitionSceneRehydrateCampaign = (
         activeScenes.forEach((sceneToStart: string) => {
             if (sceneToStart !== SCENES.Hud) {
                 transitionFromScene.scene.start(sceneToStart);
+            } else if (sceneToStart === SCENES.Overworld) {
+                transitionFromScene.scene.start(sceneToStart, data);
             }
         });
-        EventBus.emit(GAME_EVENTS.LOAD_CAMPAIGN);
+        // EventBus.emit(GAME_EVENTS.LOAD_CAMPAIGN);
         SettingsManager.updateLocalStorageCurrentScene(
             transitionFromScene,
             SCENES.Overworld,
@@ -124,7 +127,7 @@ export const abandonRunTransitionScene = (
 ) => {
     transitionFromScene.scene.stop(transitionFromScene.scene.key);
     transitionFromScene.scene.stop(SCENES.Overworld);
-    transitionFromScene.scene.start(SCENES.MainMenu).launch(SCENES.Hud);
+    transitionFromScene.scene.start(SCENES.MainMenu);
     SettingsManager.updateLocalStorageCurrentScene(
         transitionFromScene,
         SCENES.MainMenu,
