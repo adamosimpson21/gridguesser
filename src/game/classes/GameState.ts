@@ -364,11 +364,12 @@ export class GameStateClass {
                 0,
                 true,
             );
-            this.upgrades.forEach((upgrade) => {
+            this.upgrades.forEach((upgrade, index) => {
                 EventBus.emit(
                     UI_EVENTS.UPDATE_UPGRADES,
-                    this.upgrades,
+
                     upgrade,
+                    index,
                     true,
                     true,
                 );

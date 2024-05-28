@@ -102,14 +102,27 @@ export const transitionSceneRehydrateCampaign = (
     const activeScenes = LocalStorageManager.getItem(
         SETTING_CONSTANTS.currentActiveScenes,
     );
+    const lastActiveScene = LocalStorageManager.getItem(
+        SETTING_CONSTANTS.currentScene,
+    );
     if (activeScenes.length > 0) {
         activeScenes.forEach((sceneToStart: string) => {
-            if (sceneToStart !== SCENES.Hud) {
-                transitionFromScene.scene.start(sceneToStart);
+            if (sceneToStart === SCENES.TrapOverlay) {
+                // make something here
             } else if (sceneToStart === SCENES.Overworld) {
                 transitionFromScene.scene.start(sceneToStart, data);
+            } else if (sceneToStart !== SCENES.Hud) {
+                transitionFromScene.scene.start(sceneToStart);
             }
         });
+        console.log("last active scene:", lastActiveScene);
+        if (
+            lastActiveScene === SCENES.Fight ||
+            lastActiveScene === SCENES.BossFight
+        ) {
+            EventBus.emit(SCENE_EVENTS.ENTER_FIGHT);
+            EventBus.emit(SCENE_EVENTS.LEAVE_OVERWORLD);
+        }
         // EventBus.emit(GAME_EVENTS.LOAD_CAMPAIGN);
         SettingsManager.updateLocalStorageCurrentScene(
             transitionFromScene,

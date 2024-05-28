@@ -196,16 +196,16 @@ export default class HudDisplay {
         EventBus.on(
             UI_EVENTS.UPDATE_UPGRADES,
             (
-                upgrades: shopItemType[],
                 upgrade: shopItemType,
+                index: number,
                 gained: boolean,
                 silent?: boolean,
             ) => {
                 const upgradeTweenText = this.scene.make
                     .text({
-                        x: ((upgrades.length - 1) % 6) * 56 + 30,
+                        x: (index % 6) * 56 + 30,
                         y:
-                            Math.floor((upgrades.length - 1) / 6) * 48 +
+                            Math.floor(index / 6) * 48 +
                             this.upgradeDisplay.displayHeight / 2,
                         text: upgrade.icon,
                         style: headingText({}),
