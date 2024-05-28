@@ -1,4 +1,4 @@
-import { SCENES } from "@/game/types/scenes";
+import { SCENES } from "@/game/constants/scenes";
 
 export const addPauseOverlay = (scene: Phaser.Scene) => {
     if (scene.input.keyboard) {

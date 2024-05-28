@@ -1,6 +1,6 @@
-import { GameState } from "@/game/classes/GameState";
-import { EventBus } from "@/game/EventBus";
-import { FIGHT_EVENTS } from "@/game/types/events";
+import { GameState } from "@/game/GameState/GameState";
+import { EventBus } from "@/game/EventBus/EventBus";
+import { FIGHT_EVENTS } from "@/game/EventBus/events";
 import { getInputInstanceUsesAvailable } from "@/game/functions/getInputUsesAvailable";
 
 export const changeInputScrollWheel = (

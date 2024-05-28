@@ -1,11 +1,11 @@
-import { SCENES } from "@/game/types/scenes";
-import OverworldLegend from "@/game/classes/OverworldLegend";
-import { EventBus } from "@/game/EventBus";
-import { GAME_EVENTS, SCENE_EVENTS } from "@/game/types/events";
-import { SettingsManager } from "@/game/classes/SettingsManager";
-import { Overworld } from "@/game/scenes/Overworld";
-import { LocalStorageManager } from "@/game/classes/LocalStorageManager";
-import { SETTING_CONSTANTS } from "@/game/types/settingConstants";
+import { SCENES } from "@/game/constants/scenes";
+import OverworldLegend from "@/game/Overworld/OverworldLegend";
+import { EventBus } from "@/game/EventBus/EventBus";
+import { GAME_EVENTS, SCENE_EVENTS } from "@/game/EventBus/events";
+import { SettingsManager } from "@/game/Settings/SettingsManager";
+import { Overworld } from "@/game/Overworld/Overworld";
+import { LocalStorageManager } from "@/game/Settings/LocalStorageManager";
+import { SETTING_CONSTANTS } from "@/game/Settings/settingConstants";
 
 export const transitionScene = (
     transitionFromScene: Phaser.Scene,

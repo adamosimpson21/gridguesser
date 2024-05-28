@@ -1,0 +1,112 @@
+import { Scene } from "phaser";
+import FightGridCell from "../Fight/FightGridCell";
+import { PLAYER_EVENTS } from "@/game/EventBus/events";
+import { EventBus } from "@/game/EventBus/EventBus";
+import { Fight } from "@/game/Fight/Fight";
+import { SCENES } from "@/game/constants/scenes";
+import { Shop } from "@/game/Shop/Shop";
+import OverworldCell from "@/game/Overworld/OverworldCell";
+import ShopItem from "@/game/Shop/ShopItem";
+import { GameState } from "@/game/GameState/GameState";
+import { headingText } from "@/game/constants/textStyleConstructor";
+import { transitionSceneToOverworld } from "@/game/functions/transitionScene";
+import { OVERWORLD_CELL_TYPES } from "@/game/Overworld/overworldConstants";
+
+export default class ShopGrid {
+    public scene: Shop;
+    public width: number;
+    public height: number;
+    public size: number;
+    public data: any[];
+    public board: Phaser.GameObjects.Container;
+    public offset: Phaser.Math.Vector2;
+    public returnButton: any;
+    public vendingMachine: Phaser.GameObjects.Image;
+    public numPadBoard: Phaser.GameObjects.Container;
+
+    constructor(scene: Shop) {
+        this.scene = scene;
+        this.width = GameState.shopGridWidth;
+        this.height = GameState.shopGridHeight;
+        this.size = this.width * this.height;
+
+        this.offset = new Phaser.Math.Vector2(64, 36);
+
+        const x = Math.floor((scene.scale.width - 950) / 2);
+        const y = Math.floor(80);
+
+        this.data = [];
+        this.board = scene.add.container(x, y);
+        this.numPadBoard = scene.add.container(
+            1250,
+            (scene.scale.height - 300) / 2,
+        );
+
+        this.createBackground();
+
+        this.returnButton = this.scene.make.text({
+            x: 600,
+            y: 800,
+            text: "Exit Vending Machine",
+            style: { ...headingText({}), backgroundColor: "green" },
+        });
+        this.returnButton.setInteractive();
+        this.returnButton.on("pointerdown", this.handleReturnButton, this);
+        this.vendingMachine = this.scene.add
+            .image(-30, -30, "vending_machine")
+            .setOrigin(0, 0)
+            .setScale(2, 1.3)
+            .setDepth(0);
+
+        this.board.add(this.vendingMachine);
+
+        this.createCells();
+        this.generateShop();
+    }
+    handleReturnButton() {
+        transitionSceneToOverworld(this.scene);
+    }
+
+    createCells() {
+        let i = 0;
+
+        for (let x = 0; x < this.width; x++) {
+            this.data[x] = [];
+
+            for (let y = 0; y < this.height; y++) {
+                this.data[x][y] = new ShopItem(this, undefined, x, y);
+
+                i++;
+            }
+        }
+    }
+
+    generateShop() {
+        let qtyItems = GameState.shopItemNumber;
+        if (qtyItems > this.size) {
+            qtyItems = this.size;
+        }
+        do {
+            const location = Phaser.Math.Between(0, this.size - 1);
+            const cell = this.getCell(location);
+            if (cell.type === undefined) {
+                cell.generateItem();
+                qtyItems--;
+            }
+        } while (qtyItems > 0);
+    }
+
+    getCell(index: number) {
+        const pos = Phaser.Math.ToXY(index, this.width, this.height);
+
+        return this.data[pos.x][pos.y];
+    }
+
+    createBackground() {
+        const board = this.board;
+        const factory = this.scene.add;
+
+        const width = this.width * 48;
+        const height = this.height * 48;
+    }
+}

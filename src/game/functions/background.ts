@@ -1,5 +1,5 @@
 import { Scene } from "phaser";
-import { Overworld } from "@/game/scenes/Overworld";
+import { Overworld } from "@/game/Overworld/Overworld";
 
 export const createBackground = (scene: any) => {
     const background = scene.add.image(

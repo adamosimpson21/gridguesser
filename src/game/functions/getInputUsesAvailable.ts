@@ -1,5 +1,5 @@
-import { FIGHT_INPUT_TYPES } from "@/game/types/fightConstants";
-import { GameState } from "@/game/classes/GameState";
+import { FIGHT_INPUT_TYPES } from "@/game/Fight/fightConstants";
+import { GameState } from "@/game/GameState/GameState";
 
 export const getInputUsesAvailable = (inputType: string) => {
     switch (inputType) {
