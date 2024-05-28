@@ -115,7 +115,6 @@ export const transitionSceneRehydrateCampaign = (
                 transitionFromScene.scene.start(sceneToStart);
             }
         });
-        console.log("last active scene:", lastActiveScene);
         if (
             lastActiveScene === SCENES.Fight ||
             lastActiveScene === SCENES.BossFight

@@ -213,7 +213,7 @@ export default class FightInputMenu {
         EventBus.on(GAME_EVENTS.RESET_FIGHT_INPUT_MENU, () => {
             this.inputBoard.removeAll(true);
             this.populateInputBoard();
-            // this.resetInputUses();
+            this.resetInputUses();
         });
     }
 

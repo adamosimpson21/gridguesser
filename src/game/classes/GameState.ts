@@ -470,6 +470,15 @@ export class GameStateClass {
         this.instanceUmbrellaNum = this.umbrellaNum;
         this.instanceTowerNum = this.towerNum;
         this.instanceBlockNum = this.blockNum;
+        // console.log(
+        //     "resetting fight constants:",
+        //     this.instanceBlockNum,
+        //     this.instanceUmbrellaNum,
+        //     this.instanceTowerNum,
+        //     this.instanceRemoveBombNum,
+        //     this.instanceRemoveLyingNum,
+        //     this.instanceRemoveTrashNum
+        // );
         EventBus.emit(GAME_EVENTS.RESET_FIGHT_INPUT_MENU);
     }
 
