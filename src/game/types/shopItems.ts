@@ -1,9 +1,12 @@
+import { GAME_CONSTANTS } from "@/game/types/gameConstants";
+import { flavorConstants } from "@/game/types/flavorConstants";
+
 export const SHOP_ITEMS: { [key: string]: shopItemType } = {
     HEAL_FULL: {
         id: "HEAL_FULL",
         name: "Thanksgiving Dinner",
         description: "Heals to full life",
-        cost: 9,
+        cost: 11,
         effect: { heal: 1000 },
         icon: "🍗",
         permanent: false,
@@ -54,7 +57,7 @@ export const SHOP_ITEMS: { [key: string]: shopItemType } = {
         id: "MAX_HP_DOUBLE",
         name: "Pretzels",
         description: "Doubles Max Life only",
-        cost: 6,
+        cost: 9,
         effect: { maxHpDouble: 1 },
         icon: "🥨",
         permanent: true,
@@ -93,7 +96,7 @@ export const SHOP_ITEMS: { [key: string]: shopItemType } = {
     GRID_EXPAND_ONE: {
         id: "GRID_EXPAND_ONE",
         name: "Wrench",
-        description: "Expand Room grids by 1",
+        description: "Expand Office grids by 1 height and width",
         cost: 7,
         effect: { fightGridExpand: 1 },
         icon: "🔧",
@@ -103,7 +106,7 @@ export const SHOP_ITEMS: { [key: string]: shopItemType } = {
     BOMB_NUMBER_REDUCE_FIVE: {
         id: "BOMB_NUMBER_REDUCE_FIVE",
         name: "Water",
-        description: "Removes 5 Bombs per Room",
+        description: `Each ${flavorConstants.FIGHT_NAME} has 5 fewer ${flavorConstants.ENEMY_NAME_PLURAL}`,
         cost: 11,
         effect: { bombNumberReduce: 5 },
         icon: "💦",
@@ -113,7 +116,7 @@ export const SHOP_ITEMS: { [key: string]: shopItemType } = {
     FIGHT_GOLD_INCREASE_FIVE: {
         id: "FIGHT_GOLD_INCREASE_FIVE",
         name: "Promotion",
-        description: "Gain 5 more gold for cleaned rooms",
+        description: `Gain 5 more gold for cleaned ${flavorConstants.FIGHT_NAME_PLURAL}`,
         cost: 13,
         effect: { fightGoldIncrease: 5 },
         icon: "📈",
@@ -133,7 +136,7 @@ export const SHOP_ITEMS: { [key: string]: shopItemType } = {
     LUCK_IMPROVE_15: {
         id: "LUCK_IMPROVE_15",
         name: "Lucky Underpants",
-        description: "A little Luckier",
+        description: "You are a little Luckier",
         cost: 10,
         effect: { luckAdd: 15 },
         icon: "🩲",
@@ -424,6 +427,7 @@ export type shopItemType = {
     cost: number;
     effect: any;
     icon: string;
+    restrictions?: any;
 };
 
 export const SHOP_CONSTANTS = {
