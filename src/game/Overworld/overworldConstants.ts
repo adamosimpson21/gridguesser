@@ -9,12 +9,12 @@ export const OVERWORLD_CONSTANTS = {
     },
 };
 export const OVERWORLD_CELL_TYPES = {
-    empty: "EMPTY",
-    home: "HOME",
-    fight: "FIGHT",
-    shop: "SHOP",
-    boss: "BOSS",
-    buff: "BUFF",
-    trap: "TRAP",
-    visited: "VISITED",
+    EMPTY: "EMPTY",
+    HOME: "HOME",
+    FIGHT: "FIGHT",
+    SHOP: "SHOP",
+    BOSS: "BOSS",
+    BUFF: "BUFF",
+    TRAP: "TRAP",
+    VISITED: "VISITED",
 };

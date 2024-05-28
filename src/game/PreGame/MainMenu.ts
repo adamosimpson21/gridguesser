@@ -8,19 +8,15 @@ import {
     cameraFadeIn,
     transitionScene,
     transitionSceneRehydrateCampaign,
-    transitionSceneToOverworld,
 } from "@/game/functions/transitionScene";
 import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
 import { GAME_EVENTS, UI_EVENTS } from "@/game/EventBus/events";
 import { LocalStorageManager } from "@/game/Settings/LocalStorageManager";
 import { SETTING_CONSTANTS } from "@/game/Settings/settingConstants";
-import { Overworld } from "@/game/Overworld/Overworld";
-
 export class MainMenu extends Scene {
     background: GameObjects.Image;
     title: Phaser.GameObjects.Image;
     overworldButton: GameObjects.Text;
-    fightSceneButton: GameObjects.Text;
     public tutorialButton: Phaser.GameObjects.Text;
     public hallOfFameButton: Phaser.GameObjects.Text;
     public continueRunButton: Phaser.GameObjects.Text;

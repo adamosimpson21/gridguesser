@@ -14,17 +14,13 @@ import { changeInputScrollWheel } from "@/game/functions/changeInputScrollWheel"
 import { cameraFadeIn } from "@/game/functions/transitionScene";
 import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
 import { mainMenuText } from "@/game/constants/textStyleConstructor";
+import { flavorConstants } from "@/game/constants/flavorConstants";
 
 export class Fight extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
     mine: Phaser.GameObjects.Image;
-    gameText: Phaser.GameObjects.Text;
     grid: FightGrid;
-    inputMenu: FightInputMenu;
-    public removeTrashUses: number;
-    public removeBombUses: number;
-    public removeLyingUses: number;
     public titleText: Phaser.GameObjects.Text;
 
     constructor() {
@@ -76,7 +72,7 @@ export class Fight extends Scene {
         this.titleText = this.make.text({
             x: this.scale.width / 2 - 500,
             y: 50,
-            text: "Clean this dusty Room",
+            text: `Clean this dirty ${flavorConstants.FIGHT_NAME}`,
             style: mainMenuText({}),
         });
 

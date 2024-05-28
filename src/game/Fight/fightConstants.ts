@@ -6,7 +6,13 @@ export const FIGHT_CONSTANTS = {
     CAN_HAVE_MULTI_BOMB_TILES: false,
     BOMB_COUNTER_CAN_LIE: false,
     EMERGENCY_GENERATOR_CUTOFF_NUMBER: 100000,
-    BOMB_NUM_INCREMENT: 2,
+};
+
+export const ADVANCED_MECHANICS = {
+    FIGHT_CAN_HAVE_TRASH_TILES: "fightCanHaveTrashTiles",
+    FIGHT_CAN_HAVE_LYING_TILES: "fightCanHaveLyingTiles",
+    FIGHT_CAN_HAVE_MULTI_BOMB_TILES: "fightCanHaveMultiBombTiles",
+    BOMB_COUNTER_CAN_LIE: "bombCounterCanLie",
 };
 
 export const FIGHT_INPUT_TYPES = {

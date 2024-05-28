@@ -1,5 +1,5 @@
 import { SCENES } from "@/game/constants/scenes";
-import OverworldLegend from "@/game/Overworld/OverworldLegend";
+import OverworldLegend from "@/game/Hud/OverworldLegend";
 import { EventBus } from "@/game/EventBus/EventBus";
 import { GAME_EVENTS, SCENE_EVENTS } from "@/game/EventBus/events";
 import { SettingsManager } from "@/game/Settings/SettingsManager";

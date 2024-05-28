@@ -1,4 +1,3 @@
-import { Scene } from "phaser";
 import {
     SHOP_CONSTANTS,
     SHOP_ITEMS,
@@ -7,7 +6,6 @@ import {
 import ShopGrid from "@/game/Shop/ShopGrid";
 import { EventBus } from "@/game/EventBus/EventBus";
 import {
-    GAME_EVENTS,
     PLAYER_EVENTS,
     UI_EVENTS,
     UI_MESSAGE_TYPES,
@@ -17,23 +15,23 @@ import { paragraphText } from "@/game/constants/textStyleConstructor";
 import { addTooltip, TOOLTIP_CONSTANTS } from "@/game/functions/addTooltip";
 
 export default class ShopItem {
-    private scene: Phaser.Scene;
-    private type: string | undefined;
-    private item: shopItemType | undefined;
-    private x: number;
-    private y: number;
-    private tile: Phaser.GameObjects.Text;
+    public scene: Phaser.Scene;
+    public type: string | undefined;
+    public item: shopItemType | undefined;
+    public x: number;
+    public y: number;
+    public tile: Phaser.GameObjects.Text;
     public name: Phaser.GameObjects.Text;
-    private available: boolean;
-    private description: Phaser.GameObjects.Text;
-    private cost: Phaser.GameObjects.Text;
-    private numPadImage: Phaser.GameObjects.Text;
-    private grid: ShopGrid;
-    private tooltipName: Phaser.GameObjects.Text;
-    private tooltipInnerObject: Phaser.GameObjects.Container;
-    private tooltipDescription: Phaser.GameObjects.Text;
-    private tooltipCost: Phaser.GameObjects.Text;
-    private tooltipImage: Phaser.GameObjects.Text;
+    public available: boolean;
+    public description: Phaser.GameObjects.Text;
+    public cost: Phaser.GameObjects.Text;
+    public numPadImage: Phaser.GameObjects.Text;
+    public grid: ShopGrid;
+    public tooltipName: Phaser.GameObjects.Text;
+    public tooltipInnerObject: Phaser.GameObjects.Container;
+    public tooltipDescription: Phaser.GameObjects.Text;
+    public tooltipCost: Phaser.GameObjects.Text;
+    public tooltipImage: Phaser.GameObjects.Text;
     constructor(
         grid: ShopGrid,
         type: string | undefined,

@@ -2,10 +2,7 @@ import { EventBus } from "../EventBus/EventBus";
 import { Scene } from "phaser";
 import { SCENES } from "@/game/constants/scenes";
 import { createBackground } from "@/game/functions/background";
-import {
-    cameraFadeIn,
-    transitionScene,
-} from "@/game/functions/transitionScene";
+import { cameraFadeIn } from "@/game/functions/transitionScene";
 import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
 import { mainMenuText } from "@/game/constants/textStyleConstructor";
 import { GAME_EVENTS } from "@/game/EventBus/events";

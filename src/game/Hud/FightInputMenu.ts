@@ -1,19 +1,16 @@
 import { GameState } from "@/game/GameState/GameState";
-import { GameObjects, Scene } from "phaser";
+import { GameObjects } from "phaser";
 import {
     FIGHT_CONSTANTS,
     FIGHT_INPUT_TYPES,
 } from "@/game/Fight/fightConstants";
-import { Fight } from "@/game/Fight/Fight";
 import { EventBus } from "@/game/EventBus/EventBus";
 import {
     FIGHT_EVENTS,
     GAME_EVENTS,
     SCENE_EVENTS,
 } from "@/game/EventBus/events";
-import { BossFight } from "@/game/Fight/BossFight";
 import { Hud } from "@/game/Hud/Hud";
-import UppercaseFirst = Phaser.Utils.String.UppercaseFirst;
 import {
     getInputInstanceUsesAvailable,
     getInputUsesAvailable,
@@ -24,19 +21,13 @@ import { KEY_ITEMS } from "@/game/GameState/keyItems";
 import { SettingsManager } from "@/game/Settings/SettingsManager";
 
 export default class FightInputMenu {
-    public availableInputs: string[];
-    public currentInput: string;
     public scene: Hud;
     public inputBoard: any;
-    public previousCurrentInput: string;
-    private background: Phaser.GameObjects.Image;
     public inputHint: GameObjects.Image;
     constructor(scene: Hud) {
         this.scene = scene;
 
-        const x = Math.floor(
-            scene.scale.width - FIGHT_CONSTANTS.TILE_WIDTH * 7,
-        );
+        const x = Math.floor(scene.scale.width - 336);
         const y = Math.floor(scene.scale.height / 2 + 100);
 
         this.inputBoard = scene.add.container(x, y);

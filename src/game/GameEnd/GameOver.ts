@@ -1,13 +1,7 @@
 import { EventBus } from "../EventBus/EventBus";
 import { Scene } from "phaser";
 import { SCENES } from "@/game/constants/scenes";
-import { createBackground } from "@/game/functions/background";
 import { largeText } from "@/game/constants/textStyleConstructor";
-import {
-    cameraFadeIn,
-    transitionScene,
-} from "@/game/functions/transitionScene";
-import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
 import { GAME_EVENTS } from "@/game/EventBus/events";
 
 export class GameOver extends Scene {
@@ -70,10 +64,6 @@ export class GameOver extends Scene {
         this.gameOverContainer.add(this.gameOverFrame);
         this.gameOverContainer.add(this.gameOverText);
         this.gameOverContainer.add(this.restartGameText);
-
-        EventBus.on(GAME_EVENTS.LOAD_CAMPAIGN, () => {
-            console.log("game over hears load campaign");
-        });
 
         EventBus.emit("current-scene-ready", this);
     }

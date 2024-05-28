@@ -1,16 +1,8 @@
-import { Scene } from "phaser";
-import FightGridCell from "../Fight/FightGridCell";
-import { PLAYER_EVENTS } from "@/game/EventBus/events";
-import { EventBus } from "@/game/EventBus/EventBus";
-import { Fight } from "@/game/Fight/Fight";
-import { SCENES } from "@/game/constants/scenes";
 import { Shop } from "@/game/Shop/Shop";
-import OverworldCell from "@/game/Overworld/OverworldCell";
 import ShopItem from "@/game/Shop/ShopItem";
 import { GameState } from "@/game/GameState/GameState";
 import { headingText } from "@/game/constants/textStyleConstructor";
 import { transitionSceneToOverworld } from "@/game/functions/transitionScene";
-import { OVERWORLD_CELL_TYPES } from "@/game/Overworld/overworldConstants";
 
 export default class ShopGrid {
     public scene: Shop;
@@ -41,8 +33,6 @@ export default class ShopGrid {
             1250,
             (scene.scale.height - 300) / 2,
         );
-
-        this.createBackground();
 
         this.returnButton = this.scene.make.text({
             x: 600,
@@ -100,13 +90,5 @@ export default class ShopGrid {
         const pos = Phaser.Math.ToXY(index, this.width, this.height);
 
         return this.data[pos.x][pos.y];
-    }
-
-    createBackground() {
-        const board = this.board;
-        const factory = this.scene.add;
-
-        const width = this.width * 48;
-        const height = this.height * 48;
     }
 }

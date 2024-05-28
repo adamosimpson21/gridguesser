@@ -1,4 +1,3 @@
-import { Scene } from "phaser";
 import { SCENES } from "@/game/constants/scenes";
 import {
     OVERWORLD_CELL_TYPES,
@@ -20,7 +19,6 @@ export default class OverworldCell {
     public tile: Phaser.GameObjects.Image;
     public typeInfo: trapType | {};
     public hasTriggered: boolean;
-    // public topBorder: Phaser.GameObjects.Triangle;
     public borderRect: Phaser.GameObjects.Image;
     public borderSize: number;
     public borderTop: Phaser.GameObjects.Image;
@@ -51,29 +49,29 @@ export default class OverworldCell {
 
         this.value = 0;
         switch (type) {
-            case OVERWORLD_CELL_TYPES.home:
+            case OVERWORLD_CELL_TYPES.HOME:
                 this.value = 1;
                 break;
-            case OVERWORLD_CELL_TYPES.fight:
+            case OVERWORLD_CELL_TYPES.FIGHT:
                 this.value = 2;
                 break;
 
-            case OVERWORLD_CELL_TYPES.shop:
+            case OVERWORLD_CELL_TYPES.SHOP:
                 this.value = 3;
                 break;
 
-            case OVERWORLD_CELL_TYPES.boss:
+            case OVERWORLD_CELL_TYPES.BOSS:
                 this.value = 4;
                 break;
 
-            case OVERWORLD_CELL_TYPES.buff:
+            case OVERWORLD_CELL_TYPES.BUFF:
                 this.value = 5;
                 break;
 
-            case OVERWORLD_CELL_TYPES.trap:
+            case OVERWORLD_CELL_TYPES.TRAP:
                 this.value = 6;
                 break;
-            case OVERWORLD_CELL_TYPES.visited:
+            case OVERWORLD_CELL_TYPES.VISITED:
                 this.value = -1;
                 break;
             default:
@@ -120,10 +118,6 @@ export default class OverworldCell {
             );
 
         grid.board.add(this.borderRect);
-        // grid.board.add(this.borderTop);
-        // grid.board.add(this.borderLeft);
-        // grid.board.add(this.borderBottom);
-        // grid.board.add(this.borderRight);
         grid.board.add(this.tileText);
         grid.board.add(this.tile);
 
@@ -140,16 +134,8 @@ export default class OverworldCell {
             index: this.index,
             open: this.open,
             value: this.value,
-            // tile: this.tile,
             hasTriggered: this.hasTriggered,
             typeInfo: this.typeInfo,
-            // borderRect: this.borderRect,
-            // borderSize: this.borderSize,
-            // borderTop: this.borderTop,
-            // borderBottom: this.borderBottom,
-            // borderLeft: this.borderLeft,
-            // borderRight: this.borderRight,
-            // tileText: this.tileText,
         };
     }
 
@@ -158,15 +144,8 @@ export default class OverworldCell {
             // the battery is out of the smoke detector
             (this as any)[keyValue[0]] = keyValue[1];
         });
-        // this.grid.paintNeighborBorders(this);
-        // this.revealBorders();
-        // this.borderRight.setAlpha(0);
-        // this.borderBottom.setAlpha(0);
-        // this.borderTop.setAlpha(0);
-        // this.borderLeft.setAlpha(0);
 
         if (this.hasTriggered) {
-            // console.log("opening tile:", this);
             if (this.value !== 0) {
                 this.setTileToVisited(0);
             }
@@ -294,7 +273,6 @@ export default class OverworldCell {
         }
 
         this.open = true;
-        // console.log("this.grid.scene", this.grid.scene);
         // do not save during home because
         // this saves many times, could introduce bugs later
         if (this.grid.scene.overworldGrid && this.value !== 1) {

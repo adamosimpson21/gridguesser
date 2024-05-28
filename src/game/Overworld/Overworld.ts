@@ -11,9 +11,7 @@ import {
     cameraFadeIn,
     transitionScene,
 } from "@/game/functions/transitionScene";
-import { Settings } from "@/game/Settings/Settings";
 import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
-import { MainMenu } from "@/game/PreGame/MainMenu";
 import { mainMenuText } from "@/game/constants/textStyleConstructor";
 import { LocalStorageManager } from "@/game/Settings/LocalStorageManager";
 import { SETTING_CONSTANTS } from "@/game/Settings/settingConstants";

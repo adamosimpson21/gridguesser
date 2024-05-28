@@ -12,19 +12,14 @@ import { GAME_CONSTANTS } from "@/game/GameState/gameConstants";
 import { cameraFadeIn } from "@/game/functions/transitionScene";
 import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
 import { mainMenuText } from "@/game/constants/textStyleConstructor";
+import { ADVANCED_MECHANICS } from "@/game/Fight/fightConstants";
 
 export class BossFight extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
     mine: Phaser.GameObjects.Image;
-    gameText: Phaser.GameObjects.Text;
     grid: FightGrid;
-    inputMenu: FightInputMenu;
-    public removeTrashUses: number;
-    public removeBombUses: number;
-    public removeLyingUses: number;
     public titleText: Phaser.GameObjects.Text;
-
     constructor() {
         super(SCENES.BossFight);
     }
@@ -68,15 +63,13 @@ export class BossFight extends Scene {
         const gridWidth = Math.floor(GameState.fightGridWidth * 1.25);
         const gridHeight = Math.floor(GameState.fightGridHeight * 1.25);
         // testing nerf
-        const numBombs = Math.floor(GameState.bombNum * 2);
         // const numBombs = Math.floor(GameState.bombNum);
+        const numBombs = Math.floor(GameState.bombNum * 2);
         this.grid = new BossFightGrid(this, gridWidth, gridHeight, numBombs);
 
         this.input.setDefaultCursor(
             "url(/assets/cursors/broomSm.cur), pointer",
         );
-
-        this.camera.fadeIn(500, 0, 0, 0);
 
         this.createIntroModal();
 
@@ -87,7 +80,6 @@ export class BossFight extends Scene {
             style: mainMenuText({}),
         });
 
-        EventBus.emit("current-scene-ready", this);
         this.events.on(
             Phaser.Scenes.Events.SHUTDOWN,
             () => {
@@ -96,16 +88,18 @@ export class BossFight extends Scene {
             },
             this,
         );
+
+        EventBus.emit("current-scene-ready", this);
     }
-    transitionScene(scene: string) {
-        this.camera.fadeOut(1000, 0, 0, 0);
-        this.camera.once(
-            Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
-            (cam: any) => {
-                this.scene.start(scene);
-            },
-        );
-    }
+    // transitionScene(scene: string) {
+    //     this.camera.fadeOut(1000, 0, 0, 0);
+    //     this.camera.once(
+    //         Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+    //         (cam: any) => {
+    //             this.scene.start(scene);
+    //         },
+    //     );
+    // }
 
     createIntroModal() {
         const deskImage = this.add.image(
@@ -151,16 +145,16 @@ export class BossFight extends Scene {
                     )
                 ];
             switch (advancedMechanicUnlocked) {
-                case "fightCanHaveTrashTiles":
+                case ADVANCED_MECHANICS.FIGHT_CAN_HAVE_TRASH_TILES:
                     GameState.fightCanHaveTrashTiles = true;
                     break;
-                case "fightCanHaveLyingTiles":
+                case ADVANCED_MECHANICS.FIGHT_CAN_HAVE_LYING_TILES:
                     GameState.fightCanHaveLyingTiles = true;
                     break;
-                case "fightCanHaveMultiBombTiles":
+                case ADVANCED_MECHANICS.FIGHT_CAN_HAVE_MULTI_BOMB_TILES:
                     GameState.fightCanHaveMultiBombTiles = true;
                     break;
-                case "bombCounterCanLie":
+                case ADVANCED_MECHANICS.BOMB_COUNTER_CAN_LIE:
                     GameState.bombCounterCanLie = true;
                     break;
 

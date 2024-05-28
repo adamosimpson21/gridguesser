@@ -301,28 +301,6 @@ export class GameStateClass {
         );
     }
 
-    // createGameOverButton(scene: Scene) {
-    //     this.isPlaying = false;
-    //     // adds this button to current active scene
-    //     const currentScenes = scene.scene.systems.game.scene.getScenes(true);
-    //     LocalStorageManager.setItem(SETTING_CONSTANTS.hasActiveCampaign, false);
-    //     // this.GameOverBtn = currentScenes[0].add
-    //     //     .text(
-    //     //         scene.scale.width / 2 - 200,
-    //     //         200,
-    //     //         "Oh no! Game Over 😭😭😭",
-    //     //         headingText({}),
-    //     //     )
-    //     //     .setOrigin(0.5)
-    //     //     .setDepth(100);
-    //     // this.GameOverBtn.setInteractive();
-    //     // this.GameOverBtn.on("pointerdown", () => {
-    //     //     scene.scene.stop(SCENES.Fight);
-    //     //     scene.scene.stop(SCENES.BossFight);
-    //     //     scene.scene.start(SCENES.GameOver);
-    //     // });
-    // }
-
     reset() {}
 
     startNewGame() {
@@ -367,7 +345,6 @@ export class GameStateClass {
             this.upgrades.forEach((upgrade, index) => {
                 EventBus.emit(
                     UI_EVENTS.UPDATE_UPGRADES,
-
                     upgrade,
                     index,
                     true,
@@ -414,7 +391,8 @@ export class GameStateClass {
         this.level = GAME_CONSTANTS.startingLevel;
         this.bombIntensity = GAME_CONSTANTS.startingBombIntensity;
         this.bombNum = GAME_CONSTANTS.startingBombNum;
-        this.bombNumFightIncrement = FIGHT_CONSTANTS.BOMB_NUM_INCREMENT;
+        this.bombNumFightIncrement =
+            GAME_CONSTANTS.startingFightBombNumIncrement;
         this.overworldGridWidth = GAME_CONSTANTS.startingOverworldGridWidth;
         this.overworldGridHeight = GAME_CONSTANTS.startingOverworldGridHeight;
         this.fightGridWidth = GAME_CONSTANTS.startingFightGridWidth;
@@ -487,9 +465,6 @@ export class GameStateClass {
             this.currentFightInputType = fightInputType;
         }
     }
-    // setLevel(level: number) {
-    //     this.level = level;
-    // }
 
     incrementLevel() {
         this.level += 1;
@@ -514,17 +489,6 @@ export class GameStateClass {
         }
         this.bombNum += this.bombNumFightIncrement;
     }
-
-    // setBombIntensity(intensity: number) {
-    //     this.bombIntensity = intensity;
-    // }
-    //
-    // updateFieldBy(field: string, intensity: number) {
-    //     if (this.hasOwnProperty(field)) {
-    //         // @ts-ignore
-    //         this[field] += intensity;
-    //     }
-    // }
 }
 
 export const GameState = new GameStateClass();

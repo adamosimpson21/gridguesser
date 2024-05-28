@@ -105,7 +105,6 @@ export class Settings extends Scene {
         inputHintCheckbox.on("pointerdown", () => {
             SettingsManager.inputHint = !SettingsManager.inputHint;
             inputHintCheckbox.setText(SettingsManager.inputHint ? "✅" : "⛔");
-            console.log("inputhint:", SettingsManager.inputHint);
             LocalStorageManager.setItem(
                 SETTING_CONSTANTS.inputHint,
                 SettingsManager.inputHint,
@@ -135,7 +134,6 @@ export class Settings extends Scene {
             mobileControlsCheckbox.setText(
                 SettingsManager.mobileControls ? "✅" : "⛔",
             );
-            console.log("inputhint:", SettingsManager.mobileControls);
             LocalStorageManager.setItem(
                 SETTING_CONSTANTS.mobileControls,
                 SettingsManager.mobileControls,

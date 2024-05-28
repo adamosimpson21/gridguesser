@@ -1,4 +1,3 @@
-import { Game, Scene } from "phaser";
 import FightGridCell from "./FightGridCell";
 import {
     FIGHT_EVENTS,
@@ -16,14 +15,9 @@ import {
     FIGHT_CONSTANTS,
     FIGHT_INPUT_TYPES,
 } from "@/game/Fight/fightConstants";
-import { changeInputScrollWheel } from "@/game/functions/changeInputScrollWheel";
 import { flavorConstants } from "@/game/constants/flavorConstants";
-import {
-    headingText,
-    paragraphText,
-} from "@/game/constants/textStyleConstructor";
+import { headingText } from "@/game/constants/textStyleConstructor";
 import { transitionSceneToOverworld } from "@/game/functions/transitionScene";
-import { BossFight } from "@/game/Fight/BossFight";
 
 export default class FightGrid extends GameObject {
     public scene: Fight;
@@ -157,7 +151,7 @@ export default class FightGrid extends GameObject {
         this.returnButton = this.scene.make.text({
             x: 75,
             y: 150,
-            text: "Room Cleaned! Back to the Lobby",
+            text: `${flavorConstants.FIGHT_NAME} Cleaned! Back to the Lobby`,
             style: headingText({
                 wordWrapWidth: 350,
                 align: "left",
@@ -229,19 +223,19 @@ export default class FightGrid extends GameObject {
     }
 
     updateBombs(diff: number) {
-        if (GameState.bombCounterCanLie) {
-            // luck chance
-            if (
-                GameState.bombCounterCanLiePercent - GameState.luck >
-                Phaser.Math.Between(1, 100)
-            ) {
-                if (Phaser.Math.Between(0, 1)) {
-                    diff++;
-                } else {
-                    diff--;
-                }
-            }
-        }
+        // if (GameState.bombCounterCanLie) {
+        //     // luck chance
+        //     if (
+        //         GameState.bombCounterCanLiePercent - GameState.luck >
+        //         Phaser.Math.Between(1, 100)
+        //     ) {
+        //         if (Phaser.Math.Between(0, 1)) {
+        //             diff++;
+        //         } else {
+        //             diff--;
+        //         }
+        //     }
+        // }
         this.bombsCounter -= diff;
         this.bombsCounterText.setText(`${this.bombsCounter.toString()}`);
     }

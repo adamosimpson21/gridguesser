@@ -1,12 +1,6 @@
-import { Scene } from "phaser";
 import { EventBus } from "@/game/EventBus/EventBus";
-import {
-    GAME_EVENTS,
-    PLAYER_EVENTS,
-    SCENE_EVENTS,
-    UI_EVENTS,
-} from "@/game/EventBus/events";
-import { shopItemType, testingItems } from "@/game/Shop/shopItems";
+import { GAME_EVENTS, SCENE_EVENTS, UI_EVENTS } from "@/game/EventBus/events";
+import { shopItemType } from "@/game/Shop/shopItems";
 import { GameState } from "@/game/GameState/GameState";
 import FightInputMenu from "@/game/Hud/FightInputMenu";
 import { Hud } from "@/game/Hud/Hud";
@@ -55,7 +49,7 @@ export default class HudDisplay {
         this.nameDisplay = this.scene.add.text(
             this.xOffset,
             this.yOffset,
-            `Name: ${GameState.name}`,
+            `${GameState.name}`,
             headingText({}),
         );
 

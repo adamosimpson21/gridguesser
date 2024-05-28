@@ -1,5 +1,3 @@
-import { Game, Scene } from "phaser";
-import FightGridCell from "./FightGridCell";
 import {
     FIGHT_EVENTS,
     GAME_EVENTS,
@@ -7,17 +5,11 @@ import {
     UI_EVENTS,
 } from "@/game/EventBus/events";
 import { EventBus } from "@/game/EventBus/EventBus";
-import { Fight } from "@/game/Fight/Fight";
 import { SCENES } from "@/game/constants/scenes";
 import { GameState } from "@/game/GameState/GameState";
-import GameObject = Phaser.GameObjects.GameObject;
 import FightGrid from "@/game/Fight/FightGrid";
 import { BossFight } from "@/game/Fight/BossFight";
 import { GAME_CONSTANTS } from "@/game/GameState/gameConstants";
-import {
-    FIGHT_CONSTANTS,
-    FIGHT_INPUT_TYPES,
-} from "@/game/Fight/fightConstants";
 import { KEY_ITEMS, keyItemType } from "@/game/GameState/keyItems";
 import { getInputUsesAvailable } from "@/game/functions/getInputUsesAvailable";
 import { headingText } from "@/game/constants/textStyleConstructor";
@@ -25,6 +17,7 @@ import {
     transitionScene,
     transitionSceneToOverworldFromBoss,
 } from "@/game/functions/transitionScene";
+import { flavorConstants } from "@/game/constants/flavorConstants";
 
 export default class BossFightGrid extends FightGrid {
     constructor(
@@ -165,7 +158,7 @@ export default class BossFightGrid extends FightGrid {
             this.scene.add.text(
                 -200,
                 -200,
-                "After cleaning the Boss's office, you find 3 keys to add to your wonderous key ring. Choose one.",
+                `After cleaning the Boss's ${flavorConstants.FIGHT_NAME}, you find 3 keys you could add to your wondrous key ring. Choose one. Uses refill after every ${flavorConstants.FIGHT_NAME}`,
                 {
                     fontSize: "40px",
                     wordWrap: { width: 800, useAdvancedWrap: true },

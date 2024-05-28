@@ -59,11 +59,6 @@ export default class OverworldGrid {
         this.width = width;
         this.height = height;
         this.size = width * height;
-        // this.offset = new Phaser.Math.Vector2(
-        //     0,
-        //     OVERWORLD_CONSTANTS.TILE_HEIGHT,
-        // );
-
         this.numBosses = numBosses;
         this.numFights = numFights;
         this.numShops = numShops;
@@ -74,12 +69,6 @@ export default class OverworldGrid {
 
         this.playing = false;
         this.populated = false;
-
-        //  0 = waiting to create the grid
-        //  1 = playing
-        //  2 = game won
-        //  3 = game lost
-        this.state = 0;
 
         this.data = [];
 
@@ -119,7 +108,6 @@ export default class OverworldGrid {
 
         this.board = scene.add.container(x, y);
 
-        this.createBackground();
         this.createCells();
         this.generate();
         this.board.add(this.playerImage);
@@ -137,7 +125,7 @@ export default class OverworldGrid {
                     i,
                     x,
                     y,
-                    OVERWORLD_CELL_TYPES.empty,
+                    OVERWORLD_CELL_TYPES.EMPTY,
                     {},
                 );
 
@@ -178,22 +166,8 @@ export default class OverworldGrid {
         });
     }
 
-    createBackground() {
-        const board = this.board;
-        const factory = this.scene.add;
-
-        //  55 added to the top, 8 added to the bottom (63)
-        //  12 added to the left, 8 added to the right (20)
-        //  cells.ts start at 12 x 55
-
-        const width = this.width * OVERWORLD_CONSTANTS.TILE_WIDTH;
-        const height = this.height * OVERWORLD_CONSTANTS.TILE_HEIGHT;
-    }
-
     generate() {
         let qtyFights = this.numFights;
-
-        //some loop
 
         // Home
         const centerX = Math.floor(this.width / 2);
@@ -278,7 +252,6 @@ export default class OverworldGrid {
 
         this.playing = true;
         this.populated = true;
-        this.state = 1;
         if (homeCell) {
             homeCell.show();
         }

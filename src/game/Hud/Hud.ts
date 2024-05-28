@@ -3,15 +3,12 @@ import { SCENES } from "@/game/constants/scenes";
 import EventDisplay from "@/game/GameState/EventDisplay";
 import HudDisplay from "@/game/Hud/HudDisplay";
 import { EventBus } from "@/game/EventBus/EventBus";
-import { GAME_EVENTS } from "@/game/EventBus/events";
-import { GAME_CONSTANTS } from "@/game/GameState/gameConstants";
-import OverworldLegend from "@/game/Overworld/OverworldLegend";
-import { GameState } from "../GameState/GameState";
+import OverworldLegend from "@/game/Hud/OverworldLegend";
 export class Hud extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
     public eventDisplay: EventDisplay | undefined;
-    public HudDisplay: HudDisplay | undefined;
-    public OverworldLegend: OverworldLegend;
+    public hudDisplay: HudDisplay | undefined;
+    public overworldLegend: OverworldLegend;
 
     constructor() {
         super(SCENES.Hud);
@@ -35,8 +32,8 @@ export class Hud extends Scene {
 
     create() {
         this.camera = this.cameras.main;
-        this.HudDisplay = new HudDisplay(this);
-        this.OverworldLegend = new OverworldLegend(this);
+        this.hudDisplay = new HudDisplay(this);
+        this.overworldLegend = new OverworldLegend(this);
         this.eventDisplay = new EventDisplay(this);
         EventBus.emit("current-scene-ready", this);
     }

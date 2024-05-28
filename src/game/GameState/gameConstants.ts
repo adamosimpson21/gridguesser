@@ -23,6 +23,7 @@ export const GAME_CONSTANTS = {
     startingFightGoldReward: 5,
     startingFightBossGoldReward: 5,
     startingFightFlawlessGoldReward: 3,
+    startingFightBombNumIncrement: 2,
     endLevel: 5,
     startingFightInputTypes: [
         FIGHT_INPUT_TYPES.REVEAL,

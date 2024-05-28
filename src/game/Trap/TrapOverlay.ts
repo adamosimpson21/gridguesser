@@ -9,8 +9,8 @@ import { cameraFadeIn } from "@/game/functions/transitionScene";
 
 export class TrapOverlay extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
-    private trapDisplay: TrapDisplay;
-    private trap: trapType;
+    public trapDisplay: TrapDisplay;
+    public trap: trapType;
 
     constructor() {
         super(SCENES.TrapOverlay);

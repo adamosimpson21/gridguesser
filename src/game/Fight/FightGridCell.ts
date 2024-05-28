@@ -109,18 +109,6 @@ export default class FightGridCell {
         // this.tile.on('pointerup', this.onPointerUp, this);
     }
 
-    reset() {
-        this.open = false;
-        this.bombNum = 0;
-
-        this.flagNum = 0;
-        this.exploded = false;
-
-        this.value = 0;
-
-        this.tile.setFrame(11);
-    }
-
     onPointerDown(pointer: any) {
         if (!this.grid.populated) {
             this.grid.generate(this.index);
@@ -515,11 +503,6 @@ export default class FightGridCell {
             this.flagOverlay.setFrame(flagNumber);
         }
     }
-
-    // onPointerUp ()
-    // {
-    //
-    // }
 
     reveal() {
         if (this.exploded) {
