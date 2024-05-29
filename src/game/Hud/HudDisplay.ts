@@ -27,6 +27,7 @@ export default class HudDisplay {
     public font: string;
     public strokeWidth: number;
     public fightInputDisplay: FightInputMenu;
+    private postFxPlugin: Phaser.Plugins.BasePlugin | Function | null;
 
     constructor(scene: Hud) {
         this.scene = scene;
@@ -37,6 +38,9 @@ export default class HudDisplay {
         this.lineHeight = 60;
 
         this.hudBoard = this.scene.add.container(1500, 0);
+        this.postFxPlugin = this.scene.plugins.get(
+            "rexglowfilter2pipelineplugin",
+        );
 
         this.fightInputDisplay = new FightInputMenu(scene);
 
@@ -190,6 +194,11 @@ export default class HudDisplay {
                 // }
             },
         );
+        EventBus.on(UI_EVENTS.USE_UPGRADE, (upgradeId: string) => {
+            const upgradeToBeUsed: Phaser.GameObjects.Text =
+                this.upgradeDisplay.getByName(upgradeId);
+            // upgradeToBeUsed.postFxPipline("glowColor");
+        });
         EventBus.on(
             UI_EVENTS.UPDATE_UPGRADES,
             (
@@ -198,6 +207,7 @@ export default class HudDisplay {
                 gained: boolean,
                 silent?: boolean,
             ) => {
+                console.log("updating upgrades:", upgrade);
                 const upgradeTweenText = this.scene.make
                     .text({
                         x: (index % 6) * 56 + 30,
@@ -207,8 +217,23 @@ export default class HudDisplay {
                         text: upgrade.icon,
                         style: headingText({}),
                     })
-                    .setOrigin(0.5, 0.5);
+                    .setOrigin(0.5, 0.5)
+                    .setName(upgrade.id);
                 this.upgradeDisplay.add(upgradeTweenText);
+                // @ts-ignore
+                if (upgrade.activated && this.postFxPlugin?.add) {
+                    console.log("in activated item", this.postFxPlugin);
+                    // @ts-ignore
+                    upgradeTweenText.postFxPipline = this.postFxPlugin.add(
+                        upgradeTweenText,
+                        {
+                            distance: 8,
+                            outerStrength: 6,
+                            innerStrength: 2,
+                            glowColor: 0x00ff00,
+                        },
+                    );
+                }
 
                 const upgradeTooltipInnerObject = this.scene.add.container(
                     TOOLTIP_CONSTANTS.X_OFFSET,

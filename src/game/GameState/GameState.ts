@@ -3,6 +3,7 @@ import {
     FIGHT_EVENTS,
     GAME_EVENTS,
     PLAYER_EVENTS,
+    SCENE_EVENTS,
     UI_EVENTS,
 } from "@/game/EventBus/events";
 import { shopItemType } from "@/game/Shop/shopItems";
@@ -70,6 +71,9 @@ export class GameStateClass {
     public gold: number;
     public maxHp: number;
     public upgrades: shopItemType[];
+    public fightCanHaveTentacles: boolean;
+    public tentacleTileNum: number;
+    public tentacleGrowthIncrement: number;
 
     constructor() {
         this.isPlaying = true;
@@ -136,6 +140,10 @@ export class GameStateClass {
         });
         EventBus.on(FIGHT_EVENTS.ADD_INPUT_TYPE, (inputType: string) => {
             this.fightInputTypes.push(inputType);
+        });
+        EventBus.on(SCENE_EVENTS.ENTER_FIGHT, () => {
+            this.resetFightConstants();
+            this.resetSingleUseUpgrades();
         });
         EventBus.on(
             GAME_EVENTS.START_NEW_GAME,
@@ -327,12 +335,12 @@ export class GameStateClass {
                 },
             );
 
-            console.log(
-                "name, gold, hp in game state",
-                this.name,
-                this.gold,
-                this.hp,
-            );
+            // console.log(
+            //     "name, gold, hp in game state",
+            //     this.name,
+            //     this.gold,
+            //     this.hp,
+            // );
             EventBus.emit(UI_EVENTS.UPDATE_NAME, this.name);
             EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, 0, true);
             EventBus.emit(
@@ -359,8 +367,8 @@ export class GameStateClass {
             this.upgrades.push(upgrade);
             EventBus.emit(
                 UI_EVENTS.UPDATE_UPGRADES,
-                this.upgrades,
                 upgrade,
+                this.upgrades.length,
                 gained,
                 silent,
             );
@@ -372,8 +380,8 @@ export class GameStateClass {
                 this.upgrades = this.upgrades.splice(index, 1);
                 EventBus.emit(
                     UI_EVENTS.UPDATE_UPGRADES,
-                    this.upgrades,
                     upgrade,
+                    this.upgrades.length,
                     gained,
                     silent,
                 );
@@ -409,6 +417,7 @@ export class GameStateClass {
         this.fightCanHaveLyingTiles = FIGHT_CONSTANTS.CAN_HAVE_LYING_TILES;
         this.fightCanHaveMultiBombTiles =
             FIGHT_CONSTANTS.CAN_HAVE_MULTI_BOMB_TILES;
+        this.fightCanHaveTentacles = FIGHT_CONSTANTS.CAN_HAVE_TENTACLES;
         this.bombCounterCanLie = FIGHT_CONSTANTS.BOMB_COUNTER_CAN_LIE;
         this.playerDamageReduction = 0;
         this.fightInputTypes = GAME_CONSTANTS.startingFightInputTypes;
@@ -426,8 +435,12 @@ export class GameStateClass {
         this.lyingTileNum = GAME_CONSTANTS.startingLyingTileNum;
         this.bombCounterCanLiePercent =
             GAME_CONSTANTS.startingBombCounterCanLiePercent;
+        this.tentacleTileNum = GAME_CONSTANTS.startingTentacleNum;
+        this.tentacleGrowthIncrement = FIGHT_CONSTANTS.TENTACLE_INCREMENT;
 
         this.resetFightConstants();
+
+        this.resetSingleUseUpgrades();
 
         this.fightFlawlessGoldReward =
             GAME_CONSTANTS.startingFightFlawlessGoldReward;
@@ -460,6 +473,14 @@ export class GameStateClass {
         EventBus.emit(GAME_EVENTS.RESET_FIGHT_INPUT_MENU);
     }
 
+    resetSingleUseUpgrades() {
+        this.upgrades.forEach((upgrade) => {
+            if (upgrade.activated) {
+                upgrade.hasBeenUsed = false;
+            }
+        });
+    }
+
     updateFightInputType(fightInputType: string) {
         if (getInputInstanceUsesAvailable(fightInputType) != 0) {
             this.currentFightInputType = fightInputType;
@@ -480,6 +501,7 @@ export class GameStateClass {
         this.fightGoldReward += 2;
         this.lyingTileNum++;
         this.trashTileNum++;
+        this.tentacleTileNum++;
         this.bombCounterCanLiePercent += 5;
     }
 

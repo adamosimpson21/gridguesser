@@ -1,4 +1,4 @@
-import { FIGHT_EVENTS, PLAYER_EVENTS } from "@/game/EventBus/events";
+import { FIGHT_EVENTS, PLAYER_EVENTS, UI_EVENTS } from "@/game/EventBus/events";
 import { EventBus } from "@/game/EventBus/EventBus";
 import {
     FIGHT_CONSTANTS,
@@ -30,6 +30,9 @@ export default class FightGridCell {
     public specialOverlayContainer: any;
     public isBlock: boolean;
     public hasBeenChorded: boolean;
+    public isTentacle: boolean;
+    public tentacleOffset: number;
+    public tentacleTouched: boolean;
     constructor(grid: any, index: number, x: number, y: number) {
         this.grid = grid;
 
@@ -47,6 +50,12 @@ export default class FightGridCell {
         this.trash = false;
         this.lying = false;
         this.isBlock = false;
+        this.isTentacle = false;
+        this.tentacleTouched = false;
+        this.tentacleOffset = Phaser.Math.Between(
+            0,
+            GameState.tentacleGrowthIncrement,
+        );
         this.hasBeenChorded = false;
         this.lyingOffset = this.generateLyingOffset();
 
@@ -137,7 +146,7 @@ export default class FightGridCell {
         } else if (inputType === FIGHT_INPUT_TYPES.QUERY) {
             this.toggleQuery();
         } else if (inputType === FIGHT_INPUT_TYPES.REMOVE_BOMB) {
-            this.removeBomb();
+            this.useRemoveBombInstance();
         } else if (inputType === FIGHT_INPUT_TYPES.REMOVE_TRASH) {
             this.removeTrash();
         } else if (inputType === FIGHT_INPUT_TYPES.REMOVE_LIES) {
@@ -151,14 +160,21 @@ export default class FightGridCell {
         }
     }
 
+    incrementFightMove() {
+        this.grid.moveCounter++;
+        this.grid.addTentacleFromGrid();
+    }
+
     useReveal() {
         // chording
         if (
             this.open &&
             this.value > 0 &&
             !this.trash &&
-            !this.hasBeenChorded
+            !this.hasBeenChorded &&
+            !this.isTentacle
         ) {
+            this.incrementFightMove();
             const numFlagged =
                 this.grid.getAdjacentCellFlaggedAndBombedNumber(this);
             if (this.lying) {
@@ -173,7 +189,12 @@ export default class FightGridCell {
                 }
             }
         }
-        if (this.query) {
+        if (this.open && this.isTentacle) {
+            if (!this.tentacleTouched) {
+                this.touchTentacle(true);
+                this.incrementFightMove();
+            }
+        } else if (this.query) {
             this.toggleQuery();
         } else if (this.flagNum > 0) {
             //remove 1 flag with left click
@@ -181,18 +202,73 @@ export default class FightGridCell {
             this.setMultiFlagText(this.flagNum);
             this.grid.updateBombs(-1);
         } else if (this.bombNum > 0) {
-            this.exploded = true;
-            this.reveal();
-            this.tile.setInteractive(false);
-            this.grid.updateBombs(this.bombNum);
-            EventBus.emit(PLAYER_EVENTS.HIT_BOMB, this.bombNum);
+            this.incrementFightMove();
+            // user has scary mask item
+            const moveBombOneIndex = GameState.upgrades.findIndex((upgrade) => {
+                return (
+                    upgrade.id === "MOVE_BOMB_ONE" &&
+                    upgrade.hasBeenUsed !== undefined &&
+                    !upgrade.hasBeenUsed
+                );
+            });
+            if (moveBombOneIndex !== -1) {
+                EventBus.emit(UI_EVENTS.USE_UPGRADE, "MOVE_BOMB_ONE");
+                GameState.upgrades[moveBombOneIndex].hasBeenUsed = true;
+                this.grid.redistributeBombs(this);
+            } else {
+                this.exploded = true;
+                this.reveal();
+                this.tile.setInteractive(false);
+                this.grid.updateBombs(this.bombNum);
+                EventBus.emit(PLAYER_EVENTS.HIT_BOMB, this.bombNum);
+            }
         } else {
+            this.incrementFightMove();
             if (this.value === 0) {
                 this.grid.floodFill(this.x, this.y);
             } else {
                 this.show();
             }
             // this.grid.checkWinState();
+        }
+    }
+
+    touchTentacle(isReveal: boolean) {
+        if (isReveal) {
+            this.tentacleTouched = true;
+            this.flagOverlay.setFrame(25);
+        }
+    }
+
+    addTentacle() {
+        if (
+            (this.grid.moveCounter + this.tentacleOffset) %
+                GameState.tentacleGrowthIncrement ===
+            0
+        ) {
+            const adjacantCells = this.grid
+                .getAdjacentCells(this)
+                .filter((cell: FightGridCell) => {
+                    return (
+                        cell && cell.bombNum <= 0 && !cell.trash && !cell.lying
+                    );
+                });
+            let hasNotMadeTentacle = true;
+            if (adjacantCells.length > 0) {
+                do {
+                    let cell =
+                        adjacantCells[
+                            Phaser.Math.Between(0, adjacantCells.length)
+                        ];
+                    if (cell && cell.bombNum <= 0) {
+                        cell.isTentacle = true;
+                        if (cell.open) {
+                            cell.show(true);
+                        }
+                        hasNotMadeTentacle = false;
+                    }
+                } while (hasNotMadeTentacle);
+            }
         }
     }
 
@@ -223,34 +299,16 @@ export default class FightGridCell {
         }
     }
 
-    removeBomb() {
+    useRemoveBombInstance() {
         if (GameState.instanceRemoveBombNum > 0 && !this.open) {
+            this.incrementFightMove();
             EventBus.emit(
                 FIGHT_EVENTS.USE_LIMITED_INPUT,
                 FIGHT_INPUT_TYPES.REMOVE_BOMB,
             );
-            if (this.bombNum > 0) {
-                this.bombNum--;
-                // update grid
-                this.grid.bombQty--;
-                this.grid.updateBombs(1);
 
-                //update adjacent cells
-                const adjacentCells = this.grid.getAdjacentCells({
-                    x: this.x,
-                    y: this.y,
-                });
-                adjacentCells.forEach((cell: any) => {
-                    if (cell) {
-                        cell.value--;
-                        if (cell.open) {
-                            cell.show();
-                        }
-                    }
-                });
-                if (this.bombNum === 0) {
-                    this.show();
-                }
+            if (this.bombNum > 0) {
+                this.removeBomb();
                 this.grid.checkWinState();
             } else {
                 this.tile.setFrame(13);
@@ -264,8 +322,56 @@ export default class FightGridCell {
         }
     }
 
+    removeBomb() {
+        if (this.bombNum > 0) {
+            this.bombNum--;
+            // update grid
+            this.grid.bombQty--;
+            this.grid.updateBombs(1);
+
+            //update adjacent cells
+            const adjacentCells = this.grid.getAdjacentCells({
+                x: this.x,
+                y: this.y,
+            });
+            adjacentCells.forEach((cell: any) => {
+                if (cell) {
+                    cell.value--;
+                    if (cell.open) {
+                        cell.show();
+                    }
+                }
+            });
+            if (this.bombNum === 0) {
+                this.show();
+            }
+        }
+    }
+
+    addBomb() {
+        this.bombNum++;
+        // update grid
+        this.grid.bombQty++;
+        this.grid.updateBombs(-1);
+
+        //update adjacent cells
+        const adjacentCells = this.grid.getAdjacentCells({
+            x: this.x,
+            y: this.y,
+        });
+        adjacentCells.forEach((cell: any) => {
+            if (cell) {
+                cell.value++;
+                if (cell.open) {
+                    cell.show();
+                }
+            }
+        });
+    }
+
     removeLies() {
         if (GameState.instanceRemoveLyingNum > 0) {
+            this.incrementFightMove();
             if (!this.lying) {
                 this.tile.setFrame(14);
                 angryShakeTween(this.tile, this.grid.scene).on(
@@ -297,6 +403,7 @@ export default class FightGridCell {
 
     removeTrash() {
         if (this.trash && GameState.instanceRemoveTrashNum > 0) {
+            this.incrementFightMove();
             this.trash = false;
             EventBus.emit(
                 FIGHT_EVENTS.USE_LIMITED_INPUT,
@@ -308,6 +415,7 @@ export default class FightGridCell {
 
     useBlock() {
         if (GameState.instanceBlockNum > 0) {
+            this.incrementFightMove();
             EventBus.emit(
                 FIGHT_EVENTS.USE_LIMITED_INPUT,
                 FIGHT_INPUT_TYPES.BLOCK,
@@ -350,6 +458,7 @@ export default class FightGridCell {
 
     useTower() {
         if (GameState.instanceTowerNum > 0 && this.open) {
+            this.incrementFightMove();
             EventBus.emit(
                 FIGHT_EVENTS.USE_LIMITED_INPUT,
                 FIGHT_INPUT_TYPES.TOWER,
@@ -421,6 +530,7 @@ export default class FightGridCell {
     }
     useUmbrella() {
         if (GameState.instanceUmbrellaNum > 0) {
+            this.incrementFightMove();
             EventBus.emit(
                 FIGHT_EVENTS.USE_LIMITED_INPUT,
                 FIGHT_INPUT_TYPES.UMBRELLA,
@@ -554,6 +664,7 @@ export default class FightGridCell {
                 frameToSet = 21;
             }
         }
+
         if (!shouldNotAnimate) {
             const bumpTween = this.grid.scene.tweens.chain({
                 targets: this.tile,
@@ -580,9 +691,15 @@ export default class FightGridCell {
                 this.tile.setY(
                     this.grid.offset.y + this.y * FIGHT_CONSTANTS.TILE_HEIGHT,
                 );
+                if (this.isTentacle) {
+                    this.flagOverlay.setFrame(Phaser.Math.Between(22, 24));
+                }
             });
         } else {
             this.tile.setFrame(frameToSet);
+            if (this.isTentacle) {
+                this.flagOverlay.setFrame(Phaser.Math.Between(22, 24));
+            }
         }
 
         this.open = true;

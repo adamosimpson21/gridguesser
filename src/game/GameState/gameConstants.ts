@@ -42,6 +42,7 @@ export const GAME_CONSTANTS = {
     startingUmbrellaNum: 2,
     startingTowerNum: 2,
     startingBlockNum: 1,
+    startingTentacleNum: 1,
     startingTrashTileNum: 1,
     startingLyingTileNum: 1,
     startingUmbrellaSize: 3,
@@ -52,6 +53,7 @@ export const GAME_CONSTANTS = {
         "fightCanHaveTrashTiles",
         "fightCanHaveLyingTiles",
         "fightCanHaveMultiBombTiles",
+        "fightCanHaveTentacles",
         // "bombCounterCanLie",
     ],
 };

@@ -59,6 +59,7 @@ export default class BossFightGrid extends FightGrid {
                 GameState.fightCanHaveTrashTiles = true;
                 GameState.fightCanHaveLyingTiles = true;
                 GameState.fightCanHaveMultiBombTiles = true;
+                GameState.fightCanHaveTentacles = true;
                 // GameState.bombCounterCanLie = true;
             }
             this.createBossEndModal(flawless);

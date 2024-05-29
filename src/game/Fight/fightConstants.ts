@@ -4,14 +4,17 @@ export const FIGHT_CONSTANTS = {
     CAN_HAVE_TRASH_TILES: false,
     CAN_HAVE_LYING_TILES: false,
     CAN_HAVE_MULTI_BOMB_TILES: false,
+    CAN_HAVE_TENTACLES: false,
     BOMB_COUNTER_CAN_LIE: false,
     EMERGENCY_GENERATOR_CUTOFF_NUMBER: 100000,
+    TENTACLE_INCREMENT: 12,
 };
 
 export const ADVANCED_MECHANICS = {
     FIGHT_CAN_HAVE_TRASH_TILES: "fightCanHaveTrashTiles",
     FIGHT_CAN_HAVE_LYING_TILES: "fightCanHaveLyingTiles",
     FIGHT_CAN_HAVE_MULTI_BOMB_TILES: "fightCanHaveMultiBombTiles",
+    FIGHT_CAN_HAVE_TENTACLES: "fightCanHaveTentacles",
     BOMB_COUNTER_CAN_LIE: "bombCounterCanLie",
 };
 

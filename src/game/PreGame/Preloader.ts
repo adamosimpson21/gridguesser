@@ -66,11 +66,18 @@ export class Preloader extends Scene {
         //     }
         //     this.scene.remove();
         // } else {
+        // testing
         this.scene
             .launch(SCENES.MainMenu)
             // .launch(SCENES.Settings)
             .launch(SCENES.Hud)
             .remove();
+
+        // works!
+        // this.scene
+        //     .launch(SCENES.MainMenu)
+        //     .launch(SCENES.Hud)
+        //     .remove();
         // }
     }
 }

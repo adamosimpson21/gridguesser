@@ -157,6 +157,9 @@ export class BossFight extends Scene {
                 case ADVANCED_MECHANICS.BOMB_COUNTER_CAN_LIE:
                     GameState.bombCounterCanLie = true;
                     break;
+                case ADVANCED_MECHANICS.FIGHT_CAN_HAVE_TENTACLES:
+                    GameState.fightCanHaveTentacles = true;
+                    break;
 
                 default:
                     break;

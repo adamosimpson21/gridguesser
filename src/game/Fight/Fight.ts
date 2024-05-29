@@ -67,7 +67,6 @@ export class Fight extends Scene {
         const gridHeight = GameState.fightGridHeight;
         const numBombs = GameState.bombNum;
         this.grid = new FightGrid(this, gridWidth, gridHeight, numBombs);
-        GameState.resetFightConstants();
 
         this.titleText = this.make.text({
             x: this.scale.width / 2 - 500,

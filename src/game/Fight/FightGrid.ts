@@ -32,6 +32,7 @@ export default class FightGrid extends GameObject {
     public populated: boolean;
     public state: number;
     public gridData: any[];
+    public moveCounter: number;
     public board: Phaser.GameObjects.Container;
     public bombsCounterText: Phaser.GameObjects.Text;
     public emergencyGeneratorCutoffNumber: number;
@@ -68,6 +69,7 @@ export default class FightGrid extends GameObject {
 
         this.playing = false;
         this.populated = false;
+        this.moveCounter = 0;
 
         //  0 = waiting to create the grid
         //  1 = playing
@@ -240,6 +242,31 @@ export default class FightGrid extends GameObject {
         this.bombsCounterText.setText(`${this.bombsCounter.toString()}`);
     }
 
+    redistributeBombs(cell: FightGridCell) {
+        let bombsToMove = cell.bombNum;
+        const closedCells = this.getAllClosedCell();
+        do {
+            cell.removeBomb();
+            closedCells[
+                Phaser.Math.Between(0, closedCells.length - 1)
+            ].addBomb();
+            bombsToMove--;
+        } while (bombsToMove > 0);
+    }
+
+    getAllClosedCell() {
+        const allClosedCells = [] as FightGridCell[];
+        this.gridData.forEach((row) => {
+            row.forEach((cell: FightGridCell) => {
+                if (!cell.open) {
+                    allClosedCells.push(cell);
+                }
+            });
+        });
+
+        return allClosedCells;
+    }
+
     restart() {
         this.populated = false;
         this.playing = false;
@@ -401,6 +428,7 @@ export default class FightGrid extends GameObject {
         let qty = this.bombQty;
         let trashQuantity = GameState.trashTileNum;
         let lyingQuantity = GameState.lyingTileNum;
+        let tentacleQuantity = GameState.tentacleTileNum;
         let hasUsedForcedMultibomb = false;
 
         const bombs = [];
@@ -497,6 +525,23 @@ export default class FightGrid extends GameObject {
             );
         }
 
+        if (GameState.fightCanHaveTentacles) {
+            do {
+                this.emergencyGeneratorCutoffNumber++;
+                const location = Phaser.Math.Between(0, this.size - 1);
+
+                const cell = this.getCell(location);
+                if (cell.bombNum <= 0 && !cell.trash && !cell.lying) {
+                    cell.isTentacle = true;
+                    tentacleQuantity--;
+                }
+            } while (
+                tentacleQuantity > 0 &&
+                this.emergencyGeneratorCutoffNumber <
+                    FIGHT_CONSTANTS.EMERGENCY_GENERATOR_CUTOFF_NUMBER
+            );
+        }
+
         this.playing = true;
         this.populated = true;
         EventBus.emit(SCENE_EVENTS.POPULATE_FIGHT);
@@ -563,6 +608,17 @@ export default class FightGrid extends GameObject {
             width++;
         } while (width < diameter);
         return returnArray;
+    }
+
+    addTentacleFromGrid() {
+        const tentacleCells = [] as FightGridCell[];
+        this.gridData.forEach((row) => {
+            row.forEach((cell: FightGridCell) => {
+                if (cell.isTentacle) {
+                    cell.addTentacle();
+                }
+            });
+        });
     }
 
     getXYDirectionFromAdjacantCellIndex(index: number) {
