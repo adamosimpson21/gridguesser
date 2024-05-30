@@ -20,18 +20,18 @@ export default class ShopItem {
     public item: shopItemType | undefined;
     public x: number;
     public y: number;
-    public tile: Phaser.GameObjects.Text;
+    public tile: Phaser.GameObjects.Image;
     public name: Phaser.GameObjects.Text;
     public available: boolean;
     public description: Phaser.GameObjects.Text;
     public cost: Phaser.GameObjects.Text;
-    public numPadImage: Phaser.GameObjects.Text;
+    public numPadImage: Phaser.GameObjects.Image;
     public grid: ShopGrid;
     public tooltipName: Phaser.GameObjects.Text;
     public tooltipInnerObject: Phaser.GameObjects.Container;
     public tooltipDescription: Phaser.GameObjects.Text;
     public tooltipCost: Phaser.GameObjects.Text;
-    public tooltipImage: Phaser.GameObjects.Text;
+    public tooltipImage: Phaser.GameObjects.Image;
     constructor(
         grid: ShopGrid,
         type: string | undefined,
@@ -44,15 +44,17 @@ export default class ShopItem {
         this.y = y;
         this.available = true;
 
-        this.tile = grid.scene.make.text({
-            x: grid.offset.x + x * SHOP_CONSTANTS.SHOP_TILE_WIDTH,
-            y: grid.offset.y + y * SHOP_CONSTANTS.SHOP_TILE_HEIGHT,
-            text: "⬜",
-            style: {
-                fontSize: SHOP_CONSTANTS.SHOP_TILE_FONT_SIZE * 2,
-                padding: { y: 10 },
-            },
-        });
+        this.tile = grid.scene.make
+            .image({
+                x: grid.offset.x + x * SHOP_CONSTANTS.SHOP_TILE_WIDTH,
+                y: grid.offset.y + y * SHOP_CONSTANTS.SHOP_TILE_HEIGHT,
+                key: "shop_items",
+                frame: 1,
+            })
+            .setDisplaySize(
+                SHOP_CONSTANTS.SHOP_TILE_WIDTH,
+                SHOP_CONSTANTS.SHOP_TILE_HEIGHT,
+            );
         // this.name = grid.scene.make.text({
         //     x:
         //         grid.offset.x +
@@ -103,14 +105,11 @@ export default class ShopItem {
         //         lineSpacing: 18,
         //     }),
         // });
-        this.numPadImage = grid.scene.make.text({
+        this.numPadImage = grid.scene.make.image({
             x: x * SHOP_CONSTANTS.NUM_PAD_TILE_WIDTH,
             y: y * SHOP_CONSTANTS.NUM_PAD_TILE_HEIGHT,
-            text: "⬜",
-            style: {
-                fontSize: SHOP_CONSTANTS.SHOP_TILE_FONT_SIZE * 2,
-                padding: { y: 10 },
-            },
+            key: "shop_items",
+            frame: 1,
         });
 
         this.tooltipInnerObject = this.grid.scene.add.container(
@@ -145,16 +144,14 @@ export default class ShopItem {
                 wordWrapWidth: TOOLTIP_CONSTANTS.BASE_WIDTH,
             }),
         });
-        this.tooltipImage = grid.scene.make.text({
-            x: 0,
-            y: 64,
-            text: "",
-            style: paragraphText({
-                wordWrapWidth: TOOLTIP_CONSTANTS.BASE_WIDTH,
-                fontSize: "32px",
-                align: "left",
-            }),
-        });
+        this.tooltipImage = grid.scene.make
+            .image({
+                x: 0,
+                y: 64,
+                key: "shop_items",
+                frame: 1,
+            })
+            .setDisplaySize(32, 32);
 
         this.tooltipInnerObject.add(this.tooltipName);
         this.tooltipInnerObject.add(this.tooltipDescription);
@@ -173,11 +170,11 @@ export default class ShopItem {
         const itemToAssign = this.chooseRandomShopItem();
         this.type = itemToAssign.id;
         this.item = itemToAssign;
-        this.tile.setText(itemToAssign.icon);
+        this.tile.setFrame(itemToAssign.icon);
         // this.name.setText(itemToAssign.name);
         this.tooltipName.setText(itemToAssign.name);
         this.tooltipImage
-            .setText(itemToAssign.icon)
+            .setFrame(itemToAssign.icon)
             .setPosition(0, this.tooltipName.displayHeight + 8);
         // this.description.setText(itemToAssign.description);
         this.tooltipCost
@@ -194,7 +191,7 @@ export default class ShopItem {
             );
         this.cost.setText(`$${itemToAssign.cost}`);
 
-        this.numPadImage.setText(itemToAssign.icon);
+        this.numPadImage.setFrame(itemToAssign.icon);
         this.numPadImage.setInteractive();
         this.numPadImage.on("pointerdown", this.onClick, this);
         this.tile.setInteractive();
@@ -353,8 +350,8 @@ export default class ShopItem {
                     {
                         // player has successfully bought item
                         this.available = false;
-                        this.tile.setText("✅");
-                        this.numPadImage.setText("✅");
+                        this.tile.setFrame(2);
+                        this.numPadImage.setFrame(2);
                         // logic for using item
                         this.useItem(this.item);
                         EventBus.emit(PLAYER_EVENTS.LOSE_GOLD, this.item.cost);

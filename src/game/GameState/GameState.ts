@@ -364,7 +364,6 @@ export class GameStateClass {
 
     updateUpgrades(upgrade: shopItemType, gained: boolean, silent?: boolean) {
         if (gained) {
-            this.upgrades.push(upgrade);
             EventBus.emit(
                 UI_EVENTS.UPDATE_UPGRADES,
                 upgrade,
@@ -372,6 +371,7 @@ export class GameStateClass {
                 gained,
                 silent,
             );
+            this.upgrades.push(upgrade);
         } else {
             const index = this.upgrades.findIndex(
                 (item) => item.id === upgrade.id,

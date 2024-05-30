@@ -22,6 +22,11 @@ export class Shop extends Scene {
             "vending_machine",
             "/assets/shop/vendingMachineBlack.png",
         );
+        this.load.spritesheet(
+            "shop_items",
+            "/assets/shop/items/shopItemSS.png",
+            { frameWidth: 64, frameHeight: 64 },
+        );
         this.load.image("clipboard", "/assets/hud/longClipboard.png");
     }
 

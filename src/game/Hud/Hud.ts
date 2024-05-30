@@ -22,6 +22,11 @@ export class Hud extends Scene {
             frameWidth: 64,
             frameHeight: 64,
         });
+        this.load.spritesheet(
+            "shop_items",
+            "/assets/shop/items/shopItemSS.png",
+            { frameWidth: 64, frameHeight: 64 },
+        );
         this.load.image("red_border", "/assets/overworld/redBorder.png");
         this.load.image("orange_border", "/assets/overworld/orangeBorder.png");
         this.load.image("green_border", "/assets/overworld/greenBorder.png");

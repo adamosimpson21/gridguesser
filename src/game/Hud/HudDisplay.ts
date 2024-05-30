@@ -95,6 +95,15 @@ export default class HudDisplay {
         EventBus.on(UI_EVENTS.UPDATE_NAME, (name: string) => {
             this.nameDisplay.setText(name);
         });
+
+        EventBus.on(SCENE_EVENTS.LEAVE_FIGHT, () => {
+            //reset activated item
+            this.upgradeDisplay
+                .getAll("name", "MOVE_BOMB_ONE")
+                .forEach((upgrade: any) => {
+                    upgrade.setFrame(7);
+                });
+        });
         EventBus.on(
             UI_EVENTS.UPDATE_GOLD,
             (gold: number, goldDifference: number, silent?: boolean) => {
@@ -195,9 +204,11 @@ export default class HudDisplay {
             },
         );
         EventBus.on(UI_EVENTS.USE_UPGRADE, (upgradeId: string) => {
-            const upgradeToBeUsed: Phaser.GameObjects.Text =
+            const upgradeToBeUsed: Phaser.GameObjects.Image =
                 this.upgradeDisplay.getByName(upgradeId);
-            // upgradeToBeUsed.postFxPipline("glowColor");
+            if (upgradeToBeUsed.name === "MOVE_BOMB_ONE") {
+                upgradeToBeUsed.setFrame(8);
+            }
         });
         EventBus.on(
             UI_EVENTS.UPDATE_UPGRADES,
@@ -208,32 +219,21 @@ export default class HudDisplay {
                 silent?: boolean,
             ) => {
                 console.log("updating upgrades:", upgrade);
-                const upgradeTweenText = this.scene.make
-                    .text({
+                const upgradeTweenImage = this.scene.make
+                    .image({
                         x: (index % 6) * 56 + 30,
                         y:
                             Math.floor(index / 6) * 48 +
                             this.upgradeDisplay.displayHeight / 2,
-                        text: upgrade.icon,
-                        style: headingText({}),
+                        key: "shop_items",
+                        frame: upgrade.activated
+                            ? upgrade.icon + 1
+                            : upgrade.icon,
                     })
+                    .setDisplaySize(48, 48)
                     .setOrigin(0.5, 0.5)
                     .setName(upgrade.id);
-                this.upgradeDisplay.add(upgradeTweenText);
-                // @ts-ignore
-                if (upgrade.activated && this.postFxPlugin?.add) {
-                    console.log("in activated item", this.postFxPlugin);
-                    // @ts-ignore
-                    upgradeTweenText.postFxPipline = this.postFxPlugin.add(
-                        upgradeTweenText,
-                        {
-                            distance: 8,
-                            outerStrength: 6,
-                            innerStrength: 2,
-                            glowColor: 0x00ff00,
-                        },
-                    );
-                }
+                this.upgradeDisplay.add(upgradeTweenImage);
 
                 const upgradeTooltipInnerObject = this.scene.add.container(
                     TOOLTIP_CONSTANTS.X_OFFSET,
@@ -248,16 +248,14 @@ export default class HudDisplay {
                         align: "left",
                     }),
                 });
-                const tooltipImage = this.scene.make.text({
-                    x: 0,
-                    y: tooltipName.displayHeight + 8,
-                    text: upgrade.icon,
-                    style: paragraphText({
-                        wordWrapWidth: TOOLTIP_CONSTANTS.BASE_WIDTH,
-                        fontSize: "32px",
-                        align: "left",
-                    }),
-                });
+                const tooltipImage = this.scene.make
+                    .image({
+                        x: 0,
+                        y: tooltipName.displayHeight + 8,
+                        key: "shop_items",
+                        frame: upgrade.icon,
+                    })
+                    .setDisplaySize(48, 48);
                 const tooltipCost = this.scene.make.text({
                     x: 0,
                     y: tooltipImage.y + tooltipImage.displayHeight + 8,
@@ -283,12 +281,12 @@ export default class HudDisplay {
                     tooltipCost,
                     tooltipImage,
                 ]);
-                addTooltip(this.scene, upgradeTweenText, {
+                addTooltip(this.scene, upgradeTweenImage, {
                     innerObject: upgradeTooltipInnerObject,
                 });
 
                 const upgradeTween = this.scene.tweens.chain({
-                    targets: upgradeTweenText,
+                    targets: upgradeTweenImage,
                     tweens: [
                         {
                             duration: 250,

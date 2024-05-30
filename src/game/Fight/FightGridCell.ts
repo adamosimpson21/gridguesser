@@ -205,12 +205,14 @@ export default class FightGridCell {
             this.incrementFightMove();
             // user has scary mask item
             const moveBombOneIndex = GameState.upgrades.findIndex((upgrade) => {
+                console.log("upgrade:", upgrade);
                 return (
                     upgrade.id === "MOVE_BOMB_ONE" &&
                     upgrade.hasBeenUsed !== undefined &&
                     !upgrade.hasBeenUsed
                 );
             });
+            console.log("moveBombOneIndex:", moveBombOneIndex);
             if (moveBombOneIndex !== -1) {
                 EventBus.emit(UI_EVENTS.USE_UPGRADE, "MOVE_BOMB_ONE");
                 GameState.upgrades[moveBombOneIndex].hasBeenUsed = true;
