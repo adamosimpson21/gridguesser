@@ -449,13 +449,10 @@ export default class FightGrid extends GameObject {
         let tentacleQuantity = GameState.tentacleTileNum;
         let hasUsedForcedMultibomb = false;
 
-        console.log("startIndex:", startCell);
-
         const startAreaIndexes: number[] = this.getAllCellsInDiameter(
             this.getCellXY(startCell.x, startCell.y),
             GameState.initialClickSize,
         ).reduce((acc: number[], cell: FightGridCell) => {
-            console.log("acc:", acc, "cell:", cell);
             if (cell) {
                 acc.push(cell.index);
                 return acc;
@@ -463,7 +460,6 @@ export default class FightGrid extends GameObject {
                 return acc;
             }
         }, []);
-        console.log("start area indexes", startAreaIndexes);
 
         const bombs = [];
 
@@ -472,12 +468,6 @@ export default class FightGrid extends GameObject {
             const location = Phaser.Math.Between(0, this.size - 1);
 
             const cell = this.getCell(location);
-
-            console.log(
-                "index of start area",
-                cell.index,
-                startAreaIndexes.indexOf(cell.index),
-            );
 
             if (
                 startAreaIndexes.indexOf(cell.index) === -1 &&

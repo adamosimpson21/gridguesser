@@ -4,7 +4,7 @@ export const GAME_CONSTANTS = {
     startingName: "Jan Eator",
     startingHp: 8,
     startingMaxHp: 8,
-    startingGold: 50,
+    startingGold: 5,
     startingLevel: 1,
     startingBombIntensity: 2,
     startingLuck: 0,
