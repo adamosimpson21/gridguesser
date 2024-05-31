@@ -6,13 +6,16 @@ import {
 import ShopGrid from "@/game/Shop/ShopGrid";
 import { EventBus } from "@/game/EventBus/EventBus";
 import {
+    ITEM_EVENTS,
     PLAYER_EVENTS,
+    SCENE_EVENTS,
     UI_EVENTS,
     UI_MESSAGE_TYPES,
 } from "@/game/EventBus/events";
 import { GameState } from "@/game/GameState/GameState";
 import { paragraphText } from "@/game/constants/textStyleConstructor";
 import { addTooltip, TOOLTIP_CONSTANTS } from "@/game/functions/addTooltip";
+import { SCENES } from "@/game/constants/scenes";
 
 export default class ShopItem {
     public scene: Phaser.Scene;
@@ -52,9 +55,10 @@ export default class ShopItem {
                 frame: 1,
             })
             .setDisplaySize(
-                SHOP_CONSTANTS.SHOP_TILE_WIDTH,
-                SHOP_CONSTANTS.SHOP_TILE_HEIGHT,
-            );
+                SHOP_CONSTANTS.SHOP_TILE_WIDTH / 2,
+                SHOP_CONSTANTS.SHOP_TILE_HEIGHT / 2,
+            )
+            .setOrigin(0, 0);
         // this.name = grid.scene.make.text({
         //     x:
         //         grid.offset.x +
@@ -105,12 +109,14 @@ export default class ShopItem {
         //         lineSpacing: 18,
         //     }),
         // });
-        this.numPadImage = grid.scene.make.image({
-            x: x * SHOP_CONSTANTS.NUM_PAD_TILE_WIDTH,
-            y: y * SHOP_CONSTANTS.NUM_PAD_TILE_HEIGHT,
-            key: "shop_items",
-            frame: 1,
-        });
+        this.numPadImage = grid.scene.make
+            .image({
+                x: x * SHOP_CONSTANTS.NUM_PAD_TILE_WIDTH,
+                y: y * SHOP_CONSTANTS.NUM_PAD_TILE_HEIGHT,
+                key: "shop_items",
+                frame: 1,
+            })
+            .setOrigin(0, 0);
 
         this.tooltipInnerObject = this.grid.scene.add.container(
             TOOLTIP_CONSTANTS.X_OFFSET,
@@ -151,7 +157,8 @@ export default class ShopItem {
                 key: "shop_items",
                 frame: 1,
             })
-            .setDisplaySize(32, 32);
+            .setDisplaySize(32, 32)
+            .setOrigin(0, 0);
 
         this.tooltipInnerObject.add(this.tooltipName);
         this.tooltipInnerObject.add(this.tooltipDescription);
@@ -329,8 +336,21 @@ export default class ShopItem {
                         message: "Increased Room reward Gold",
                     });
                     break;
+                case "initialClickEnlarge":
+                    GameState.initialClickSize +=
+                        itemEffect.initialClickEnlarge;
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message: "Initial Sweep enlarged",
+                    });
+                    break;
             }
         });
+        // run on pick-up, once
+        switch (item.id) {
+            case "OVERWORLD_MAP_REVEAL":
+                EventBus.emit(ITEM_EVENTS.REVEAL_OVERWORLD);
+        }
     }
 
     onClick() {

@@ -103,6 +103,16 @@ export default class HudDisplay {
                 .forEach((upgrade: any) => {
                     upgrade.setFrame(7);
                 });
+            this.upgradeDisplay
+                .getAll("name", "BROOMTAR")
+                .forEach((upgrade: any) => {
+                    upgrade.setFrame(3);
+                });
+            this.upgradeDisplay
+                .getAll("name", "HARBROOM")
+                .forEach((upgrade: any) => {
+                    upgrade.setFrame(42);
+                });
         });
         EventBus.on(
             UI_EVENTS.UPDATE_GOLD,
@@ -208,6 +218,10 @@ export default class HudDisplay {
                 this.upgradeDisplay.getByName(upgradeId);
             if (upgradeToBeUsed.name === "MOVE_BOMB_ONE") {
                 upgradeToBeUsed.setFrame(8);
+            } else if (upgradeToBeUsed.name === "BROOMTAR") {
+                upgradeToBeUsed.setFrame(5);
+            } else if (upgradeToBeUsed.name === "HARBROOM") {
+                upgradeToBeUsed.setFrame(43);
             }
         });
         EventBus.on(
@@ -221,16 +235,16 @@ export default class HudDisplay {
                 console.log("updating upgrades:", upgrade);
                 const upgradeTweenImage = this.scene.make
                     .image({
-                        x: (index % 6) * 56 + 30,
+                        x: (index % 6) * 60 + 30,
                         y:
-                            Math.floor(index / 6) * 48 +
+                            Math.floor(index / 6) * 52 +
                             this.upgradeDisplay.displayHeight / 2,
                         key: "shop_items",
                         frame: upgrade.activated
                             ? upgrade.icon + 1
                             : upgrade.icon,
                     })
-                    .setDisplaySize(48, 48)
+                    .setDisplaySize(32, 32)
                     .setOrigin(0.5, 0.5)
                     .setName(upgrade.id);
                 this.upgradeDisplay.add(upgradeTweenImage);
@@ -255,7 +269,8 @@ export default class HudDisplay {
                         key: "shop_items",
                         frame: upgrade.icon,
                     })
-                    .setDisplaySize(48, 48);
+                    .setDisplaySize(48, 48)
+                    .setOrigin(0, 0);
                 const tooltipCost = this.scene.make.text({
                     x: 0,
                     y: tooltipImage.y + tooltipImage.displayHeight + 8,

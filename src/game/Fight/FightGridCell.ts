@@ -37,6 +37,7 @@ export default class FightGridCell {
         this.grid = grid;
 
         this.index = index;
+        console.log("this.index", index);
         this.x = x;
         this.y = y;
 
@@ -120,7 +121,8 @@ export default class FightGridCell {
 
     onPointerDown(pointer: any) {
         if (!this.grid.populated) {
-            this.grid.generate(this.index);
+            console.log("this.index generate", this.index);
+            this.grid.generate(this);
         }
 
         if (!this.grid.playing) {
@@ -175,16 +177,19 @@ export default class FightGridCell {
             !this.isTentacle
         ) {
             this.incrementFightMove();
+
             const numFlagged =
                 this.grid.getAdjacentCellFlaggedAndBombedNumber(this);
             if (this.lying) {
                 if (this.value + this.lyingOffset === numFlagged) {
                     this.grid.chordFill(this.x, this.y);
+                    this.grid.incrementChordMove();
                     this.hasBeenChorded = true;
                 }
             } else {
                 if (this.value === numFlagged) {
                     this.grid.chordFill(this.x, this.y);
+                    this.grid.incrementChordMove();
                     this.hasBeenChorded = true;
                 }
             }

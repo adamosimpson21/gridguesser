@@ -18,6 +18,7 @@ import {
 import { flavorConstants } from "@/game/constants/flavorConstants";
 import { headingText } from "@/game/constants/textStyleConstructor";
 import { transitionSceneToOverworld } from "@/game/functions/transitionScene";
+import { start } from "node:repl";
 
 export default class FightGrid extends GameObject {
     public scene: Fight;
@@ -33,6 +34,7 @@ export default class FightGrid extends GameObject {
     public state: number;
     public gridData: any[];
     public moveCounter: number;
+    public chordCount: number;
     public board: Phaser.GameObjects.Container;
     public bombsCounterText: Phaser.GameObjects.Text;
     public emergencyGeneratorCutoffNumber: number;
@@ -70,6 +72,7 @@ export default class FightGrid extends GameObject {
         this.playing = false;
         this.populated = false;
         this.moveCounter = 0;
+        this.chordCount = 0;
 
         //  0 = waiting to create the grid
         //  1 = playing
@@ -222,6 +225,21 @@ export default class FightGrid extends GameObject {
         const factory = this.scene.add;
         const width = this.width * 16;
         const height = this.height * 16;
+    }
+
+    incrementChordMove() {
+        this.chordCount++;
+        if (this.chordCount === 8) {
+            if (GameState.hasUpgrade("HARBROOM")) {
+                EventBus.emit(PLAYER_EVENTS.GAIN_HP, 2);
+                EventBus.emit(UI_EVENTS.USE_UPGRADE, "HARBROOM");
+            }
+        } else if (this.chordCount === 12) {
+            if (GameState.hasUpgrade("BROOMTAR")) {
+                EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, 3);
+                EventBus.emit(UI_EVENTS.USE_UPGRADE, "BROOMTAR");
+            }
+        }
     }
 
     updateBombs(diff: number) {
@@ -424,12 +442,28 @@ export default class FightGrid extends GameObject {
         } while (location < this.size);
     }
 
-    generate(startIndex: number) {
+    generate(startCell: FightGridCell) {
         let qty = this.bombQty;
         let trashQuantity = GameState.trashTileNum;
         let lyingQuantity = GameState.lyingTileNum;
         let tentacleQuantity = GameState.tentacleTileNum;
         let hasUsedForcedMultibomb = false;
+
+        console.log("startIndex:", startCell);
+
+        const startAreaIndexes: number[] = this.getAllCellsInDiameter(
+            this.getCellXY(startCell.x, startCell.y),
+            GameState.initialClickSize,
+        ).reduce((acc: number[], cell: FightGridCell) => {
+            console.log("acc:", acc, "cell:", cell);
+            if (cell) {
+                acc.push(cell.index);
+                return acc;
+            } else {
+                return acc;
+            }
+        }, []);
+        console.log("start area indexes", startAreaIndexes);
 
         const bombs = [];
 
@@ -439,12 +473,19 @@ export default class FightGrid extends GameObject {
 
             const cell = this.getCell(location);
 
+            console.log(
+                "index of start area",
+                cell.index,
+                startAreaIndexes.indexOf(cell.index),
+            );
+
             if (
-                cell.index !== startIndex &&
+                startAreaIndexes.indexOf(cell.index) === -1 &&
                 (cell.bombNum === 0 || GameState.fightCanHaveMultiBombTiles) &&
                 cell.bombNum <= 9
             ) {
                 // if (!(cell.bombNum > 0) && cell.index !== startIndex)
+
                 cell.bombNum++;
                 qty--;
                 bombs.push(cell);
@@ -487,7 +528,7 @@ export default class FightGrid extends GameObject {
                 const cell = this.getCell(location);
                 // trash tiles must have a value before becoming trash
                 if (
-                    cell.index !== startIndex &&
+                    cell.index !== startCell.index &&
                     cell.bombNum <= 0 &&
                     cell.value >= 1 &&
                     !cell.trash
@@ -548,13 +589,20 @@ export default class FightGrid extends GameObject {
 
         this.state = 1;
 
+        startAreaIndexes.forEach((index) => {
+            const cell = this.getCell(index);
+            if (cell) {
+                cell.onClick();
+            }
+        });
+
         this.debug();
     }
 
     getCell(index: number) {
         const pos = Phaser.Math.ToXY(index, this.width, this.height);
 
-        return this.gridData[pos.x][pos.y];
+        return this.gridData[pos.y][pos.x];
     }
 
     getCellXY(x: number, y: number) {

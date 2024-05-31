@@ -1,8 +1,4 @@
-import { Scene } from "phaser";
-import FightGridCell from "../Fight/FightGridCell";
 import OverworldCell from "./OverworldCell";
-import HudDisplay from "@/game/Hud/HudDisplay";
-import Trap from "@/game/Trap/Trap";
 import EventDisplay from "@/game/GameState/EventDisplay";
 import { Hud } from "@/game/Hud/Hud";
 import {
@@ -10,8 +6,10 @@ import {
     OVERWORLD_CONSTANTS,
 } from "@/game/Overworld/overworldConstants";
 import { TRAPS } from "@/game/Trap/trapConstants";
-import { random } from "nanoid";
 import { Overworld } from "@/game/Overworld/Overworld";
+import { GameState } from "@/game/GameState/GameState";
+import { ITEM_EVENTS } from "@/game/EventBus/events";
+import { EventBus } from "@/game/EventBus/EventBus";
 
 export default class OverworldGrid {
     public scene: Overworld;
@@ -111,6 +109,10 @@ export default class OverworldGrid {
         this.createCells();
         this.generate();
         this.board.add(this.playerImage);
+
+        EventBus.on(ITEM_EVENTS.REVEAL_OVERWORLD, () => {
+            this.revealAll();
+        });
     }
 
     createCells() {
@@ -264,6 +266,22 @@ export default class OverworldGrid {
         // });
 
         this.debug();
+
+        if (
+            GameState.upgrades.findIndex((upgrade) => {
+                return upgrade.id === "OVERWORLD_MAP_REVEAL";
+            }) !== -1
+        ) {
+            this.revealAll();
+        }
+    }
+
+    revealAll() {
+        this.data.forEach((row) => {
+            row.forEach((cell: OverworldCell) => {
+                cell.reveal();
+            });
+        });
     }
 
     getCell(index: number) {

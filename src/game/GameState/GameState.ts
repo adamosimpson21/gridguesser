@@ -7,7 +7,6 @@ import {
     UI_EVENTS,
 } from "@/game/EventBus/events";
 import { shopItemType } from "@/game/Shop/shopItems";
-import { Scene } from "phaser";
 import { GAME_CONSTANTS } from "@/game/GameState/gameConstants";
 import {
     FIGHT_CONSTANTS,
@@ -74,6 +73,7 @@ export class GameStateClass {
     public fightCanHaveTentacles: boolean;
     public tentacleTileNum: number;
     public tentacleGrowthIncrement: number;
+    public initialClickSize: number;
 
     constructor() {
         this.isPlaying = true;
@@ -397,6 +397,7 @@ export class GameStateClass {
         this.luck = GAME_CONSTANTS.startingLuck;
         this.upgrades = [];
         this.level = GAME_CONSTANTS.startingLevel;
+        this.initialClickSize = GAME_CONSTANTS.startingInitialClickSize;
         this.bombIntensity = GAME_CONSTANTS.startingBombIntensity;
         this.bombNum = GAME_CONSTANTS.startingBombNum;
         this.bombNumFightIncrement =
@@ -479,6 +480,14 @@ export class GameStateClass {
                 upgrade.hasBeenUsed = false;
             }
         });
+    }
+
+    hasUpgrade(upgradeId: string) {
+        return (
+            this.upgrades.findIndex((upgrade) => {
+                return upgrade.id === upgradeId;
+            }) !== -1
+        );
     }
 
     updateFightInputType(fightInputType: string) {
