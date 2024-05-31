@@ -1,8 +1,5 @@
 import { GameStateClass } from "@/game/GameState/GameState";
-import { Overworld } from "@/game/Overworld/Overworld";
-import OverworldGrid from "@/game/Overworld/OverworldGrid";
 import FightGrid from "@/game/Fight/FightGrid";
-import OverworldCell from "@/game/Overworld/OverworldCell";
 
 export const SETTING_CONSTANTS = {
     volumeLevel: "volumeLevel",
