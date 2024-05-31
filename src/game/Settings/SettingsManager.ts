@@ -54,12 +54,14 @@ class SettingsManagerClass {
                 false,
             );
         }
-        if (LocalStorageManager.getItem(SETTING_CONSTANTS.uuid) === null) {
-            LocalStorageManager.setItem(
-                SETTING_CONSTANTS.uuid,
-                Phaser.Math.RND.uuid(),
-            );
-        }
+        // TODO: fix uuid
+        // console.log("uuid:", Phaser.Math.RND);
+        // if (LocalStorageManager.getItem(SETTING_CONSTANTS.uuid) === null) {
+        //     LocalStorageManager.setItem(
+        //         SETTING_CONSTANTS.uuid,
+        //         Phaser.Math.RND.uuid(),
+        //     );
+        // }
         if (
             LocalStorageManager.getItem(SETTING_CONSTANTS.startingDate) === null
         ) {
