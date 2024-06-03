@@ -144,7 +144,7 @@ export const SHOP_ITEMS: { [key: string]: shopItemType } = {
         effect: { fightGoldIncrease: 5 },
         icon: 19,
         permanent: true,
-        singleton: true,
+        singleton: false,
         activated: false,
         restrictions: {},
     },
