@@ -38,9 +38,6 @@ export default class HudDisplay {
         this.lineHeight = 60;
 
         this.hudBoard = this.scene.add.container(1500, 0);
-        this.postFxPlugin = this.scene.plugins.get(
-            "rexglowfilter2pipelineplugin",
-        );
 
         this.fightInputDisplay = new FightInputMenu(scene);
 
@@ -91,6 +88,7 @@ export default class HudDisplay {
         });
         EventBus.on(GAME_EVENTS.START_NEW_GAME, () => {
             this.upgradeDisplay.removeAll(true);
+            this.show();
         });
         EventBus.on(UI_EVENTS.UPDATE_NAME, (name: string) => {
             this.nameDisplay.setText(name);
@@ -329,5 +327,19 @@ export default class HudDisplay {
                 });
             },
         );
+        EventBus.on(SCENE_EVENTS.ENTER_MAIN_MENU, () => {
+            this.hide();
+        });
+
+        // initially hidden
+        this.hide();
+    }
+
+    show() {
+        this.hudBoard.setAlpha(1);
+    }
+
+    hide() {
+        this.hudBoard.setAlpha(0);
     }
 }

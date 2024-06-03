@@ -16,9 +16,11 @@ export default class OverworldLegend {
         );
 
         this.populateInputBoard();
+        this.hide();
 
         EventBus.on(SCENE_EVENTS.ENTER_OVERWORLD, this.show, this);
         EventBus.on(SCENE_EVENTS.LEAVE_OVERWORLD, this.hide, this);
+        EventBus.on(SCENE_EVENTS.ENTER_MAIN_MENU, this.hide, this);
     }
 
     populateInputBoard() {

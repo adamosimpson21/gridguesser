@@ -10,7 +10,7 @@ import {
     transitionSceneRehydrateCampaign,
 } from "@/game/functions/transitionScene";
 import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
-import { GAME_EVENTS, UI_EVENTS } from "@/game/EventBus/events";
+import { GAME_EVENTS, SCENE_EVENTS, UI_EVENTS } from "@/game/EventBus/events";
 import { LocalStorageManager } from "@/game/Settings/LocalStorageManager";
 import { SETTING_CONSTANTS } from "@/game/Settings/settingConstants";
 export class MainMenu extends Scene {
@@ -109,5 +109,9 @@ export class MainMenu extends Scene {
             this.scene.start(SCENES.HallOfFame);
         });
         EventBus.emit("current-scene-ready", this);
+
+        this.events.on(Phaser.Scenes.Events.CREATE, () => {
+            EventBus.emit(SCENE_EVENTS.ENTER_MAIN_MENU);
+        });
     }
 }
