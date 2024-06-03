@@ -6,8 +6,12 @@ import {
     SCENE_EVENTS,
     UI_EVENTS,
 } from "@/game/EventBus/events";
-import { shopItemType } from "@/game/Shop/shopItems";
-import { GAME_CONSTANTS } from "@/game/GameState/gameConstants";
+import { SHOP_ITEMS, shopItemType } from "@/game/Shop/shopItems";
+import {
+    CHARACTER_CHOICES,
+    characterType,
+    GAME_CONSTANTS,
+} from "@/game/GameState/gameConstants";
 import {
     FIGHT_CONSTANTS,
     FIGHT_INPUT_TYPES,
@@ -65,7 +69,7 @@ export class GameStateClass {
     public bombNumFightIncrement: number;
     public bombCounterCanLiePercent: number;
     public hasLocalStorage: boolean;
-    public name: string;
+    public character: characterType;
     public hp: number;
     public gold: number;
     public maxHp: number;
@@ -74,6 +78,8 @@ export class GameStateClass {
     public tentacleTileNum: number;
     public tentacleGrowthIncrement: number;
     public initialClickSize: number;
+    public hasDyscalc: boolean;
+    public klutz: boolean;
 
     constructor() {
         this.isPlaying = true;
@@ -181,10 +187,14 @@ export class GameStateClass {
         EventBus.on(GAME_EVENTS.LOAD_CAMPAIGN, () => {
             this.hydrateGameState();
         });
-        EventBus.on(PLAYER_EVENTS.CHANGE_NAME, (name: string) => {
-            this.name = name;
-            EventBus.emit(UI_EVENTS.UPDATE_NAME, name);
-        });
+        EventBus.on(
+            PLAYER_EVENTS.CHANGE_CHARACTER,
+            (character: characterType) => {
+                this.character = character;
+                this.useCharacterChoice();
+                EventBus.emit(UI_EVENTS.UPDATE_NAME, character.name);
+            },
+        );
         EventBus.on(
             PLAYER_EVENTS.GAIN_HP,
             (severity: number, silent?: boolean) => {
@@ -248,6 +258,7 @@ export class GameStateClass {
         EventBus.on(
             PLAYER_EVENTS.HIT_BOMB,
             (numBombs: number, silent?: boolean) => {
+                console.log("this.hp, numBombs:", this.hp, numBombs);
                 this.hitBomb(numBombs, silent);
             },
         );
@@ -315,7 +326,30 @@ export class GameStateClass {
         LocalStorageManager.removeCurrentCampaignItem();
         this.initializeNewGameConstants();
         this.isPlaying = true;
+
         LocalStorageManager.setItem(SETTING_CONSTANTS.hasActiveCampaign, true);
+    }
+
+    useCharacterChoice() {
+        console.log("start new game");
+        if (this.character.id === "CHAR_SIX") {
+            this.playerDamageReduction++;
+            EventBus.emit(PLAYER_EVENTS.GAIN_MAX_HP, 8, 8, true);
+            this.fightGridWidth -= 2;
+            this.fightGridHeight -= 2;
+        } else if (this.character.id === "CHAR_SEVEN") {
+            this.hasDyscalc = true;
+            this.lyingTileNum += 6;
+            this.fightCanHaveLyingTiles = true;
+        } else if (this.character.id === "CHAR_TWO") {
+            EventBus.emit(PLAYER_EVENTS.GAIN_UPGRADE, SHOP_ITEMS["NEST_EGG"]);
+        } else if (this.character.id === "CHAR_FOUR") {
+            EventBus.emit(FIGHT_EVENTS.ADD_INPUT_TYPE, "Dust Suck");
+        } else if (this.character.id === "CHAR_THREE") {
+            this.klutz = true;
+        } else if (this.character.id === "CHAR_FIVE") {
+            ////////// ????
+        }
     }
 
     hitBomb(numBombs: number, silent?: boolean) {
@@ -341,7 +375,7 @@ export class GameStateClass {
             //     this.gold,
             //     this.hp,
             // );
-            EventBus.emit(UI_EVENTS.UPDATE_NAME, this.name);
+            EventBus.emit(UI_EVENTS.UPDATE_NAME, this.character.name);
             EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, 0, true);
             EventBus.emit(
                 UI_EVENTS.UPDATE_HEALTH,
@@ -390,7 +424,7 @@ export class GameStateClass {
     }
 
     initializeNewGameConstants() {
-        this.name = GAME_CONSTANTS.startingName;
+        this.character = CHARACTER_CHOICES[GAME_CONSTANTS.startingCharacter];
         this.hp = GAME_CONSTANTS.startingHp;
         this.maxHp = GAME_CONSTANTS.startingMaxHp;
         this.gold = GAME_CONSTANTS.startingGold;
@@ -438,6 +472,8 @@ export class GameStateClass {
             GAME_CONSTANTS.startingBombCounterCanLiePercent;
         this.tentacleTileNum = GAME_CONSTANTS.startingTentacleNum;
         this.tentacleGrowthIncrement = FIGHT_CONSTANTS.TENTACLE_INCREMENT;
+        this.hasDyscalc = false;
+        this.klutz = false;
 
         this.resetFightConstants();
 
@@ -449,7 +485,7 @@ export class GameStateClass {
         this.fightBossGoldReward = GAME_CONSTANTS.startingFightBossGoldReward;
 
         // EventBus.emit(GAME_EVENTS.RESET_FIGHT_INPUT_MENU);
-        EventBus.emit(UI_EVENTS.UPDATE_NAME, this.name);
+        EventBus.emit(UI_EVENTS.UPDATE_NAME, this.character.name);
         EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, 0, true);
         EventBus.emit(UI_EVENTS.UPDATE_HEALTH, this.hp, this.maxHp, 0, true);
         EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, this.upgrades, true);

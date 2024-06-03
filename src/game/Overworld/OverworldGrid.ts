@@ -83,7 +83,8 @@ export default class OverworldGrid {
             .image(
                 Math.floor(this.width / 2) * OVERWORLD_CONSTANTS.TILE_WIDTH,
                 Math.floor(this.height / 2) * OVERWORLD_CONSTANTS.TILE_HEIGHT,
-                "player",
+                "characters",
+                GameState.character.imageFrame,
             )
             .setDepth(10)
             .setDisplaySize(
@@ -95,9 +96,9 @@ export default class OverworldGrid {
             targets: this.playerImage,
             loop: -1,
             tweens: [
-                { scaleX: 1.5, duration: 1500, flipX: true },
+                { scaleX: 1.3, duration: 1500, flipX: true },
                 {
-                    scaleX: -1.5,
+                    scaleX: -1.3,
                     duration: 1500,
                     flipX: true,
                 },

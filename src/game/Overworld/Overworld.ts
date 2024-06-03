@@ -45,6 +45,10 @@ export class Overworld extends Scene {
             "/assets/overworld/overworldBordersSS.png",
             { frameWidth: 64, frameHeight: 64 },
         );
+        this.load.spritesheet("characters", "/assets/overworld/janitorSS.png", {
+            frameWidth: 128,
+            frameHeight: 128,
+        });
         this.load.image("red_border", "assets/overworld/redBorder.png");
         this.load.image("green_border", "assets/overworld/greenBorder.png");
         this.load.image("white_border", "assets/overworld/whiteBorder.png");

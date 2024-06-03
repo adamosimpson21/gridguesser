@@ -5,6 +5,8 @@ import { Overworld } from "@/game/Overworld/Overworld";
 import { GameState } from "@/game/GameState/GameState";
 import OverworldGrid from "@/game/Overworld/OverworldGrid";
 import OverworldCell from "@/game/Overworld/OverworldCell";
+import { EventBus } from "@/game/EventBus/EventBus";
+import { GAME_EVENTS, SCENE_EVENTS } from "@/game/EventBus/events";
 
 class SettingsManagerClass {
     public volumeLevel: number;
@@ -20,6 +22,14 @@ class SettingsManagerClass {
         window.onbeforeunload = () => {
             this.onBeforeUnload();
         };
+        EventBus.on(GAME_EVENTS.START_NEW_GAME, () => {
+            if (LocalStorageManager.getItem(SETTING_CONSTANTS.uuid) === null) {
+                LocalStorageManager.setItem(
+                    SETTING_CONSTANTS.uuid,
+                    Phaser.Math.RND.uuid(),
+                );
+            }
+        });
     }
 
     initializeLocalStorage() {
@@ -54,14 +64,7 @@ class SettingsManagerClass {
                 false,
             );
         }
-        // TODO: fix uuid
-        // console.log("uuid:", Phaser.Math.RND);
-        // if (LocalStorageManager.getItem(SETTING_CONSTANTS.uuid) === null) {
-        //     LocalStorageManager.setItem(
-        //         SETTING_CONSTANTS.uuid,
-        //         Phaser.Math.RND.uuid(),
-        //     );
-        // }
+
         if (
             LocalStorageManager.getItem(SETTING_CONSTANTS.startingDate) === null
         ) {

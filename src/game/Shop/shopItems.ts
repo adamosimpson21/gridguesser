@@ -256,6 +256,21 @@ export const SHOP_ITEMS: { [key: string]: shopItemType } = {
     },
 };
 
+export const SPECIAL_ITEMS: { [key: string]: shopItemType } = {
+    NEST_EGG: {
+        id: "NEST_EGG",
+        name: "Nest Egg",
+        description: "Open to gain random items. ",
+        cost: 0,
+        effect: { nest_egg: 1 },
+        icon: 11,
+        permanent: true,
+        singleton: true,
+        activated: false,
+        restrictions: { character: "CHAR_TWO" },
+    },
+};
+
 // export const testingItems: shopItemType[] = [
 //     {
 //         id: "SHOP_ITEMS_ADD_3",

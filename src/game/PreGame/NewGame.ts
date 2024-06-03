@@ -7,9 +7,13 @@ import {
     PLAYER_EVENTS,
     SCENE_EVENTS,
 } from "@/game/EventBus/events";
-import { NAME_CHOICES } from "@/game/GameState/gameConstants";
+import {
+    CHARACTER_CHOICES,
+    characterType,
+} from "@/game/GameState/gameConstants";
 import { createBackground } from "@/game/functions/background";
 import {
+    headingText,
     largeText,
     mainMenuText,
     paragraphText,
@@ -25,16 +29,24 @@ export class NewGame extends Scene {
     background: Phaser.GameObjects.Image;
     gameText: Phaser.GameObjects.Text;
     submitButton: Phaser.GameObjects.Text;
-    public nameChoice: string;
-    private titleText: Phaser.GameObjects.Text;
-    private nameChoiceBoard: any;
+    public characterChoice: characterType;
+    public titleText: Phaser.GameObjects.Text;
+    public nameChoiceBoard: Phaser.GameObjects.Container;
 
     constructor() {
         super(SCENES.NewGame);
-        this.nameChoice = "Jan Eator";
+        this.characterChoice = CHARACTER_CHOICES["CHAR_ONE"];
     }
 
-    init() {
+    preload() {
+        this.load.spritesheet("characters", "/assets/overworld/janitorSS.png", {
+            frameWidth: 128,
+            frameHeight: 128,
+        });
+        this.load.image("clipboard", "/assets/hud/longClipboard.png");
+    }
+
+    create() {
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0x00000);
 
@@ -52,37 +64,47 @@ export class NewGame extends Scene {
             this,
         );
 
-        this.nameChoiceBoard = this.add.container(this.scale.width / 2, 350);
+        this.nameChoiceBoard = this.add.container(80, 100);
 
         this.titleText = this.add
             .text(
                 this.scale.width / 2,
-                200,
+                50,
                 "Choose your Character",
                 mainMenuText({ fontSize: "69px", wordWrapWidth: 1500 }),
             )
             .setOrigin(0.5)
             .setDepth(100);
 
-        NAME_CHOICES.forEach((name, index) => {
-            this.nameChoiceBoard.add(
-                this.add
-                    .text(0, index * 80, name, {
-                        backgroundColor: index === 0 ? "#ECA127" : "",
-                        ...largeText({}),
-                    })
-                    .setOrigin(0.5)
-                    .setDepth(100)
-                    .setInteractive()
-                    .setName(name)
-                    .on("pointerdown", () => this.updateNameBoard(name)),
-            );
+        Object.entries(CHARACTER_CHOICES).forEach((character, index) => {
+            this.createCharacterProfile(character[1], index);
+            // this.nameChoiceBoard.add(
+            //     this.add
+            //         .image(-150, index * 80, "characters", 1)
+            //         .setOrigin(0, 0)
+            //         .setDisplaySize(128, 128)
+            //         .setName(`${character[1].id}_IMG`),
+            // );
+            // this.nameChoiceBoard.add(
+            //     this.add
+            //         .text(0, index * 80, character[1].name, {
+            //             backgroundColor: index === 0 ? "#ECA127" : "",
+            //             ...largeText({}),
+            //         })
+            //         .setOrigin(0.5)
+            //         .setDepth(100)
+            //         .setInteractive()
+            //         .setName(character[1].id)
+            //         .on("pointerdown", () =>
+            //             this.updateNameBoard(character[1].id),
+            //         ),
+            // );
         });
 
         this.submitButton = this.add
             .text(
                 this.scale.width / 2,
-                850,
+                1000,
                 "Begin Sweepin'",
                 mainMenuText({ fontSize: "69px" }),
             )
@@ -94,20 +116,87 @@ export class NewGame extends Scene {
     submit() {
         transitionScene(this, SCENES.Overworld);
         EventBus.emit(GAME_EVENTS.START_NEW_GAME);
-        EventBus.emit(PLAYER_EVENTS.CHANGE_NAME, this.nameChoice);
+        // console.log("this.nameChoice:", this.characterChoice);
+        // console.log(CHARACTER_CHOICES[this.characterChoice]);
+        console.log("submitting button");
+        EventBus.emit(PLAYER_EVENTS.CHANGE_CHARACTER, this.characterChoice);
         EventBus.emit(SCENE_EVENTS.ENTER_OVERWORLD);
     }
 
-    updateNameBoard(name: string) {
-        this.nameChoice = name;
-        this.nameChoiceBoard.list.forEach(
-            (textElement: Phaser.GameObjects.Text) => {
-                if (textElement.name === name) {
-                    textElement.setBackgroundColor("#ECA127");
-                } else {
-                    textElement.setBackgroundColor("transparent");
-                }
-            },
-        );
+    handleCharacterClick(character: characterType) {
+        if (character.unlocked) {
+            this.characterChoice = character;
+
+            this.nameChoiceBoard
+                .getAll()
+                // name choice board is a container of containers
+                // @ts-ignore
+                .forEach((gameObject: Phaser.GameObjects.Container) => {
+                    if (gameObject.name === character.id) {
+                        gameObject.setAlpha(1);
+                    } else {
+                        gameObject.setAlpha(0.5);
+                    }
+                });
+        }
+    }
+
+    createCharacterProfile(character: characterType, index: number) {
+        const xOffset = (index % 4) * 420;
+        const yOffset = Math.floor(index / 4) * 440;
+        const unlocked = character.unlocked;
+        const characterBoard = this.add
+            .container(xOffset, yOffset)
+            .setName(character.id)
+            .setAlpha(index === 0 ? 1 : 0.5);
+        const profileBackground = this.make
+            .image({
+                x: 0,
+                y: 0,
+                key: "clipboard",
+            })
+            .setOrigin(0, 0)
+            .setDisplaySize(380, 420)
+            .setInteractive()
+            .on("pointerdown", () => {
+                this.handleCharacterClick(character);
+            });
+        const profileName = this.make.text({
+            x: 36,
+            y: 58,
+            text: character.name,
+            style: headingText({}),
+        });
+        const profilePicture = this.make
+            .image({
+                x: 36,
+                y: 92,
+                key: "characters",
+                frame: unlocked ? character.imageFrame : 10,
+            })
+            .setOrigin(0, 0);
+        const abilityName = this.make.text({
+            x: 36,
+            y: 220,
+            text: unlocked ? character.specialPower.name : "????",
+            style: headingText({}),
+        });
+        const abilityDescription = this.make.text({
+            x: 36,
+            y: 256,
+            text: unlocked ? character.specialPower.description : "????",
+            style: paragraphText({
+                lineSpacing: 5,
+                wordWrapWidth: 332,
+                fontSize: "18px",
+                align: "left",
+            }),
+        });
+        characterBoard.add(profileBackground);
+        characterBoard.add(profileName);
+        characterBoard.add(profilePicture);
+        characterBoard.add(abilityName);
+        characterBoard.add(abilityDescription);
+        this.nameChoiceBoard.add(characterBoard);
     }
 }
