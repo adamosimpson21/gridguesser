@@ -56,6 +56,14 @@ export class Settings extends Scene {
             this.scale.height / 2 - 225,
         );
 
+        if (this.input.keyboard) {
+            this.input.keyboard
+                .addKey(Phaser.Input.Keyboard.KeyCodes["ESC"])
+                .on("down", () => {
+                    this.scene.stop();
+                });
+        }
+
         this.createVolume();
         this.createInputHint();
         this.createMobileControls();
