@@ -116,9 +116,6 @@ export class NewGame extends Scene {
     submit() {
         transitionScene(this, SCENES.Overworld);
         EventBus.emit(GAME_EVENTS.START_NEW_GAME);
-        // console.log("this.nameChoice:", this.characterChoice);
-        // console.log(CHARACTER_CHOICES[this.characterChoice]);
-        console.log("submitting button");
         EventBus.emit(PLAYER_EVENTS.CHANGE_CHARACTER, this.characterChoice);
         EventBus.emit(SCENE_EVENTS.ENTER_OVERWORLD);
     }
@@ -149,6 +146,7 @@ export class NewGame extends Scene {
             .container(xOffset, yOffset)
             .setName(character.id)
             .setAlpha(index === 0 ? 1 : 0.5);
+
         const profileBackground = this.make
             .image({
                 x: 0,
@@ -160,6 +158,14 @@ export class NewGame extends Scene {
             .setInteractive()
             .on("pointerdown", () => {
                 this.handleCharacterClick(character);
+            })
+            .on("pointerover", () => {
+                characterBoard.setAlpha(1);
+            })
+            .on("pointerout", () => {
+                if (this.characterChoice !== character) {
+                    characterBoard.setAlpha(0.5);
+                }
             });
         const profileName = this.make.text({
             x: 36,
