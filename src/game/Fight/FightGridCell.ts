@@ -37,7 +37,6 @@ export default class FightGridCell {
         this.grid = grid;
 
         this.index = index;
-        console.log("this.index", index);
         this.x = x;
         this.y = y;
 
@@ -121,7 +120,6 @@ export default class FightGridCell {
 
     onPointerDown(pointer: any) {
         if (!this.grid.populated) {
-            console.log("this.index generate", this.index);
             this.grid.generate(this);
         }
 
@@ -210,14 +208,12 @@ export default class FightGridCell {
             this.incrementFightMove();
             // user has scary mask item
             const moveBombOneIndex = GameState.upgrades.findIndex((upgrade) => {
-                console.log("upgrade:", upgrade);
                 return (
                     upgrade.id === "MOVE_BOMB_ONE" &&
                     upgrade.hasBeenUsed !== undefined &&
                     !upgrade.hasBeenUsed
                 );
             });
-            console.log("moveBombOneIndex:", moveBombOneIndex);
             if (moveBombOneIndex !== -1) {
                 EventBus.emit(UI_EVENTS.USE_UPGRADE, "MOVE_BOMB_ONE");
                 GameState.upgrades[moveBombOneIndex].hasBeenUsed = true;

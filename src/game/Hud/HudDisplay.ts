@@ -53,7 +53,7 @@ export default class HudDisplay {
         this.nameDisplay = this.scene.add.text(
             this.xOffset,
             this.yOffset,
-            `${GameState.name}`,
+            `${GameState.character.name}`,
             headingText({}),
         );
 

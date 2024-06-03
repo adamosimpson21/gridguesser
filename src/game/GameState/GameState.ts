@@ -455,7 +455,7 @@ export class GameStateClass {
         this.fightCanHaveTentacles = FIGHT_CONSTANTS.CAN_HAVE_TENTACLES;
         this.bombCounterCanLie = FIGHT_CONSTANTS.BOMB_COUNTER_CAN_LIE;
         this.playerDamageReduction = 0;
-        this.fightInputTypes = GAME_CONSTANTS.startingFightInputTypes;
+        this.fightInputTypes = [...GAME_CONSTANTS.startingFightInputTypes];
         this.currentFightInputType = FIGHT_INPUT_TYPES.REVEAL;
         this.removeTrashNum = GAME_CONSTANTS.startingRemoveTrashNum;
         this.removeBombNum = GAME_CONSTANTS.startingRemoveBombNum;
@@ -484,7 +484,6 @@ export class GameStateClass {
 
         this.fightBossGoldReward = GAME_CONSTANTS.startingFightBossGoldReward;
 
-        // EventBus.emit(GAME_EVENTS.RESET_FIGHT_INPUT_MENU);
         EventBus.emit(UI_EVENTS.UPDATE_NAME, this.character.name);
         EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, 0, true);
         EventBus.emit(UI_EVENTS.UPDATE_HEALTH, this.hp, this.maxHp, 0, true);
