@@ -150,6 +150,17 @@ export default class TrapDisplay {
                         );
                     }
                     break;
+                case "bombNum":
+                    if (typeof severity === "number") {
+                        GameState.bombNum += severity;
+                    }
+                    break;
+                case "fightGridSize":
+                    if (typeof severity === "number") {
+                        GameState.fightGridWidth += severity;
+                        GameState.fightGridHeight += severity;
+                    }
+                    break;
                 case "luck":
                     if (typeof severity === "number") {
                         GameState.luck += severity;

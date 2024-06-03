@@ -60,8 +60,8 @@ export class BossFight extends Scene {
 
         this.background = createBackground(this);
 
-        const gridWidth = Math.floor(GameState.fightGridWidth * 1.25);
-        const gridHeight = Math.floor(GameState.fightGridHeight * 1.25);
+        const gridWidth = Math.ceil(GameState.fightGridWidth * 1.35);
+        const gridHeight = Math.ceil(GameState.fightGridHeight * 1.35);
         // testing nerf
         // const numBombs = Math.floor(GameState.bombNum);
         const numBombs = Math.floor(GameState.bombNum * 2);

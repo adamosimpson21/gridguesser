@@ -631,20 +631,6 @@ export default class FightGridCell {
     }
 
     show(shouldNotAnimate?: boolean) {
-        const values = [
-            "⬜️",
-            "1️⃣",
-            "2️⃣",
-            "3️⃣",
-            "4️⃣",
-            "5️⃣",
-            "6️⃣",
-            "7️⃣",
-            "8️⃣",
-            "9️⃣",
-            "🔟",
-        ];
-
         let frameToSet = 10;
         if (this.trash) {
             frameToSet = 24;
@@ -657,9 +643,11 @@ export default class FightGridCell {
                 frameToSet = this.value + this.lyingOffset;
             }
         } else {
-            if (this.value < 9) {
+            if (this.value <= 10) {
                 if (this.value === 0) {
                     frameToSet = 10;
+                } else if (this.value === 10) {
+                    frameToSet = 20;
                 } else {
                     frameToSet = this.value;
                 }

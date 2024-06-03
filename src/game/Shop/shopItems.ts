@@ -163,7 +163,7 @@ export const SHOP_ITEMS: { [key: string]: shopItemType } = {
         name: "Lucky Underpants",
         description: "You are a little Luckier",
         cost: 10,
-        effect: { luckAdd: 15 },
+        effect: { luckAdd: 35 },
         icon: 25,
         permanent: true,
         singleton: false,
