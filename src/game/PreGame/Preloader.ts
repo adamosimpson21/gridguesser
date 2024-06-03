@@ -68,7 +68,7 @@ export class Preloader extends Scene {
         // } else {
         // testing
         this.scene
-            .launch(SCENES.NewGame)
+            .launch(SCENES.MainMenu)
             // .launch(SCENES.Settings)
             .launch(SCENES.Hud)
             .remove();
