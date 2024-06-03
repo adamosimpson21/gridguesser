@@ -165,24 +165,6 @@ export default class FightGrid extends GameObject {
         });
 
         this.trashBG.setInteractive().setDepth(4);
-        this.trashBG.on("pointerdown", () => {
-            this.scene.tweens.add({
-                targets: this.endGameBoard,
-                y: 800,
-            });
-            this.scene.tweens.add({
-                targets: [this.endGameTrashCan, this.endGameTrashCanOver],
-                y: 0,
-            });
-            this.scene.time.addEvent({
-                delay: 1000,
-                loop: false,
-                callback: () => {
-                    transitionSceneToOverworld(this.scene);
-                },
-                callbackScope: this,
-            });
-        });
 
         (this.endGameTrashCan = this.scene.add
             .image(0, 2000, "trash_can")
@@ -305,6 +287,24 @@ export default class FightGrid extends GameObject {
     gameWon(flawless: boolean) {
         this.playing = false;
         this.state = 2;
+        this.trashBG.on("pointerdown", () => {
+            this.scene.tweens.add({
+                targets: this.endGameBoard,
+                y: 800,
+            });
+            this.scene.tweens.add({
+                targets: [this.endGameTrashCan, this.endGameTrashCanOver],
+                y: 0,
+            });
+            this.scene.time.addEvent({
+                delay: 1000,
+                loop: false,
+                callback: () => {
+                    transitionSceneToOverworld(this.scene);
+                },
+                callbackScope: this,
+            });
+        });
 
         if (flawless) {
             EventBus.emit(

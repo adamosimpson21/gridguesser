@@ -52,7 +52,7 @@ export default class BossFightGrid extends FightGrid {
                     callbackScope: this,
                 });
             });
-            this.createBossEndModal(flawless);
+            this.afterEndBossModal(flawless);
         } else {
             if (GameState.level === 1) {
                 //unleash all advanced mechanics
@@ -62,7 +62,7 @@ export default class BossFightGrid extends FightGrid {
                 GameState.fightCanHaveTentacles = true;
                 // GameState.bombCounterCanLie = true;
             }
-            this.createBossEndModal(flawless);
+            this.afterEndBossModal(flawless);
         }
     }
 
@@ -126,7 +126,7 @@ export default class BossFightGrid extends FightGrid {
                     delay: 1000,
                     loop: false,
                     callback: () => {
-                        transitionSceneToOverworldFromBoss(this.scene);
+                        this.createBossEndModal(flawless);
                     },
                     callbackScope: this,
                 });
@@ -201,7 +201,7 @@ export default class BossFightGrid extends FightGrid {
                 modalContainer.setAlpha(0);
                 background.setAlpha(0);
                 bossDeskImage.setAlpha(0);
-                this.afterEndBossModal(flawless);
+                transitionSceneToOverworldFromBoss(this.scene);
             });
             const keyName = this.scene.add.text(
                 -8,
