@@ -110,7 +110,7 @@ export const SHOP_ITEMS: { [key: string]: shopItemType } = {
         permanent: true,
         singleton: false,
         activated: false,
-        restrictions: {},
+        restrictions: { level: 2 },
     },
     GRID_EXPAND_ONE: {
         id: "GRID_EXPAND_ONE",
@@ -148,16 +148,6 @@ export const SHOP_ITEMS: { [key: string]: shopItemType } = {
         activated: false,
         restrictions: {},
     },
-    // REMOVE_TRASH_TILE_TWO: {
-    //     id: "REMOVE_TRASH_TILE_TWO",
-    //     name: "Big Trash Can",
-    //     description: "Adds 2 uses to Remove Trash Tile",
-    //     cost: 9,
-    //     effect: { trashTileRemove: 2 },
-    //     icon: "🥫",
-    //     permanent: true,
-    //     singleton: false,
-    // },
     LUCK_IMPROVE_15: {
         id: "LUCK_IMPROVE_15",
         name: "Lucky Underpants",
@@ -254,6 +244,90 @@ export const SHOP_ITEMS: { [key: string]: shopItemType } = {
         activated: false,
         restrictions: {},
     },
+    TENTACLE_SLOW: {
+        id: "TENTACLE_SLOW",
+        name: "Tentacle Musk",
+        description: "Slows the spread of Tentacles",
+        cost: 7,
+        effect: { tentacleIncrement: 10 },
+        icon: 40,
+        permanent: true,
+        singleton: false,
+        activated: false,
+        restrictions: { advancedMechanics: "fightCanHaveTentacles" },
+    },
+    UMBRELLA_USES_TWO: {
+        id: "UMBRELLA_USES_TWO",
+        name: "Extra Towels",
+        description: "Adds 2 uses to towel key",
+        cost: 7,
+        effect: { umbrellaUses: 2 },
+        icon: 21,
+        permanent: true,
+        singleton: false,
+        activated: false,
+        restrictions: { key: "UMBRELLA" },
+    },
+    CEMENT_USES_TWO: {
+        id: "CEMENT_USES_TWO",
+        name: "Extra Cement",
+        description: "Adds 2 uses to cement key",
+        cost: 15,
+        effect: { blockUses: 2 },
+        icon: 23,
+        permanent: true,
+        singleton: false,
+        activated: false,
+        restrictions: { key: "BLOCK" },
+    },
+    CEMENT_SIZE_TWO: {
+        id: "CEMENT_USES_TWO",
+        name: "Extra Cement",
+        description: "Adds 2 height and width to cement key",
+        cost: 18,
+        effect: { blockSize: 2 },
+        icon: 40,
+        permanent: true,
+        singleton: false,
+        activated: false,
+        restrictions: { key: "BLOCK" },
+    },
+    TOWER_USES_TWO: {
+        id: "TOWER_USES_TWO",
+        name: "Extra Stepstools",
+        description: "Adds 2 uses to stepstool key",
+        cost: 10,
+        effect: { towerUses: 2 },
+        icon: 22,
+        permanent: true,
+        singleton: false,
+        activated: false,
+        restrictions: { key: "TOWER" },
+    },
+    REMOVE_TRASH_TILE_TWO: {
+        id: "REMOVE_TRASH_TILE_TWO",
+        name: "Big Trash Can",
+        description: "Adds 2 uses to Remove Trash Tile Key",
+        cost: 9,
+        effect: { trashTileRemoveUses: 2 },
+        icon: 34,
+        permanent: true,
+        singleton: false,
+        activated: false,
+        restrictions: { key: "REMOVE_TRASH" },
+    },
+    REMOVE_TRASH_REWARD_THREE: {
+        id: "REMOVE_TRASH_REWARD_THREE",
+        name: "",
+        description: "Whenever you remove a trash tile, gain $3",
+        cost: 9,
+        effect: { trashTileRemoveReward: 3 },
+        icon: 40,
+        permanent: true,
+        singleton: false,
+        activated: false,
+        restrictions: { key: "REMOVE_TRASH" },
+    },
 };
 
 export const SPECIAL_ITEMS: { [key: string]: shopItemType } = {
@@ -268,6 +342,18 @@ export const SPECIAL_ITEMS: { [key: string]: shopItemType } = {
         singleton: true,
         activated: false,
         restrictions: { character: "CHAR_TWO" },
+    },
+    LUCKY_COIN: {
+        id: "LUCKY_COIN",
+        name: "Lucky Coin",
+        description: "Makes life a little easier",
+        cost: 0,
+        effect: { nest_egg: 1 },
+        icon: 10,
+        permanent: true,
+        singleton: false,
+        activated: false,
+        restrictions: { event: "LUCKY_COIN" },
     },
 };
 
@@ -535,7 +621,7 @@ export type shopItemType = {
     icon: number;
     activated: boolean;
     hasBeenUsed?: boolean;
-    restrictions?: any;
+    restrictions: { [key: string]: any };
 };
 
 export const SHOP_CONSTANTS = {

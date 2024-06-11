@@ -15,7 +15,6 @@ import {
 import { GameState } from "@/game/GameState/GameState";
 import { paragraphText } from "@/game/constants/textStyleConstructor";
 import { addTooltip, TOOLTIP_CONSTANTS } from "@/game/functions/addTooltip";
-import { SCENES } from "@/game/constants/scenes";
 
 export default class ShopItem {
     public scene: Phaser.Scene;
@@ -41,7 +40,8 @@ export default class ShopItem {
         x: number,
         y: number,
     ) {
-        (this.grid = grid), (this.type = type);
+        this.grid = grid;
+        this.type = type;
         this.item = undefined;
         this.x = x;
         this.y = y;
@@ -212,11 +212,8 @@ export default class ShopItem {
     }
 
     chooseRandomShopItem(): shopItemType {
-        const keys = Object.keys(SHOP_ITEMS);
-        const randomIndex = Phaser.Math.Between(0, keys.length - 1);
-        const randomKey = keys[randomIndex] as keyof shopItemType;
-        this.type = randomKey;
-        return SHOP_ITEMS[randomKey];
+        // type assertion because array will always be longer than 0, hopefully
+        return <shopItemType>this.grid.availableItems.pop();
     }
 
     playerCanUseItemCheck(item: shopItemType): boolean {

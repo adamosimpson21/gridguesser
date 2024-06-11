@@ -534,7 +534,7 @@ export class GameStateClass {
     incrementLevel() {
         this.level += 1;
         this.bombIntensity++;
-        this.bombNum += 4;
+        this.bombNum += 8;
         this.overworldGridWidth++;
         this.overworldGridHeight++;
         this.fightGridWidth += 2;
@@ -542,9 +542,9 @@ export class GameStateClass {
         this.overworldFights += 3;
         this.overworldBuffs++;
         this.overworldTraps++;
-        this.fightGoldReward += 2;
-        this.lyingTileNum++;
-        this.trashTileNum++;
+        // this.fightGoldReward += 2;
+        this.lyingTileNum += 1;
+        this.trashTileNum += 2;
         this.tentacleTileNum++;
         this.bombCounterCanLiePercent += 5;
     }

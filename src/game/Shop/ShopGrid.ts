@@ -3,6 +3,7 @@ import ShopItem from "@/game/Shop/ShopItem";
 import { GameState } from "@/game/GameState/GameState";
 import { headingText } from "@/game/constants/textStyleConstructor";
 import { transitionSceneToOverworld } from "@/game/functions/transitionScene";
+import { SHOP_ITEMS, shopItemType } from "@/game/Shop/shopItems";
 
 export default class ShopGrid {
     public scene: Shop;
@@ -13,6 +14,7 @@ export default class ShopGrid {
     public board: Phaser.GameObjects.Container;
     public offset: Phaser.Math.Vector2;
     public returnButton: any;
+    public availableItems: shopItemType[];
     public vendingMachine: Phaser.GameObjects.Image;
     public numPadBoard: Phaser.GameObjects.Container;
 
@@ -21,6 +23,7 @@ export default class ShopGrid {
         this.width = GameState.shopGridWidth;
         this.height = GameState.shopGridHeight;
         this.size = this.width * this.height;
+        this.availableItems = this.generateAvailableItems();
 
         this.offset = new Phaser.Math.Vector2(64, 36);
 
@@ -55,6 +58,62 @@ export default class ShopGrid {
     }
     handleReturnButton() {
         transitionSceneToOverworld(this.scene);
+    }
+
+    generateAvailableItems() {
+        const singletonItemsPlayerHas = GameState.upgrades.filter((upgrade) => {
+            return upgrade.singleton;
+        });
+        console.log("items player has", singletonItemsPlayerHas);
+
+        return Phaser.Utils.Array.Shuffle(
+            Object.values(SHOP_ITEMS).reduce(
+                (accumulator: shopItemType[], shopItem: shopItemType) => {
+                    if (singletonItemsPlayerHas.indexOf(shopItem) >= 0) {
+                        return accumulator;
+                    } else if (this.filterIteByRestrictions(shopItem)) {
+                        accumulator.push(shopItem);
+                    }
+                    return accumulator;
+                },
+                [] as shopItemType[],
+            ),
+        );
+    }
+
+    // returns true if item should be included, false if restrictions mean it shouldn't
+    filterIteByRestrictions(shopItem: shopItemType) {
+        const restrictions = Object.entries(shopItem.restrictions);
+        if (restrictions.length <= 0) {
+            return true;
+        }
+        let shouldBeIncluded = true;
+        restrictions.forEach((restriction) => {
+            switch (restriction[0]) {
+                case "level":
+                    if (GameState.level < restriction[1]) {
+                        shouldBeIncluded = false;
+                    }
+                    break;
+                case "key":
+                    if (
+                        GameState.fightInputTypes.indexOf(restriction[1]) === -1
+                    ) {
+                        shouldBeIncluded = false;
+                    }
+                    break;
+                case "advancedMechanics":
+                    // @ts-ignore
+                    if (!GameState[restriction[1]]) {
+                        shouldBeIncluded = false;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        return shouldBeIncluded;
     }
 
     createCells() {
