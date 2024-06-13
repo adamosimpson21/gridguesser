@@ -102,6 +102,11 @@ export default class HudDisplay {
                     upgrade.setFrame(7);
                 });
             this.upgradeDisplay
+                .getAll("name", "REMOVE_BOMB_ONE")
+                .forEach((upgrade: any) => {
+                    upgrade.setFrame(48);
+                });
+            this.upgradeDisplay
                 .getAll("name", "BROOMTAR")
                 .forEach((upgrade: any) => {
                     upgrade.setFrame(3);
@@ -110,6 +115,16 @@ export default class HudDisplay {
                 .getAll("name", "HARBROOM")
                 .forEach((upgrade: any) => {
                     upgrade.setFrame(42);
+                });
+            this.upgradeDisplay
+                .getAll("name", "BROOMDRUM")
+                .forEach((upgrade: any) => {
+                    upgrade.setFrame(45);
+                });
+            this.upgradeDisplay
+                .getAll("name", "BROOMOPHONE")
+                .forEach((upgrade: any) => {
+                    upgrade.setFrame(52);
                 });
         });
         EventBus.on(
@@ -220,6 +235,12 @@ export default class HudDisplay {
                 upgradeToBeUsed.setFrame(5);
             } else if (upgradeToBeUsed.name === "HARBROOM") {
                 upgradeToBeUsed.setFrame(43);
+            } else if (upgradeToBeUsed.name === "BROOMOPHONE") {
+                upgradeToBeUsed.setFrame(53);
+            } else if (upgradeToBeUsed.name === "BROOMDRUM") {
+                upgradeToBeUsed.setFrame(46);
+            } else if (upgradeToBeUsed.name === "REMOVE_BOMB_ONE") {
+                upgradeToBeUsed.setFrame(49);
             }
         });
         EventBus.on(

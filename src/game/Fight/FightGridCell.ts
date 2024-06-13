@@ -137,10 +137,10 @@ export default class FightGridCell {
         }
     }
 
-    onClick() {
+    onClick(isNotClick?: boolean) {
         const inputType = GameState.currentFightInputType;
         if (inputType === FIGHT_INPUT_TYPES.REVEAL) {
-            this.useReveal();
+            this.useReveal(isNotClick);
         } else if (inputType === FIGHT_INPUT_TYPES.FLAG) {
             this.addFlag();
         } else if (inputType === FIGHT_INPUT_TYPES.QUERY) {
@@ -165,7 +165,7 @@ export default class FightGridCell {
         this.grid.addTentacleFromGrid();
     }
 
-    useReveal() {
+    useReveal(isNotClick?: boolean) {
         // chording
         if (
             this.open &&
@@ -174,29 +174,31 @@ export default class FightGridCell {
             !this.hasBeenChorded &&
             !this.isTentacle
         ) {
-            this.incrementFightMove();
-
             const numFlagged =
                 this.grid.getAdjacentCellFlaggedAndBombedNumber(this);
-            if (this.lying) {
-                if (this.value + this.lyingOffset === numFlagged) {
-                    this.grid.chordFill(this.x, this.y);
-                    this.grid.incrementChordMove();
-                    this.hasBeenChorded = true;
+            // chording with lying
+            if (
+                (this.lying && this.value + this.lyingOffset === numFlagged) ||
+                (!this.lying && this.value === numFlagged)
+            ) {
+                // successfully chorded
+                if (!isNotClick) {
+                    this.incrementFightMove();
                 }
-            } else {
-                if (this.value === numFlagged) {
-                    this.grid.chordFill(this.x, this.y);
-                    this.grid.incrementChordMove();
-                    this.hasBeenChorded = true;
-                }
+                this.grid.chordFill(this.x, this.y);
+                this.grid.incrementChordMove();
+                this.hasBeenChorded = true;
             }
         }
+
+        // interacting with tentacle
         if (this.open && this.isTentacle) {
             if (!this.tentacleTouched) {
                 this.touchTentacle(true);
                 this.incrementFightMove();
             }
+
+            // add query
         } else if (this.query) {
             this.toggleQuery();
         } else if (this.flagNum > 0) {
@@ -206,6 +208,17 @@ export default class FightGridCell {
             this.grid.updateBombs(-1);
         } else if (this.bombNum > 0) {
             this.incrementFightMove();
+
+            const removeBombOneIndex = GameState.upgrades.findIndex(
+                (upgrade) => {
+                    return (
+                        upgrade.id === "REMOVE_BOMB_ONE" &&
+                        upgrade.hasBeenUsed !== undefined &&
+                        !upgrade.hasBeenUsed
+                    );
+                },
+            );
+
             // user has scary mask item
             const moveBombOneIndex = GameState.upgrades.findIndex((upgrade) => {
                 return (
@@ -214,7 +227,11 @@ export default class FightGridCell {
                     !upgrade.hasBeenUsed
                 );
             });
-            if (moveBombOneIndex !== -1) {
+            if (removeBombOneIndex !== -1) {
+                EventBus.emit(UI_EVENTS.USE_UPGRADE, "REMOVE_BOMB_ONE");
+                GameState.upgrades[removeBombOneIndex].hasBeenUsed = true;
+                this.removeBomb();
+            } else if (moveBombOneIndex !== -1) {
                 EventBus.emit(UI_EVENTS.USE_UPGRADE, "MOVE_BOMB_ONE");
                 GameState.upgrades[moveBombOneIndex].hasBeenUsed = true;
                 this.grid.redistributeBombs(this);
@@ -226,7 +243,10 @@ export default class FightGridCell {
                 EventBus.emit(PLAYER_EVENTS.HIT_BOMB, this.bombNum);
             }
         } else {
-            this.incrementFightMove();
+            // only counts as a move if it's closed
+            if (!this.open) {
+                this.incrementFightMove();
+            }
             if (this.value === 0) {
                 this.grid.floodFill(this.x, this.y);
             } else {
@@ -252,9 +272,7 @@ export default class FightGridCell {
             const adjacantCells = this.grid
                 .getAdjacentCells(this)
                 .filter((cell: FightGridCell) => {
-                    return (
-                        cell && cell.bombNum <= 0 && !cell.trash && !cell.lying
-                    );
+                    return cell && cell.bombNum <= 0;
                 });
             let hasNotMadeTentacle = true;
             if (adjacantCells.length > 0) {
@@ -412,6 +430,12 @@ export default class FightGridCell {
                 FIGHT_EVENTS.USE_LIMITED_INPUT,
                 FIGHT_INPUT_TYPES.REMOVE_TRASH,
             );
+            const collectionsUsed = GameState.useAllActivatedUpgrade(
+                "REMOVE_TRASH_REWARD_THREE",
+            );
+            if (collectionsUsed > 0) {
+                EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, collectionsUsed * 2);
+            }
             this.show();
         }
     }
@@ -635,12 +659,34 @@ export default class FightGridCell {
         if (this.trash) {
             frameToSet = 24;
         } else if (this.lying) {
-            if (this.value + this.lyingOffset <= 0) {
-                frameToSet = 0;
-            } else if (this.value + this.lyingOffset > 9) {
-                frameToSet = 21;
+            const trustedNumbers = GameState.trustedNumbers;
+            if (
+                trustedNumbers.indexOf(this.value) !== -1 ||
+                trustedNumbers.indexOf(this.value + this.lyingOffset) !== -1
+            ) {
+                // base value or value + offset is a trusted number
+                this.lying = false;
+                // repeat code from end of function
+                if (this.value <= 10) {
+                    if (this.value === 0) {
+                        frameToSet = 10;
+                    } else if (this.value === 10) {
+                        frameToSet = 20;
+                    } else {
+                        frameToSet = this.value;
+                    }
+                } else {
+                    frameToSet = 21;
+                }
+                // end repeat
             } else {
-                frameToSet = this.value + this.lyingOffset;
+                if (this.value + this.lyingOffset <= 0) {
+                    frameToSet = 0;
+                } else if (this.value + this.lyingOffset > 9) {
+                    frameToSet = 21;
+                } else {
+                    frameToSet = this.value + this.lyingOffset;
+                }
             }
         } else {
             if (this.value <= 10) {

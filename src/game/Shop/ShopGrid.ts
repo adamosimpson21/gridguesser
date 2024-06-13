@@ -108,6 +108,11 @@ export default class ShopGrid {
                         shouldBeIncluded = false;
                     }
                     break;
+                case "item":
+                    if (!GameState.hasUpgrade(restriction[1])) {
+                        shouldBeIncluded = false;
+                    }
+                    break;
                 default:
                     break;
             }

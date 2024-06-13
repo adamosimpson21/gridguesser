@@ -15,6 +15,7 @@ import {
 import { GameState } from "@/game/GameState/GameState";
 import { paragraphText } from "@/game/constants/textStyleConstructor";
 import { addTooltip, TOOLTIP_CONSTANTS } from "@/game/functions/addTooltip";
+import { flavorConstants } from "@/game/constants/flavorConstants";
 
 export default class ShopItem {
     public scene: Phaser.Scene;
@@ -297,6 +298,13 @@ export default class ShopItem {
                         message: `Added ${itemEffect.shopItemsAdd} items to future Vending Machines`,
                     });
                     break;
+                case "trustedNumber":
+                    GameState.trustedNumbers.push(itemEffect.trustedNumber);
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message: `${itemEffect.trustedNumber}s are the truth!`,
+                    });
+                    break;
                 case "damage_reduce":
                     GameState.playerDamageReduction += itemEffect.damage_reduce;
                     EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
@@ -316,14 +324,67 @@ export default class ShopItem {
                     GameState.fightGridWidth += itemEffect.fightGridExpand;
                     EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
                         type: UI_MESSAGE_TYPES.SUCCESS,
-                        message: "Room size width and height increased",
+                        message: `${flavorConstants.FIGHT_NAME} size width and height increased`,
                     });
                     break;
+                case "bossFightGridExpand":
+                    GameState.bossFightGridChange +=
+                        itemEffect.bossFightGridExpand;
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message: `Boss ${flavorConstants.FIGHT_NAME} size width and height increased`,
+                    });
+                    break;
+
                 case "bombNumberReduce":
                     GameState.bombNum -= itemEffect.bombNumberReduce;
                     EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
                         type: UI_MESSAGE_TYPES.SUCCESS,
                         message: "Reduced Bomb Number",
+                    });
+                    break;
+                case "umbrellaUses":
+                    GameState.towerNum += itemEffect.umbrellaUses;
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message: "Added 2 Uses of the Towel Key",
+                    });
+                    break;
+                case "blockUses":
+                    GameState.blockNum += itemEffect.blockUses;
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message: "Added 2 Uses of the Cement Key",
+                    });
+                    break;
+                case "blockSize":
+                    GameState.blockSize += itemEffect.blockSize;
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message: "Added 2 height and width to the Cement Key",
+                    });
+                    break;
+                case "towerUses":
+                    GameState.towerNum += itemEffect.towerUses;
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message: "Added 2 Uses of the Stepstool Key",
+                    });
+                    break;
+                case "trashTileRemoveUses":
+                    GameState.removeTrashNum += itemEffect.trashTileRemoveUses;
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message: "Added 2 Uses of the Remove Trash Key",
+                    });
+                    break;
+                case "tentacleIncrement":
+                    GameState.tentacleGrowthIncrement +=
+                        itemEffect.tentacleIncrement;
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message:
+                            "You apply the musk to your broom and the tentacle begin to recede",
                     });
                     break;
                 case "fightGoldIncrease":

@@ -32,6 +32,9 @@ export class GameStateClass {
     public shopGridHeight: number;
     public shopGridWidth: number;
     public fightGridHeight: number;
+    public bossFightGridChange: number;
+    public bossFightBombChange: number;
+    public trustedNumbers: number[];
     public overworldShops: number;
     public overworldFights: number;
     public overworldBuffs: number;
@@ -474,6 +477,9 @@ export class GameStateClass {
         this.tentacleGrowthIncrement = FIGHT_CONSTANTS.TENTACLE_INCREMENT;
         this.hasDyscalc = false;
         this.klutz = false;
+        this.bossFightGridChange = GAME_CONSTANTS.startingBossFightGridChange;
+        this.bossFightBombChange = GAME_CONSTANTS.startingBossFightBombChange;
+        this.trustedNumbers = [...GAME_CONSTANTS.startingTrustedNumbers];
 
         this.resetFightConstants();
 
@@ -525,6 +531,17 @@ export class GameStateClass {
         );
     }
 
+    useAllActivatedUpgrade(upgradeId: string) {
+        let numUsed = 0;
+        this.upgrades.forEach((upgrade) => {
+            if (upgrade.id === upgradeId && !upgrade.hasBeenUsed) {
+                upgrade.hasBeenUsed = true;
+                numUsed++;
+            }
+        });
+        return numUsed;
+    }
+
     updateFightInputType(fightInputType: string) {
         if (getInputInstanceUsesAvailable(fightInputType) != 0) {
             this.currentFightInputType = fightInputType;
@@ -542,6 +559,7 @@ export class GameStateClass {
         this.overworldFights += 3;
         this.overworldBuffs++;
         this.overworldTraps++;
+        this.bossFightBombChange += 8;
         // this.fightGoldReward += 2;
         this.lyingTileNum += 1;
         this.trashTileNum += 2;

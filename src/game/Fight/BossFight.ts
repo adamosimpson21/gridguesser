@@ -2,7 +2,7 @@ import { EventBus } from "../EventBus/EventBus";
 import { Scene } from "phaser";
 import FightGrid from "./FightGrid";
 import { SCENES } from "@/game/constants/scenes";
-import { GameState } from "@/game/GameState/GameState";
+import { GameState, GameStateClass } from "@/game/GameState/GameState";
 import { GAME_EVENTS, SCENE_EVENTS } from "@/game/EventBus/events";
 import BossFightGrid from "@/game/Fight/BossFightGrid";
 import FightInputMenu from "@/game/Hud/FightInputMenu";
@@ -60,11 +60,17 @@ export class BossFight extends Scene {
 
         this.background = createBackground(this);
 
-        const gridWidth = Math.ceil(GameState.fightGridWidth + 3);
-        const gridHeight = Math.ceil(GameState.fightGridHeight + 3);
+        const gridWidth = Math.ceil(
+            GameState.fightGridWidth + GameState.bossFightGridChange,
+        );
+        const gridHeight = Math.ceil(
+            GameState.fightGridHeight + GameState.bossFightGridChange,
+        );
         // testing nerf
         // const numBombs = Math.floor(GameState.bombNum);
-        const numBombs = Math.floor(GameState.bombNum * 1.5 + 10);
+        const numBombs = Math.floor(
+            GameState.bombNum * 1.5 + GameState.bossFightBombChange,
+        );
         this.grid = new BossFightGrid(this, gridWidth, gridHeight, numBombs);
 
         this.input.setDefaultCursor(

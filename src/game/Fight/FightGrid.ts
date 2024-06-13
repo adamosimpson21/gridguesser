@@ -32,9 +32,10 @@ export default class FightGrid extends GameObject {
     public playing: boolean;
     public populated: boolean;
     public state: number;
-    public gridData: any[];
+    public gridData: FightGridCell[][];
     public moveCounter: number;
     public chordCount: number;
+    public chordMoves: number[];
     public board: Phaser.GameObjects.Container;
     public bombsCounterText: Phaser.GameObjects.Text;
     public emergencyGeneratorCutoffNumber: number;
@@ -73,6 +74,7 @@ export default class FightGrid extends GameObject {
         this.populated = false;
         this.moveCounter = 0;
         this.chordCount = 0;
+        this.chordMoves = [];
 
         //  0 = waiting to create the grid
         //  1 = playing
@@ -211,6 +213,7 @@ export default class FightGrid extends GameObject {
 
     incrementChordMove() {
         this.chordCount++;
+        this.chordMoves.push(this.moveCounter);
         if (this.chordCount === 8) {
             if (GameState.hasUpgrade("HARBROOM")) {
                 EventBus.emit(PLAYER_EVENTS.GAIN_HP, 2);
@@ -221,10 +224,30 @@ export default class FightGrid extends GameObject {
                 EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, 3);
                 EventBus.emit(UI_EVENTS.USE_UPGRADE, "BROOMTAR");
             }
+        } else if (this.chordCount === 5) {
+            if (GameState.hasUpgrade("BROOMOPHONE")) {
+                EventBus.emit(UI_EVENTS.USE_UPGRADE, "BROOMOPHONE");
+                this.removeUnflaggedBomb();
+            }
+        }
+        // TODO: make sure this doesn't trigger multiple times per fight
+        if (
+            this.chordMoves.length >= 4 &&
+            this.chordMoves[this.chordMoves.length - 4] === this.moveCounter - 3
+        ) {
+            // last 4 consecutive moves are chords
+            if (GameState.hasUpgrade("BROOMDRUM")) {
+                const numBroomDrums =
+                    GameState.useAllActivatedUpgrade("BROOMDRUM");
+                if (numBroomDrums > 0) {
+                    EventBus.emit(PLAYER_EVENTS.GAIN_MAX_HP, numBroomDrums);
+                    EventBus.emit(UI_EVENTS.USE_UPGRADE, "BROOMDRUM");
+                }
+            }
         }
     }
 
-    updateBombs(diff: number) {
+    updateBombs(loss: number) {
         // if (GameState.bombCounterCanLie) {
         //     // luck chance
         //     if (
@@ -238,7 +261,7 @@ export default class FightGrid extends GameObject {
         //         }
         //     }
         // }
-        this.bombsCounter -= diff;
+        this.bombsCounter -= loss;
         this.bombsCounterText.setText(`${this.bombsCounter.toString()}`);
     }
 
@@ -252,6 +275,24 @@ export default class FightGrid extends GameObject {
             ].addBomb();
             bombsToMove--;
         } while (bombsToMove > 0);
+    }
+
+    removeUnflaggedBomb() {
+        let hasRemovedBomb = false;
+        Phaser.Utils.Array.Shuffle([...this.getAllClosedCell()]).forEach(
+            (cell) => {
+                if (
+                    !cell.open &&
+                    cell.bombNum > 0 &&
+                    cell.flagNum <= 0 &&
+                    !hasRemovedBomb
+                ) {
+                    cell.removeBomb();
+                    hasRemovedBomb = true;
+                    return;
+                }
+            },
+        );
     }
 
     getAllClosedCell() {
@@ -268,20 +309,20 @@ export default class FightGrid extends GameObject {
     }
 
     restart() {
-        this.populated = false;
-        this.playing = false;
-        this.bombsCounter = this.bombQty;
-        this.state = 0;
-
-        let location = 0;
-
-        do {
-            this.getCell(location).reset();
-
-            location++;
-        } while (location < this.size);
-
-        this.scene.scene.stop(SCENES.Fight);
+        // this.populated = false;
+        // this.playing = false;
+        // this.bombsCounter = this.bombQty;
+        // this.state = 0;
+        //
+        // let location = 0;
+        //
+        // do {
+        //     this.getCell(location).reset();
+        //
+        //     location++;
+        // } while (location < this.size);
+        //
+        // this.scene.scene.stop(SCENES.Fight);
     }
 
     gameWon(flawless: boolean) {
@@ -449,10 +490,10 @@ export default class FightGrid extends GameObject {
         let tentacleQuantity = GameState.tentacleTileNum;
         let hasUsedForcedMultibomb = false;
 
-        const startAreaIndexes: number[] = this.getAllCellsInDiameter(
+        let startAreaIndexes: number[] = this.getAllCellsInDiameter(
             this.getCellXY(startCell.x, startCell.y),
             GameState.initialClickSize,
-        ).reduce((acc: number[], cell: FightGridCell) => {
+        ).reduce((acc: number[], cell: FightGridCell | null) => {
             if (cell) {
                 acc.push(cell.index);
                 return acc;
@@ -460,6 +501,18 @@ export default class FightGrid extends GameObject {
                 return acc;
             }
         }, []);
+
+        if (GameState.hasUpgrade("INITIAL_CLICK_CORNERS_ONE")) {
+            // top left corner, top right corner, bottom left corner, bottom right corner
+            console.log("you are in initial click corners 1");
+            startAreaIndexes.push(
+                0,
+                this.width - 1,
+                (this.height - 1) * this.width,
+                this.size - 1,
+            );
+            console.log("start area indexes:", startAreaIndexes);
+        }
 
         const bombs = [];
 
@@ -534,6 +587,7 @@ export default class FightGrid extends GameObject {
         }
 
         if (GameState.fightCanHaveLyingTiles) {
+            const trustedNum = GameState.trustedNumbers;
             do {
                 this.emergencyGeneratorCutoffNumber++;
                 const location = Phaser.Math.Between(0, this.size - 1);
@@ -544,7 +598,8 @@ export default class FightGrid extends GameObject {
                     cell.bombNum <= 0 &&
                     cell.value >= 1 &&
                     !cell.trash &&
-                    !cell.lying
+                    !cell.lying &&
+                    trustedNum.indexOf(cell.value) === -1
                 ) {
                     cell.lying = true;
                     lyingQuantity--;
@@ -579,10 +634,15 @@ export default class FightGrid extends GameObject {
 
         this.state = 1;
 
-        startAreaIndexes.forEach((index) => {
+        startAreaIndexes.forEach((index, i) => {
             const cell = this.getCell(index);
             if (cell) {
-                cell.onClick();
+                if (i === 0) {
+                    cell.onClick();
+                } else {
+                    // other indexes are not click events
+                    cell.onClick(true);
+                }
             }
         });
 
@@ -621,30 +681,32 @@ export default class FightGrid extends GameObject {
         ];
     }
 
-    getAllCellsInDiameter(cell: FightGridCell, diameterInput?: number) {
+    getAllCellsInDiameter(cell: FightGridCell | null, diameterInput?: number) {
         const diameter = diameterInput || 3;
         let width = 0;
         let height = 0;
         let returnArray = [];
-        do {
+        if (cell) {
             do {
-                returnArray.push(
-                    this.getCellXY(
-                        cell.x -
-                            Math.floor(diameter / 2) +
-                            height +
-                            ((diameter + 1) % 2),
-                        cell.y -
-                            Math.floor(diameter / 2) +
-                            width +
-                            ((diameter + 1) % 2),
-                    ),
-                );
-                height++;
-            } while (height < diameter);
-            height = 0;
-            width++;
-        } while (width < diameter);
+                do {
+                    returnArray.push(
+                        this.getCellXY(
+                            cell.x -
+                                Math.floor(diameter / 2) +
+                                height +
+                                ((diameter + 1) % 2),
+                            cell.y -
+                                Math.floor(diameter / 2) +
+                                width +
+                                ((diameter + 1) % 2),
+                        ),
+                    );
+                    height++;
+                } while (height < diameter);
+                height = 0;
+                width++;
+            } while (width < diameter);
+        }
         return returnArray;
     }
 
@@ -740,7 +802,7 @@ export default class FightGrid extends GameObject {
                 if (adjacentCell && !(adjacentCell.flagNum > 0)) {
                     if (adjacentCell.bombNum > 0) {
                         if (!adjacentCell.exploded) {
-                            adjacentCell.onClick();
+                            adjacentCell.onClick(true);
                         }
                     } else if (adjacentCell.value === 0) {
                         this.floodFill(adjacentCell.x, adjacentCell.y);
