@@ -531,7 +531,7 @@ export class GameStateClass {
         );
     }
 
-    useAllActivatedUpgrade(upgradeId: string) {
+    activateAllUpgrades(upgradeId: string) {
         let numUsed = 0;
         this.upgrades.forEach((upgrade) => {
             if (upgrade.id === upgradeId && !upgrade.hasBeenUsed) {

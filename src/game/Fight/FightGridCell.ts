@@ -430,7 +430,7 @@ export default class FightGridCell {
                 FIGHT_EVENTS.USE_LIMITED_INPUT,
                 FIGHT_INPUT_TYPES.REMOVE_TRASH,
             );
-            const collectionsUsed = GameState.useAllActivatedUpgrade(
+            const collectionsUsed = GameState.activateAllUpgrades(
                 "REMOVE_TRASH_REWARD_THREE",
             );
             if (collectionsUsed > 0) {

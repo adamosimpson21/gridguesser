@@ -238,7 +238,7 @@ export default class FightGrid extends GameObject {
             // last 4 consecutive moves are chords
             if (GameState.hasUpgrade("BROOMDRUM")) {
                 const numBroomDrums =
-                    GameState.useAllActivatedUpgrade("BROOMDRUM");
+                    GameState.activateAllUpgrades("BROOMDRUM");
                 if (numBroomDrums > 0) {
                     EventBus.emit(PLAYER_EVENTS.GAIN_MAX_HP, numBroomDrums);
                     EventBus.emit(UI_EVENTS.USE_UPGRADE, "BROOMDRUM");
