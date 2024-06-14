@@ -228,11 +228,11 @@ export default class FightGridCell {
                 );
             });
             if (removeBombOneIndex !== -1) {
-                EventBus.emit(UI_EVENTS.USE_UPGRADE, "REMOVE_BOMB_ONE");
+                EventBus.emit(UI_EVENTS.USE_UPGRADE, removeBombOneIndex);
                 GameState.upgrades[removeBombOneIndex].hasBeenUsed = true;
                 this.removeBomb();
             } else if (moveBombOneIndex !== -1) {
-                EventBus.emit(UI_EVENTS.USE_UPGRADE, "MOVE_BOMB_ONE");
+                EventBus.emit(UI_EVENTS.USE_UPGRADE, moveBombOneIndex);
                 GameState.upgrades[moveBombOneIndex].hasBeenUsed = true;
                 this.grid.redistributeBombs(this);
             } else {

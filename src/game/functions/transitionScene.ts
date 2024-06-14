@@ -113,6 +113,8 @@ export const transitionSceneRehydrateCampaign = (
                 transitionFromScene.scene.start(sceneToStart, data);
             } else if (sceneToStart !== SCENES.Hud) {
                 transitionFromScene.scene.start(sceneToStart);
+            } else if (sceneToStart === SCENES.Hud) {
+                EventBus.emit(SCENE_EVENTS.SHOW_HUD);
             }
         });
         if (

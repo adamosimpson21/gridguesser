@@ -365,19 +365,12 @@ export class GameStateClass {
         if (serializedCampaign?.gameState) {
             Object.entries(serializedCampaign?.gameState).forEach(
                 (row: [string, any]) => {
-                    if (row[0] === "hp") {
-                        console.log("hp:", row[1]);
-                    }
+                    // if (row[0] === "hp") {
+                    //     console.log("hp:", row[1]);
+                    // }
                     (this as any)[row[0]] = row[1];
                 },
             );
-
-            // console.log(
-            //     "name, gold, hp in game state",
-            //     this.name,
-            //     this.gold,
-            //     this.hp,
-            // );
             EventBus.emit(UI_EVENTS.UPDATE_NAME, this.character.name);
             EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, 0, true);
             EventBus.emit(
@@ -503,15 +496,6 @@ export class GameStateClass {
         this.instanceUmbrellaNum = this.umbrellaNum;
         this.instanceTowerNum = this.towerNum;
         this.instanceBlockNum = this.blockNum;
-        // console.log(
-        //     "resetting fight constants:",
-        //     this.instanceBlockNum,
-        //     this.instanceUmbrellaNum,
-        //     this.instanceTowerNum,
-        //     this.instanceRemoveBombNum,
-        //     this.instanceRemoveLyingNum,
-        //     this.instanceRemoveTrashNum
-        // );
         EventBus.emit(GAME_EVENTS.RESET_FIGHT_INPUT_MENU);
     }
 
@@ -533,12 +517,41 @@ export class GameStateClass {
 
     activateAllUpgrades(upgradeId: string) {
         let numUsed = 0;
-        this.upgrades.forEach((upgrade) => {
+        this.upgrades.forEach((upgrade, index) => {
             if (upgrade.id === upgradeId && !upgrade.hasBeenUsed) {
                 upgrade.hasBeenUsed = true;
+                EventBus.emit(UI_EVENTS.USE_UPGRADE, index);
                 numUsed++;
             }
         });
+
+        if (numUsed > 0) {
+            switch (upgradeId) {
+                case "HARBROOM":
+                    EventBus.emit(
+                        PLAYER_EVENTS.GAIN_HP,
+                        SHOP_ITEMS["HARBROOM"].effect.activatedGainHp * numUsed,
+                    );
+                    break;
+                case "BROOMTAR":
+                    EventBus.emit(
+                        PLAYER_EVENTS.GAIN_GOLD,
+                        SHOP_ITEMS["BROOMTAR"].effect.activatedGainGold *
+                            numUsed,
+                    );
+                    break;
+                case "BROOMDRUM":
+                    EventBus.emit(
+                        PLAYER_EVENTS.GAIN_MAX_HP,
+                        SHOP_ITEMS["BROOMDRUM"].effect.activatedGainMaxhp *
+                            numUsed,
+                    );
+                    break;
+                default:
+                    break;
+            }
+        }
+
         return numUsed;
     }
 

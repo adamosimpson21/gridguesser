@@ -1,6 +1,6 @@
 import { EventBus } from "@/game/EventBus/EventBus";
 import { GAME_EVENTS, SCENE_EVENTS, UI_EVENTS } from "@/game/EventBus/events";
-import { shopItemType } from "@/game/Shop/shopItems";
+import { SHOP_ITEMS, shopItemType } from "@/game/Shop/shopItems";
 import { GameState } from "@/game/GameState/GameState";
 import FightInputMenu from "@/game/Hud/FightInputMenu";
 import { Hud } from "@/game/Hud/Hud";
@@ -97,41 +97,48 @@ export default class HudDisplay {
         EventBus.on(SCENE_EVENTS.LEAVE_FIGHT, () => {
             //reset activated item
             this.upgradeDisplay
-                .getAll("name", "MOVE_BOMB_ONE")
-                .forEach((upgrade: any) => {
-                    upgrade.setFrame(7);
+                .getAll()
+                // @ts-ignore
+                .forEach((upgrade: Phaser.GameObjects.Image) => {
+                    if (SHOP_ITEMS[upgrade.name].activated) {
+                        upgrade.setFrame(SHOP_ITEMS[upgrade.name].icon + 1);
+                    }
                 });
-            this.upgradeDisplay
-                .getAll("name", "REMOVE_BOMB_ONE")
-                .forEach((upgrade: any) => {
-                    upgrade.setFrame(48);
-                });
-            this.upgradeDisplay
-                .getAll("name", "BROOMTAR")
-                .forEach((upgrade: any) => {
-                    upgrade.setFrame(3);
-                });
-            this.upgradeDisplay
-                .getAll("name", "HARBROOM")
-                .forEach((upgrade: any) => {
-                    upgrade.setFrame(42);
-                });
-            this.upgradeDisplay
-                .getAll("name", "BROOMDRUM")
-                .forEach((upgrade: any) => {
-                    upgrade.setFrame(45);
-                });
-            this.upgradeDisplay
-                .getAll("name", "BROOMOPHONE")
-                .forEach((upgrade: any) => {
-                    upgrade.setFrame(52);
-                });
+            // this.upgradeDisplay
+            //     .getAll("name", "MOVE_BOMB_ONE")
+            //     .forEach((upgrade: any) => {
+            //         upgrade.setFrame(7);
+            //     });
+            // this.upgradeDisplay
+            //     .getAll("name", "REMOVE_BOMB_ONE")
+            //     .forEach((upgrade: any) => {
+            //         upgrade.setFrame(48);
+            //     });
+            // this.upgradeDisplay
+            //     .getAll("name", "BROOMTAR")
+            //     .forEach((upgrade: any) => {
+            //         upgrade.setFrame(3);
+            //     });
+            // this.upgradeDisplay
+            //     .getAll("name", "HARBROOM")
+            //     .forEach((upgrade: any) => {
+            //         upgrade.setFrame(42);
+            //     });
+            // this.upgradeDisplay
+            //     .getAll("name", "BROOMDRUM")
+            //     .forEach((upgrade: any) => {
+            //         upgrade.setFrame(45);
+            //     });
+            // this.upgradeDisplay
+            //     .getAll("name", "BROOMOPHONE")
+            //     .forEach((upgrade: any) => {
+            //         upgrade.setFrame(52);
+            //     });
         });
         EventBus.on(
             UI_EVENTS.UPDATE_GOLD,
             (gold: number, goldDifference: number, silent?: boolean) => {
                 this.goldDisplay.setText(`$${gold} `);
-                // this.goldDisplay.setText(`$glod `);
                 if (!silent) {
                     const goldChangeTween = this.scene.make
                         .text({
@@ -159,14 +166,6 @@ export default class HudDisplay {
                         alpha: 0,
                         duration: 3500,
                     });
-                    // EventBus.emit(
-                    //     UI_EVENTS.DISPLAY_MESSAGE,
-                    //     {
-                    //         type: UI_EVENTS.UPDATE_GOLD,
-                    //         message: `New money amount $${gold}`,
-                    //     },
-                    //     "5000",
-                    // );
                 }
             },
         );
@@ -183,7 +182,6 @@ export default class HudDisplay {
                     this.hpDisplay.setColor("black");
                 }
                 this.hpDisplay.setText(`Health: ${hp}/${maxHp}`);
-                // this.hpDisplay.setText(`Health: hps`);
 
                 if (!silent) {
                     const hpChangeTween = this.scene.make
@@ -213,35 +211,13 @@ export default class HudDisplay {
                         duration: 3500,
                     });
                 }
-
-                // if (!silent) {
-                //     EventBus.emit(
-                //         UI_EVENTS.DISPLAY_MESSAGE,
-                //         {
-                //             type: UI_EVENTS.UPDATE_HEALTH,
-                //             message: `New HP amount ${hp}`,
-                //         },
-                //         "5000",
-                //     );
-                // }
             },
         );
-        EventBus.on(UI_EVENTS.USE_UPGRADE, (upgradeId: string) => {
+        EventBus.on(UI_EVENTS.USE_UPGRADE, (index: number) => {
+            // @ts-ignore
             const upgradeToBeUsed: Phaser.GameObjects.Image =
-                this.upgradeDisplay.getByName(upgradeId);
-            if (upgradeToBeUsed.name === "MOVE_BOMB_ONE") {
-                upgradeToBeUsed.setFrame(8);
-            } else if (upgradeToBeUsed.name === "BROOMTAR") {
-                upgradeToBeUsed.setFrame(5);
-            } else if (upgradeToBeUsed.name === "HARBROOM") {
-                upgradeToBeUsed.setFrame(43);
-            } else if (upgradeToBeUsed.name === "BROOMOPHONE") {
-                upgradeToBeUsed.setFrame(53);
-            } else if (upgradeToBeUsed.name === "BROOMDRUM") {
-                upgradeToBeUsed.setFrame(46);
-            } else if (upgradeToBeUsed.name === "REMOVE_BOMB_ONE") {
-                upgradeToBeUsed.setFrame(49);
-            }
+                this.upgradeDisplay.getAll()[index];
+            upgradeToBeUsed.setFrame(SHOP_ITEMS[upgradeToBeUsed.name].icon + 2);
         });
         EventBus.on(
             UI_EVENTS.UPDATE_UPGRADES,
@@ -251,7 +227,6 @@ export default class HudDisplay {
                 gained: boolean,
                 silent?: boolean,
             ) => {
-                console.log("updating upgrades:", upgrade);
                 const upgradeTweenImage = this.scene.make
                     .image({
                         x: (index % 6) * 60 + 30,
@@ -350,6 +325,9 @@ export default class HudDisplay {
         );
         EventBus.on(SCENE_EVENTS.ENTER_MAIN_MENU, () => {
             this.hide();
+        });
+        EventBus.on(SCENE_EVENTS.SHOW_HUD, () => {
+            this.show();
         });
 
         // initially hidden

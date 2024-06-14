@@ -5,7 +5,7 @@ export const GAME_CONSTANTS = {
     startingCharacter: "CHAR_ONE",
     startingHp: 12,
     startingMaxHp: 12,
-    startingGold: 15,
+    startingGold: 1500,
     startingLevel: 1,
     startingBombIntensity: 2,
     startingLuck: 0,
@@ -27,7 +27,7 @@ export const GAME_CONSTANTS = {
     startingFightGoldReward: 5,
     startingFightBossGoldReward: 10,
     startingFightFlawlessGoldReward: 3,
-    startingFightBombNumIncrement: 2,
+    startingFightBombNumIncrement: 1,
     endLevel: 5,
     startingFightInputTypes: [
         FIGHT_INPUT_TYPES.REVEAL,

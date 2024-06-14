@@ -216,18 +216,20 @@ export default class FightGrid extends GameObject {
         this.chordMoves.push(this.moveCounter);
         if (this.chordCount === 8) {
             if (GameState.hasUpgrade("HARBROOM")) {
-                EventBus.emit(PLAYER_EVENTS.GAIN_HP, 2);
-                EventBus.emit(UI_EVENTS.USE_UPGRADE, "HARBROOM");
+                GameState.activateAllUpgrades("HARBROOM");
             }
         } else if (this.chordCount === 12) {
             if (GameState.hasUpgrade("BROOMTAR")) {
-                EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, 3);
-                EventBus.emit(UI_EVENTS.USE_UPGRADE, "BROOMTAR");
+                GameState.activateAllUpgrades("BROOMTAR");
             }
         } else if (this.chordCount === 5) {
             if (GameState.hasUpgrade("BROOMOPHONE")) {
-                EventBus.emit(UI_EVENTS.USE_UPGRADE, "BROOMOPHONE");
-                this.removeUnflaggedBomb();
+                let numBroomophones =
+                    GameState.activateAllUpgrades("BROOMOPHONE");
+                do {
+                    this.removeUnflaggedBomb();
+                    numBroomophones--;
+                } while (numBroomophones > 0);
             }
         }
         // TODO: make sure this doesn't trigger multiple times per fight
@@ -236,14 +238,7 @@ export default class FightGrid extends GameObject {
             this.chordMoves[this.chordMoves.length - 4] === this.moveCounter - 3
         ) {
             // last 4 consecutive moves are chords
-            if (GameState.hasUpgrade("BROOMDRUM")) {
-                const numBroomDrums =
-                    GameState.activateAllUpgrades("BROOMDRUM");
-                if (numBroomDrums > 0) {
-                    EventBus.emit(PLAYER_EVENTS.GAIN_MAX_HP, numBroomDrums);
-                    EventBus.emit(UI_EVENTS.USE_UPGRADE, "BROOMDRUM");
-                }
-            }
+            GameState.activateAllUpgrades("BROOMDRUM");
         }
     }
 
