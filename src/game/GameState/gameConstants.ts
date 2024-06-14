@@ -5,7 +5,7 @@ export const GAME_CONSTANTS = {
     startingCharacter: "CHAR_ONE",
     startingHp: 12,
     startingMaxHp: 12,
-    startingGold: 1500,
+    startingGold: 15,
     startingLevel: 1,
     startingBombIntensity: 2,
     startingLuck: 0,

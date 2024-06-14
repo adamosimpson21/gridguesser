@@ -555,6 +555,16 @@ export class GameStateClass {
         return numUsed;
     }
 
+    numberOfUpgrade(upgradeId: string) {
+        let numUsed = 0;
+        this.upgrades.forEach((upgrade, index) => {
+            if (upgrade.id === upgradeId) {
+                numUsed++;
+            }
+        });
+        return numUsed;
+    }
+
     updateFightInputType(fightInputType: string) {
         if (getInputInstanceUsesAvailable(fightInputType) != 0) {
             this.currentFightInputType = fightInputType;
