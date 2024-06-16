@@ -100,7 +100,10 @@ export default class HudDisplay {
                 .getAll()
                 // @ts-ignore
                 .forEach((upgrade: Phaser.GameObjects.Image) => {
-                    if (SHOP_ITEMS[upgrade.name].activated) {
+                    if (
+                        SHOP_ITEMS[upgrade.name] &&
+                        SHOP_ITEMS[upgrade.name].activated
+                    ) {
                         upgrade.setFrame(SHOP_ITEMS[upgrade.name].icon + 1);
                     }
                 });

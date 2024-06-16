@@ -580,8 +580,8 @@ export class GameStateClass {
         this.fightGridWidth += 2;
         this.fightGridHeight += 2;
         this.overworldFights += 3;
-        this.overworldBuffs++;
-        this.overworldTraps++;
+        this.overworldBuffs += 2;
+        // this.overworldTraps++;
         this.bossFightBombChange += 8;
         // this.fightGoldReward += 2;
         this.lyingTileNum += 1;

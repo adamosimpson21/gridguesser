@@ -227,9 +227,13 @@ export default class FightGrid extends GameObject {
                 let numBroomophones =
                     GameState.activateAllUpgrades("BROOMOPHONE");
                 do {
+                    // each broomophone does this 3x
+                    this.removeUnflaggedBomb();
+                    this.removeUnflaggedBomb();
                     this.removeUnflaggedBomb();
                     numBroomophones--;
                 } while (numBroomophones > 0);
+                this.checkWinState();
             }
         }
         // TODO: make sure this doesn't trigger multiple times per fight

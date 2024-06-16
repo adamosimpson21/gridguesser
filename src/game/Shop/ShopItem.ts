@@ -285,7 +285,7 @@ export default class ShopItem {
                     });
                     break;
                 case "flawlessVictoryDouble":
-                    GameState.fightFlawlessGoldReward += 2;
+                    GameState.fightFlawlessGoldReward *= 2;
                     EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
                         type: UI_MESSAGE_TYPES.SUCCESS,
                         message: `Doubled Flawless Victory Reward`,
