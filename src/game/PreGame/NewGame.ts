@@ -29,6 +29,7 @@ export class NewGame extends Scene {
     background: Phaser.GameObjects.Image;
     gameText: Phaser.GameObjects.Text;
     submitButton: Phaser.GameObjects.Text;
+    lastClick: number;
     public characterChoice: characterType;
     public titleText: Phaser.GameObjects.Text;
     public nameChoiceBoard: Phaser.GameObjects.Container;
@@ -48,6 +49,7 @@ export class NewGame extends Scene {
 
     create() {
         this.camera = this.cameras.main;
+        this.lastClick = 0;
         this.camera.setBackgroundColor(0x00000);
 
         this.background = createBackground(this);
@@ -135,6 +137,13 @@ export class NewGame extends Scene {
                         gameObject.setAlpha(0.5);
                     }
                 });
+
+            // handle double click
+            let clickDelay = this.time.now - this.lastClick;
+            this.lastClick = this.time.now;
+            if (clickDelay < 350) {
+                this.submit();
+            }
         }
     }
 
