@@ -17,6 +17,7 @@ export const SETTING_CONSTANTS = {
     hasActiveCampaign: "hasActiveCampaign",
     currentCampaignDetails: "currentCampaignDetails",
     highestAscensionBeaten: "highestAscensionBeaten",
+    ascension: "ascension",
 };
 
 export type currentCampaignDetails = {
@@ -27,5 +28,8 @@ export type currentCampaignDetails = {
 };
 
 export type unlockProgressType = {
-    ascension: number;
+    ascension: {
+        // character name
+        [key: string]: number;
+    };
 };

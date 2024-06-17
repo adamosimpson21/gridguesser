@@ -185,7 +185,8 @@ export const TRAPS: { [key: string]: trapType } = {
                 outcomes: [
                     {
                         effect: {
-                            luck: 0.25,
+                            luck: 0.22,
+                            gainItem: "LUCKY_COIN",
                         },
                         chance: 50,
                         positive: true,
@@ -193,11 +194,12 @@ export const TRAPS: { [key: string]: trapType } = {
                     },
                     {
                         effect: {
-                            luck: -0.25,
+                            luck: -0.2,
+                            gainItem: "UNLUCKY_COIN",
                         },
                         chance: 50,
                         positive: false,
-                        text: "This coin sure is shiny",
+                        text: "This coin sure is rusty",
                     },
                 ],
             },

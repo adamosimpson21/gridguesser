@@ -34,11 +34,11 @@ export class Hud extends Scene {
         this.load.image("purple_border", "/assets/overworld/purpleBorder.png");
         this.load.image("white_border", "/assets/overworld/whiteBorder.png");
         // shader plugin
-        this.load.plugin(
-            "rexglowfilter2pipelineplugin",
-            "https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexglowfilter2pipelineplugin.min.js",
-            true,
-        );
+        // this.load.plugin(
+        //     "rexglowfilter2pipelineplugin",
+        //     "https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexglowfilter2pipelineplugin.min.js",
+        //     true,
+        // );
     }
 
     create() {

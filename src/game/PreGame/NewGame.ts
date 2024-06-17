@@ -8,8 +8,10 @@ import {
     SCENE_EVENTS,
 } from "@/game/EventBus/events";
 import {
+    ASCENSION_INFO,
     CHARACTER_CHOICES,
     characterType,
+    GAME_CONSTANTS,
 } from "@/game/GameState/gameConstants";
 import { createBackground } from "@/game/functions/background";
 import {
@@ -23,6 +25,11 @@ import {
     transitionScene,
 } from "@/game/functions/transitionScene";
 import { addPauseOverlay } from "@/game/functions/addPauseOverlay";
+import {
+    SETTING_CONSTANTS,
+    unlockProgressType,
+} from "@/game/Settings/settingConstants";
+import { LocalStorageManager } from "@/game/Settings/LocalStorageManager";
 
 export class NewGame extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -30,13 +37,24 @@ export class NewGame extends Scene {
     gameText: Phaser.GameObjects.Text;
     submitButton: Phaser.GameObjects.Text;
     lastClick: number;
+    ascension: number;
+    ascensionInfo: unlockProgressType;
     public characterChoice: characterType;
     public titleText: Phaser.GameObjects.Text;
     public nameChoiceBoard: Phaser.GameObjects.Container;
+    public ascensionBoard: Phaser.GameObjects.Container;
+    private ascensionIncrementButton: Phaser.GameObjects.Text;
+    private ascensionDecrementButton: Phaser.GameObjects.Text;
+    private ascensionLevelNumber: Phaser.GameObjects.Text;
+    private ascensionDescription: Phaser.GameObjects.Text;
 
     constructor() {
         super(SCENES.NewGame);
         this.characterChoice = CHARACTER_CHOICES["CHAR_ONE"];
+        this.ascension = 0;
+        this.ascensionInfo = LocalStorageManager.getItem(
+            SETTING_CONSTANTS.ascension,
+        );
     }
 
     preload() {
@@ -66,7 +84,7 @@ export class NewGame extends Scene {
             this,
         );
 
-        this.nameChoiceBoard = this.add.container(80, 100);
+        this.nameChoiceBoard = this.add.container(80, 70);
 
         this.titleText = this.add
             .text(
@@ -114,11 +132,16 @@ export class NewGame extends Scene {
             .setDepth(100);
         this.submitButton.setInteractive();
         this.submitButton.on("pointerdown", () => this.submit());
+
+        this.createAscensionBoard();
     }
     submit() {
+        EventBus.emit(
+            GAME_EVENTS.START_NEW_GAME,
+            this.ascension,
+            this.characterChoice.id,
+        );
         transitionScene(this, SCENES.Overworld);
-        EventBus.emit(GAME_EVENTS.START_NEW_GAME);
-        EventBus.emit(PLAYER_EVENTS.CHANGE_CHARACTER, this.characterChoice);
         EventBus.emit(SCENE_EVENTS.ENTER_OVERWORLD);
     }
 
@@ -147,9 +170,83 @@ export class NewGame extends Scene {
         }
     }
 
+    createAscensionBoard() {
+        this.ascensionBoard = this.add.container(
+            this.scale.width / 2 - 300,
+            470,
+        );
+        this.ascensionBoard.add(
+            this.add.text(
+                0,
+                0,
+                "Ascension:",
+                mainMenuText({ fontSize: "36px" }),
+            ),
+        );
+        this.ascensionLevelNumber = this.add.text(
+            250,
+            0,
+            `${this.ascension}`,
+            mainMenuText({ fontSize: "36px" }),
+        );
+        this.ascensionIncrementButton = this.add.text(
+            220,
+            0,
+            "+",
+            mainMenuText({ fontSize: "36px" }),
+        );
+        this.ascensionIncrementButton.setInteractive();
+        this.ascensionIncrementButton.on("pointerdown", () =>
+            this.handleAscensionButtonClick(true),
+        );
+        this.ascensionDecrementButton = this.add.text(
+            280,
+            0,
+            "-",
+            mainMenuText({ fontSize: "36px" }),
+        );
+        this.ascensionDecrementButton.setInteractive();
+        this.ascensionDecrementButton.on("pointerdown", () =>
+            this.handleAscensionButtonClick(false),
+        );
+        this.ascensionDescription = this.add.text(
+            0,
+            45,
+            `${ASCENSION_INFO[this.ascension]}`,
+            mainMenuText({
+                fontSize: "32px",
+                wordWrapWidth: 1900,
+                align: "center",
+            }),
+        );
+
+        this.ascensionBoard.add(this.ascensionLevelNumber);
+        this.ascensionBoard.add(this.ascensionDescription);
+        this.ascensionBoard.add(this.ascensionIncrementButton);
+        this.ascensionBoard.add(this.ascensionDecrementButton);
+    }
+
+    handleAscensionButtonClick(isIncrement: boolean) {
+        if (isIncrement && this.ascension + 1 <= GAME_CONSTANTS.maxAscension) {
+            this.ascension++;
+        } else if (!isIncrement && this.ascension - 1 >= 0) {
+            this.ascension--;
+        }
+        this.ascensionLevelNumber.setText(`${this.ascension}`);
+        if (this.ascension >= 2) {
+            this.ascensionDescription.setText(
+                `Applies all previous effects, ${ASCENSION_INFO[this.ascension]}`,
+            );
+        } else {
+            this.ascensionDescription.setText(
+                `${ASCENSION_INFO[this.ascension]}`,
+            );
+        }
+    }
+
     createCharacterProfile(character: characterType, index: number) {
         const xOffset = (index % 4) * 420;
-        const yOffset = Math.floor(index / 4) * 440;
+        const yOffset = Math.floor(index / 4) * 500;
         const unlocked = character.unlocked;
         const characterBoard = this.add
             .container(xOffset, yOffset)
@@ -163,7 +260,7 @@ export class NewGame extends Scene {
                 key: "clipboard",
             })
             .setOrigin(0, 0)
-            .setDisplaySize(380, 420)
+            .setDisplaySize(380, 390)
             .setInteractive()
             .on("pointerdown", () => {
                 this.handleCharacterClick(character);

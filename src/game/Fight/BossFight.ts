@@ -140,36 +140,7 @@ export class BossFight extends Scene {
             background.setAlpha(0);
             introText.setAlpha(0);
             introButton.setAlpha(0);
-
-            const advancedMechanicUnlocked =
-                GAME_CONSTANTS.advancedMechanics[
-                    Math.floor(
-                        Phaser.Math.Between(
-                            0,
-                            GAME_CONSTANTS.advancedMechanics.length - 1,
-                        ),
-                    )
-                ];
-            switch (advancedMechanicUnlocked) {
-                case ADVANCED_MECHANICS.FIGHT_CAN_HAVE_TRASH_TILES:
-                    GameState.fightCanHaveTrashTiles = true;
-                    break;
-                case ADVANCED_MECHANICS.FIGHT_CAN_HAVE_LYING_TILES:
-                    GameState.fightCanHaveLyingTiles = true;
-                    break;
-                case ADVANCED_MECHANICS.FIGHT_CAN_HAVE_MULTI_BOMB_TILES:
-                    GameState.fightCanHaveMultiBombTiles = true;
-                    break;
-                case ADVANCED_MECHANICS.BOMB_COUNTER_CAN_LIE:
-                    GameState.bombCounterCanLie = true;
-                    break;
-                case ADVANCED_MECHANICS.FIGHT_CAN_HAVE_TENTACLES:
-                    GameState.fightCanHaveTentacles = true;
-                    break;
-
-                default:
-                    break;
-            }
+            GameState.addAdvancedMechanic();
         });
     }
 }

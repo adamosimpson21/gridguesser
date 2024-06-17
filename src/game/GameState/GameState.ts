@@ -8,6 +8,7 @@ import {
 } from "@/game/EventBus/events";
 import { SHOP_ITEMS, shopItemType } from "@/game/Shop/shopItems";
 import {
+    AdvancedMechanic,
     CHARACTER_CHOICES,
     characterType,
     GAME_CONSTANTS,
@@ -23,6 +24,7 @@ import { SETTING_CONSTANTS } from "@/game/Settings/settingConstants";
 export class GameStateClass {
     // stores information about current run
     public level: number;
+    public ascension: number;
     public bombIntensity: number;
     public isPlaying: boolean;
     public bombNum: number;
@@ -156,8 +158,8 @@ export class GameStateClass {
         });
         EventBus.on(
             GAME_EVENTS.START_NEW_GAME,
-            () => {
-                this.startNewGame();
+            (ascension: number, character: string) => {
+                this.startNewGame(ascension, character);
             },
             this,
         );
@@ -186,18 +188,39 @@ export class GameStateClass {
                 false,
             );
             LocalStorageManager.removeCurrentCampaignItem();
+            const ascensionInfo = LocalStorageManager.getItem(
+                SETTING_CONSTANTS.ascension,
+            );
+            if (!ascensionInfo.ascension[this.character.id]) {
+                ascensionInfo.ascension[this.character.id] = 0;
+            }
+            // highest ascension beaten
+            if (
+                ascensionInfo.ascension[this.character.id] <= this.ascension &&
+                this.ascension < GAME_CONSTANTS.maxAscension
+            ) {
+                EventBus.emit(GAME_EVENTS.UNLOCK_ASCENSION, this.ascension + 1);
+                ascensionInfo[this.character.id]++;
+                console.log(
+                    "in game won, setting new ascension info:",
+                    ascensionInfo,
+                );
+                LocalStorageManager.setItem(
+                    SETTING_CONSTANTS.ascension,
+                    ascensionInfo,
+                );
+            }
         });
         EventBus.on(GAME_EVENTS.LOAD_CAMPAIGN, () => {
             this.hydrateGameState();
         });
-        EventBus.on(
-            PLAYER_EVENTS.CHANGE_CHARACTER,
-            (character: characterType) => {
-                this.character = character;
-                this.useCharacterChoice();
-                EventBus.emit(UI_EVENTS.UPDATE_NAME, character.name);
-            },
-        );
+        // EventBus.on(
+        // PLAYER_EVENTS.CHANGE_CHARACTER,
+        // (character: characterType) => {
+        //     this.character = character;
+        //     EventBus.emit(UI_EVENTS.UPDATE_NAME, character.name);
+        // },
+        // );
         EventBus.on(
             PLAYER_EVENTS.GAIN_HP,
             (severity: number, silent?: boolean) => {
@@ -261,14 +284,13 @@ export class GameStateClass {
         EventBus.on(
             PLAYER_EVENTS.HIT_BOMB,
             (numBombs: number, silent?: boolean) => {
-                console.log("this.hp, numBombs:", this.hp, numBombs);
                 this.hitBomb(numBombs, silent);
             },
         );
     }
 
     create() {
-        this.initializeNewGameConstants();
+        this.initializeNewGameConstants(0, GAME_CONSTANTS.startingCharacter);
     }
 
     updateHp(hp?: number, maxHp?: number, silent?: boolean) {
@@ -325,16 +347,16 @@ export class GameStateClass {
 
     reset() {}
 
-    startNewGame() {
+    startNewGame(ascension: number, character: string) {
         LocalStorageManager.removeCurrentCampaignItem();
-        this.initializeNewGameConstants();
+        this.initializeNewGameConstants(ascension, character);
         this.isPlaying = true;
 
         LocalStorageManager.setItem(SETTING_CONSTANTS.hasActiveCampaign, true);
     }
 
     useCharacterChoice() {
-        console.log("start new game");
+        EventBus.emit(UI_EVENTS.UPDATE_NAME, this.character.name);
         if (this.character.id === "CHAR_SIX") {
             this.playerDamageReduction++;
             EventBus.emit(PLAYER_EVENTS.GAIN_MAX_HP, 8, 8, true);
@@ -342,8 +364,16 @@ export class GameStateClass {
             this.fightGridHeight -= 2;
         } else if (this.character.id === "CHAR_SEVEN") {
             this.hasDyscalc = true;
-            this.lyingTileNum += 6;
+            this.lyingTileNum += 3;
             this.fightCanHaveLyingTiles = true;
+            EventBus.emit(
+                PLAYER_EVENTS.GAIN_UPGRADE,
+                SHOP_ITEMS["MOVE_BOMB_ONE"],
+            );
+            EventBus.emit(
+                PLAYER_EVENTS.GAIN_UPGRADE,
+                SHOP_ITEMS["MOVE_BOMB_ONE"],
+            );
         } else if (this.character.id === "CHAR_TWO") {
             EventBus.emit(PLAYER_EVENTS.GAIN_UPGRADE, SHOP_ITEMS["NEST_EGG"]);
         } else if (this.character.id === "CHAR_FOUR") {
@@ -393,6 +423,7 @@ export class GameStateClass {
     }
 
     updateUpgrades(upgrade: shopItemType, gained: boolean, silent?: boolean) {
+        // EventBus.emit(SCENE_EVENTS.SHOW_HUD);
         if (gained) {
             EventBus.emit(
                 UI_EVENTS.UPDATE_UPGRADES,
@@ -419,14 +450,15 @@ export class GameStateClass {
         }
     }
 
-    initializeNewGameConstants() {
-        this.character = CHARACTER_CHOICES[GAME_CONSTANTS.startingCharacter];
+    initializeNewGameConstants(ascension: number, character: string) {
+        this.character = CHARACTER_CHOICES[character];
         this.hp = GAME_CONSTANTS.startingHp;
         this.maxHp = GAME_CONSTANTS.startingMaxHp;
         this.gold = GAME_CONSTANTS.startingGold;
         this.luck = GAME_CONSTANTS.startingLuck;
         this.upgrades = [];
         this.level = GAME_CONSTANTS.startingLevel;
+        this.ascension = GAME_CONSTANTS.startingAscension;
         this.initialClickSize = GAME_CONSTANTS.startingInitialClickSize;
         this.bombIntensity = GAME_CONSTANTS.startingBombIntensity;
         this.bombNum = GAME_CONSTANTS.startingBombNum;
@@ -482,11 +514,15 @@ export class GameStateClass {
             GAME_CONSTANTS.startingFightFlawlessGoldReward;
 
         this.fightBossGoldReward = GAME_CONSTANTS.startingFightBossGoldReward;
+        this.useCharacterChoice();
+        this.handleAscension(ascension);
 
         EventBus.emit(UI_EVENTS.UPDATE_NAME, this.character.name);
         EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, 0, true);
         EventBus.emit(UI_EVENTS.UPDATE_HEALTH, this.hp, this.maxHp, 0, true);
-        EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, this.upgrades, true);
+        // this.upgrades.forEach((upgrade) => {
+        //     EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, upgrade, true, true);
+        // });
     }
 
     resetFightConstants() {
@@ -505,6 +541,93 @@ export class GameStateClass {
                 upgrade.hasBeenUsed = false;
             }
         });
+    }
+
+    handleAscension(ascension: number) {
+        this.ascension = ascension;
+        if (this.ascension >= 1) {
+            this.addAdvancedMechanic();
+            this.addAdvancedMechanic();
+        }
+        if (this.ascension >= 2) {
+            this.bombNum += 2;
+        }
+        if (this.ascension >= 3) {
+            this.fightGoldReward -= 2;
+        }
+        if (this.ascension >= 4) {
+            this.bossFightGridChange -= 2;
+        }
+        if (this.ascension >= 5) {
+            // handled in this.incrementLevel()
+        }
+        if (this.ascension >= 6) {
+            this.bombNumFightIncrement += 1;
+        }
+        if (this.ascension >= 7) {
+            this.luck -= 0.25;
+        }
+        if (this.ascension >= 8) {
+            this.bossFightBombChange += 10;
+        }
+        if (this.ascension >= 9) {
+            this.fightFlawlessGoldReward -= 2;
+        }
+        if (this.ascension >= 10) {
+            this.addAdvancedMechanic();
+            this.addAdvancedMechanic();
+            // fifth mechanic??
+            this.addAdvancedMechanic();
+        }
+        if (this.ascension >= 11) {
+            this.overworldShops--;
+        }
+        if (this.ascension >= 12) {
+            this.gold -= 5;
+        }
+        if (this.ascension >= 13) {
+            this.bombIntensity++;
+        }
+        if (this.ascension >= 14) {
+            this.fightInputTypes.splice(
+                this.fightInputTypes.indexOf(FIGHT_INPUT_TYPES.FLAG, 1),
+            );
+            this.fightInputTypes.splice(
+                this.fightInputTypes.indexOf(FIGHT_INPUT_TYPES.QUERY, 1),
+            );
+        }
+        if (this.ascension >= 15) {
+            this.hp = Math.floor(this.hp / 2);
+            this.maxHp = this.hp;
+        }
+        if (this.ascension >= 16) {
+            // ????????????
+        }
+        if (this.ascension >= 17) {
+            // keys have less uses
+        }
+        if (this.ascension >= 18) {
+            this.fightGridHeight -= 2;
+            this.fightGridWidth -= 2;
+        }
+        if (this.ascension >= 19) {
+            // ???????????????
+        }
+        if (this.ascension >= 20) {
+            // ???????????????
+        }
+    }
+
+    addAdvancedMechanic() {
+        let hasAdded = false;
+        Phaser.Utils.Array.Shuffle(GAME_CONSTANTS.advancedMechanics).forEach(
+            (mechanic: AdvancedMechanic) => {
+                if (!GameState[mechanic] && !hasAdded) {
+                    hasAdded = true;
+                    this[mechanic] = true;
+                }
+            },
+        );
     }
 
     hasUpgrade(upgradeId: string) {
@@ -577,8 +700,10 @@ export class GameStateClass {
         this.bombNum += 8;
         this.overworldGridWidth++;
         this.overworldGridHeight++;
-        this.fightGridWidth += 2;
-        this.fightGridHeight += 2;
+        if (this.ascension <= 5) {
+            this.fightGridWidth += 2;
+            this.fightGridHeight += 2;
+        }
         this.overworldFights += 3;
         this.overworldBuffs += 2;
         // this.overworldTraps++;

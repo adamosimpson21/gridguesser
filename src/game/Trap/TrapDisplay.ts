@@ -9,6 +9,7 @@ import {
     paragraphText,
 } from "@/game/constants/textStyleConstructor";
 import { transitionSceneToOverworld } from "@/game/functions/transitionScene";
+import { SPECIAL_ITEMS } from "@/game/Shop/shopItems";
 
 export default class TrapDisplay {
     public scene: Phaser.Scene;
@@ -86,6 +87,14 @@ export default class TrapDisplay {
             GameState.luck * this.trap.luckFactor + rngCall >
             this.trap.options[0].outcomes[0].chance / 100
         ) {
+            console.log(
+                "luck factor:",
+                GameState.luck * this.trap.luckFactor + rngCall,
+            );
+            console.log(
+                "outcome chance: ",
+                this.trap.options[0].outcomes[0].chance / 100,
+            );
             this.parseOutcome(this.trap.options[0].outcomes[0]);
         } else {
             this.parseOutcome(this.trap.options[0].outcomes[1]);
@@ -166,7 +175,14 @@ export default class TrapDisplay {
                         GameState.luck += severity;
                     }
                     break;
-                case "item":
+                case "gainItem":
+                    EventBus.emit(
+                        PLAYER_EVENTS.GAIN_UPGRADE,
+                        SPECIAL_ITEMS[severity],
+                        true,
+                    );
+                    break;
+                case "loseItem":
                     EventBus.emit(PLAYER_EVENTS.LOSE_UPGRADE, severity, true);
                     break;
                 default:

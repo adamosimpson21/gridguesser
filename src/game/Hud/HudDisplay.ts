@@ -107,36 +107,6 @@ export default class HudDisplay {
                         upgrade.setFrame(SHOP_ITEMS[upgrade.name].icon + 1);
                     }
                 });
-            // this.upgradeDisplay
-            //     .getAll("name", "MOVE_BOMB_ONE")
-            //     .forEach((upgrade: any) => {
-            //         upgrade.setFrame(7);
-            //     });
-            // this.upgradeDisplay
-            //     .getAll("name", "REMOVE_BOMB_ONE")
-            //     .forEach((upgrade: any) => {
-            //         upgrade.setFrame(48);
-            //     });
-            // this.upgradeDisplay
-            //     .getAll("name", "BROOMTAR")
-            //     .forEach((upgrade: any) => {
-            //         upgrade.setFrame(3);
-            //     });
-            // this.upgradeDisplay
-            //     .getAll("name", "HARBROOM")
-            //     .forEach((upgrade: any) => {
-            //         upgrade.setFrame(42);
-            //     });
-            // this.upgradeDisplay
-            //     .getAll("name", "BROOMDRUM")
-            //     .forEach((upgrade: any) => {
-            //         upgrade.setFrame(45);
-            //     });
-            // this.upgradeDisplay
-            //     .getAll("name", "BROOMOPHONE")
-            //     .forEach((upgrade: any) => {
-            //         upgrade.setFrame(52);
-            //     });
         });
         EventBus.on(
             UI_EVENTS.UPDATE_GOLD,
@@ -230,99 +200,102 @@ export default class HudDisplay {
                 gained: boolean,
                 silent?: boolean,
             ) => {
-                const upgradeTweenImage = this.scene.make
-                    .image({
-                        x: (index % 6) * 60 + 30,
-                        y:
-                            Math.floor(index / 6) * 52 +
-                            this.upgradeDisplay.displayHeight / 2,
-                        key: "shop_items",
-                        frame: upgrade.activated
-                            ? upgrade.icon + 1
-                            : upgrade.icon,
-                    })
-                    .setDisplaySize(32, 32)
-                    .setOrigin(0.5, 0.5)
-                    .setName(upgrade.id);
-                this.upgradeDisplay.add(upgradeTweenImage);
+                // uses update
+                this.scene.events.once("update", () => {
+                    const upgradeTweenImage = this.scene.make
+                        .image({
+                            x: (index % 6) * 60 + 30,
+                            y:
+                                Math.floor(index / 6) * 52 +
+                                this.upgradeDisplay.displayHeight / 2,
+                            key: "shop_items",
+                            frame: upgrade.activated
+                                ? upgrade.icon + 1
+                                : upgrade.icon,
+                        })
+                        .setDisplaySize(32, 32)
+                        .setOrigin(0.5, 0.5)
+                        .setName(upgrade.id);
+                    this.upgradeDisplay.add(upgradeTweenImage);
 
-                const upgradeTooltipInnerObject = this.scene.add.container(
-                    TOOLTIP_CONSTANTS.X_OFFSET,
-                    TOOLTIP_CONSTANTS.Y_OFFSET,
-                );
-                const tooltipName = this.scene.make.text({
-                    x: 0,
-                    y: 0,
-                    text: upgrade.name,
-                    style: paragraphText({
-                        wordWrapWidth: TOOLTIP_CONSTANTS.BASE_WIDTH,
-                        align: "left",
-                    }),
-                });
-                const tooltipImage = this.scene.make
-                    .image({
+                    const upgradeTooltipInnerObject = this.scene.add.container(
+                        TOOLTIP_CONSTANTS.X_OFFSET,
+                        TOOLTIP_CONSTANTS.Y_OFFSET,
+                    );
+                    const tooltipName = this.scene.make.text({
                         x: 0,
-                        y: tooltipName.displayHeight + 8,
-                        key: "shop_items",
-                        frame: upgrade.icon,
-                    })
-                    .setDisplaySize(48, 48)
-                    .setOrigin(0, 0);
-                const tooltipCost = this.scene.make.text({
-                    x: 0,
-                    y: tooltipImage.y + tooltipImage.displayHeight + 8,
-                    text: `$${upgrade.cost}`,
-                    style: paragraphText({
-                        align: "left",
-                        wordWrapWidth: TOOLTIP_CONSTANTS.BASE_WIDTH,
-                    }),
-                });
-                const tooltipDescription = this.scene.make.text({
-                    x: 0,
-                    y: tooltipCost.y + tooltipCost.displayHeight + 8,
-                    text: upgrade.description,
-                    style: paragraphText({
-                        wordWrapWidth: TOOLTIP_CONSTANTS.BASE_WIDTH,
-                        align: "left",
-                    }),
-                });
+                        y: 0,
+                        text: upgrade.name,
+                        style: paragraphText({
+                            wordWrapWidth: TOOLTIP_CONSTANTS.BASE_WIDTH,
+                            align: "left",
+                        }),
+                    });
+                    const tooltipImage = this.scene.make
+                        .image({
+                            x: 0,
+                            y: tooltipName.displayHeight + 8,
+                            key: "shop_items",
+                            frame: upgrade.icon,
+                        })
+                        .setDisplaySize(48, 48)
+                        .setOrigin(0, 0);
+                    const tooltipCost = this.scene.make.text({
+                        x: 0,
+                        y: tooltipImage.y + tooltipImage.displayHeight + 8,
+                        text: `$${upgrade.cost}`,
+                        style: paragraphText({
+                            align: "left",
+                            wordWrapWidth: TOOLTIP_CONSTANTS.BASE_WIDTH,
+                        }),
+                    });
+                    const tooltipDescription = this.scene.make.text({
+                        x: 0,
+                        y: tooltipCost.y + tooltipCost.displayHeight + 8,
+                        text: upgrade.description,
+                        style: paragraphText({
+                            wordWrapWidth: TOOLTIP_CONSTANTS.BASE_WIDTH,
+                            align: "left",
+                        }),
+                    });
 
-                upgradeTooltipInnerObject.add([
-                    tooltipName,
-                    tooltipDescription,
-                    tooltipCost,
-                    tooltipImage,
-                ]);
-                addTooltip(this.scene, upgradeTweenImage, {
-                    innerObject: upgradeTooltipInnerObject,
-                });
+                    upgradeTooltipInnerObject.add([
+                        tooltipName,
+                        tooltipDescription,
+                        tooltipCost,
+                        tooltipImage,
+                    ]);
+                    addTooltip(this.scene, upgradeTweenImage, {
+                        innerObject: upgradeTooltipInnerObject,
+                    });
 
-                const upgradeTween = this.scene.tweens.chain({
-                    targets: upgradeTweenImage,
-                    tweens: [
-                        {
-                            duration: 250,
-                            scaleX: 2,
-                            scaleY: 2,
-                        },
-                        {
-                            duration: 250,
-                            angle: 45,
-                        },
-                        {
-                            duration: 500,
-                            angle: -45,
-                        },
-                        {
-                            duration: 250,
-                            angle: 0,
-                        },
-                        {
-                            duration: 500,
-                            scaleX: 1,
-                            scaleY: 1,
-                        },
-                    ],
+                    const upgradeTween = this.scene.tweens.chain({
+                        targets: upgradeTweenImage,
+                        tweens: [
+                            {
+                                duration: 250,
+                                scaleX: 2,
+                                scaleY: 2,
+                            },
+                            {
+                                duration: 250,
+                                angle: 45,
+                            },
+                            {
+                                duration: 500,
+                                angle: -45,
+                            },
+                            {
+                                duration: 250,
+                                angle: 0,
+                            },
+                            {
+                                duration: 500,
+                                scaleX: 1,
+                                scaleY: 1,
+                            },
+                        ],
+                    });
                 });
             },
         );

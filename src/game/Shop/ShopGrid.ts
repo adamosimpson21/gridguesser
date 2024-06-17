@@ -64,7 +64,6 @@ export default class ShopGrid {
         const singletonItemsPlayerHas = GameState.upgrades.filter((upgrade) => {
             return upgrade.singleton;
         });
-        console.log("items player has", singletonItemsPlayerHas);
 
         return Phaser.Utils.Array.Shuffle(
             Object.values(SHOP_ITEMS).reduce(

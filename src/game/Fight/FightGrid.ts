@@ -382,6 +382,9 @@ export default class FightGrid extends GameObject {
             y: 600,
         });
 
+        if (GameState.character.id === "CHAR_ONE") {
+            EventBus.emit(PLAYER_EVENTS.GAIN_HP, 2);
+        }
         EventBus.emit(PLAYER_EVENTS.GAIN_GOLD, GameState.fightGoldReward, true);
         EventBus.emit(FIGHT_EVENTS.FIGHT_WON, false);
     }
@@ -442,12 +445,7 @@ export default class FightGrid extends GameObject {
             //     revealedCells + this.bombQty - correctBombs >= this.size
             // ) {
 
-            // unsure if something is wrong here
             if (revealedCells >= this.size) {
-                // console.log(
-                //     "revealedCells + this.bombQrt - correctBombs:",
-                //     revealedCells + this.bombQty - correctBombs,
-                // );
                 this.playing = false;
                 this.flagAllBombs();
                 this.removalAllLies();

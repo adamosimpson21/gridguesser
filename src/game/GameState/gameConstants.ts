@@ -1,5 +1,6 @@
 import { FIGHT_INPUT_TYPES } from "@/game/Fight/fightConstants";
 import { shopItemType } from "@/game/Shop/shopItems";
+import { flavorConstants } from "@/game/constants/flavorConstants";
 
 export const GAME_CONSTANTS = {
     startingCharacter: "CHAR_ONE",
@@ -7,6 +8,8 @@ export const GAME_CONSTANTS = {
     startingMaxHp: 12,
     startingGold: 15,
     startingLevel: 1,
+    startingAscension: 0,
+    maxAscension: 15,
     startingBombIntensity: 2,
     startingLuck: 0,
     startingInitialClickSize: 1,
@@ -60,8 +63,16 @@ export const GAME_CONSTANTS = {
         "fightCanHaveMultiBombTiles",
         "fightCanHaveTentacles",
         // "bombCounterCanLie",
-    ],
+    ] as AdvancedMechanic[],
 };
+
+export enum AdvancedMechanic {
+    fightCanHaveTrashTiles = "fightCanHaveTrashTiles",
+    fightCanHaveLyingTiles = "fightCanHaveLyingTiles",
+    fightCanHaveMultiBombTiles = "fightCanHaveMultiBombTiles",
+    fightCanHaveTentacles = "fightCanHaveTentacles",
+    // bombCounterCanLie = "bombCounterCanLie",
+}
 
 export const CHARACTER_CHOICES: { [key: string]: characterType } = {
     CHAR_ONE: {
@@ -70,7 +81,7 @@ export const CHARACTER_CHOICES: { [key: string]: characterType } = {
         imageFrame: 3,
         specialPower: {
             name: "Average",
-            description: "Just your average sweeper",
+            description: `Has pocket potato chips, 2hp after each ${flavorConstants.FIGHT_NAME}`,
         },
         unlocked: true,
     },
@@ -91,7 +102,8 @@ export const CHARACTER_CHOICES: { [key: string]: characterType } = {
         imageFrame: 5,
         specialPower: {
             name: "Dyscalculia",
-            description: "Has a hard time reading numbers",
+            description:
+                "Has a hard time reading numbers, and is exceedingly ugly",
         },
         unlocked: true,
     },
@@ -149,6 +161,38 @@ export const CHARACTER_CHOICES: { [key: string]: characterType } = {
         },
         unlocked: false,
     },
+};
+
+export const ASCENSION_INFO: { [key: number]: string } = {
+    0: "Normal Gameplay",
+    1: "2 Advanced Mechanics Unlocked",
+    2: `2 Additional ${flavorConstants.ENEMY_NAME_PLURAL}`,
+    3: `Earn $2 less per cleaned ${flavorConstants.FIGHT_NAME}`,
+    4: `Smaller Boss's ${flavorConstants.FIGHT_NAME}`,
+    5: `${flavorConstants.FIGHT_NAME} size doesn't increase per floor`,
+    6: `Each ${flavorConstants.FIGHT_NAME} adds an additional ${flavorConstants.ENEMY_NAME}`,
+    7: "You're Unlucky",
+    8: `10 Additional ${flavorConstants.ENEMY_NAME_PLURAL} in Boss's ${flavorConstants.FIGHT_NAME_PLURAL}`,
+    9: `Earn $2 less per Clean Sweep`,
+    10: "All Advanced Mechanics Unlocked",
+    11: "Less Shops per Floor",
+    12: "Less Starting Money",
+    13: `${flavorConstants.ENEMY_NAME_PLURAL} deal 1 more damage`,
+    14: "Start without Caution or Query key",
+    15: "Less Starting Health",
+    16: "Character Bonuses are Worse",
+    17: "Keys have less uses",
+    18: `Smaller ${flavorConstants.FIGHT_NAME_PLURAL}`,
+    19: "Healing Effects Halved",
+    20: "Epic Final Boss",
+};
+
+export const NEGATIVE_ASCENSION_INFO: { [key: number]: string } = {
+    1: `${flavorConstants.ENEMY_NAME_PLURAL} deal 1 less damage`,
+    2: "You're Rich",
+    3: "Bosses are Easier",
+    4: "You're very Lucky",
+    5: "You're invincible, probably",
 };
 
 export type characterType = {
