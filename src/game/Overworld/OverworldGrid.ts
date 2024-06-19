@@ -82,7 +82,7 @@ export default class OverworldGrid {
         this.playerImage = this.scene.add
             .image(
                 Math.floor(this.width / 2) * OVERWORLD_CONSTANTS.TILE_WIDTH,
-                Math.floor(this.height / 2) * OVERWORLD_CONSTANTS.TILE_HEIGHT,
+                Math.floor(this.height - 1) * OVERWORLD_CONSTANTS.TILE_HEIGHT,
                 "characters",
                 GameState.character.imageFrame,
             )
@@ -175,37 +175,42 @@ export default class OverworldGrid {
         // Home
         const centerX = Math.floor(this.width / 2);
         const centerY = Math.floor(this.height / 2);
-        const homeCell = this.getCellXY(centerX, centerY);
+        const homeCell = this.getCellXY(centerX, this.height - 1);
         if (homeCell) {
             homeCell.value = 1;
         }
 
         // Boss
-        const bossWall = Phaser.Math.Between(0, 1);
+        // const bossWall = Phaser.Math.Between(0, 1);
         // const bossX = Phaser.Math.Between(0, this.width - 1);
         // const bossY = Phaser.Math.Between(0, this.height - 1);
-        let bossCell;
-        if (bossWall < 0.25) {
-            bossCell = this.getCellXY(0, 0);
-            if (bossCell) {
-                bossCell.value = 4;
-            }
-        } else if (bossWall < 0.5) {
-            bossCell = this.getCellXY(this.width - 1, this.height - 1);
-            if (bossCell) {
-                bossCell.value = 4;
-            }
-        } else if (bossWall < 0.75) {
-            bossCell = this.getCellXY(this.width - 1, 0);
-            if (bossCell) {
-                bossCell.value = 4;
-            }
-        } else {
-            bossCell = this.getCellXY(0, this.height - 1);
-            if (bossCell) {
-                bossCell.value = 4;
-            }
+        const bossXPos = Phaser.Math.Between(0, this.width - 1);
+        let bossCell = this.getCellXY(bossXPos, 0);
+        if (bossCell) {
+            bossCell.value = 4;
         }
+
+        // if (bossWall < 0.25) {
+        //     bossCell = this.getCellXY(0, 0);
+        //     if (bossCell) {
+        //         bossCell.value = 4;
+        //     }
+        // } else if (bossWall < 0.5) {
+        //     bossCell = this.getCellXY(this.width - 1, this.height - 1);
+        //     if (bossCell) {
+        //         bossCell.value = 4;
+        //     }
+        // } else if (bossWall < 0.75) {
+        //     bossCell = this.getCellXY(this.width - 1, 0);
+        //     if (bossCell) {
+        //         bossCell.value = 4;
+        //     }
+        // } else {
+        //     bossCell = this.getCellXY(0, this.height - 1);
+        //     if (bossCell) {
+        //         bossCell.value = 4;
+        //     }
+        // }
 
         this.populateCell(2, this.numFights);
         this.populateCell(3, this.numShops);

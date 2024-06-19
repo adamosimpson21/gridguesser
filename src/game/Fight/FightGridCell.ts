@@ -474,6 +474,8 @@ export default class FightGridCell {
                         this.grid.updateBombs(cell.bombNum);
                         cell.bombNum = 0;
                         cell.isBlock = true;
+                        cell.isTentacle = false;
+                        cell.lying = false;
                         cell.value = 0;
                         cell.tile.setFrame(10);
                         cell.flagOverlay.setFrame(21);

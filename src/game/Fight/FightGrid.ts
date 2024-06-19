@@ -131,7 +131,12 @@ export default class FightGrid extends GameObject {
 
         // .setDisplaySize(300, 600);
 
-        EventBus.on(GAME_EVENTS.GAME_OVER, () => (this.playing = false));
+        EventBus.on(GAME_EVENTS.GAME_OVER, () => {
+            this.playing = false;
+            this.flagAllBombs();
+            this.removalAllLies();
+            this.revealAllOpenCells();
+        });
     }
 
     createCells() {
@@ -399,29 +404,6 @@ export default class FightGrid extends GameObject {
 
             do {
                 const cell = this.getCell(location);
-
-                // if (cell.open) {
-                //     // exploded bomb
-                //     if (cell.exploded) {
-                //         console.log("calculating exploded bombs");
-                //         correctBombs += cell.bombNum;
-                //         correctBombCells++;
-                //     }
-                //
-                //     // exploded or normal reveal
-                //     revealedCells++;
-                // } else if (
-                //     cell.bombNum > 0 &&
-                //     cell.flagNum > 0 &&
-                //     cell.bombNum === cell.flagNum
-                // ) {
-                //     // flag number matches bomb number
-                //     correctBombs += cell.bombNum;
-                //     correctBombCells++;
-                // }
-                // // if(cell.bombNum > 0 && cell.open){
-                // //     open++;
-                // // }
                 if (cell.open) {
                     revealedCells++;
                 } else if (cell.bombNum > 0) {
@@ -462,6 +444,18 @@ export default class FightGrid extends GameObject {
             if (cell && cell.bombNum > 0) {
                 cell.flagNum = cell.bombNum;
                 cell.setMultiFlagText(cell.bombNum);
+            }
+            location++;
+        } while (location < this.size);
+    }
+
+    revealAllOpenCells() {
+        let location = 0;
+        do {
+            const cell = this.getCell(location);
+            if (cell && cell.bombNum === 0 && !cell.open) {
+                cell.open = true;
+                cell.show();
             }
             location++;
         } while (location < this.size);

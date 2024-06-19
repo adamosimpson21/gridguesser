@@ -17,31 +17,28 @@ export class GameOver extends Scene {
     }
 
     preload() {
-        this.load.image("black_screen", "/assets/blackScreen.png");
+        // this.load.image("black_screen", "/assets/blackScreen.png");
         this.load.image("clipboard", "/assets/hud/longClipboard.png");
     }
 
     create() {
         this.camera = this.cameras.main;
 
-        this.background = this.make
-            .image({ x: 0, y: 0, key: "black_screen" })
-            .setAlpha(0.5, 0.5)
-            .setOrigin(0, 0)
-            .setDisplaySize(this.scale.width, this.scale.height);
+        // this.background = this.make
+        //     .image({ x: 0, y: 0, key: "black_screen" })
+        //     .setAlpha(0.5, 0.5)
+        //     .setOrigin(0, 0)
+        //     .setDisplaySize(this.scale.width, this.scale.height);
 
-        this.gameOverContainer = this.add.container(
-            this.scale.width / 2 - 325,
-            this.scale.height / 2 - 225,
-        );
+        this.gameOverContainer = this.add.container(50, 200);
 
         this.gameOverFrame = this.make
             .image({
-                x: -100,
-                y: -100,
+                x: 0,
+                y: 0,
                 key: "clipboard",
             })
-            .setDisplaySize(800, 600)
+            .setDisplaySize(300, 600)
             .setOrigin(0, 0);
         this.gameOverFrame.setInteractive();
         this.gameOverFrame.on("pointerdown", () => {
@@ -49,11 +46,11 @@ export class GameOver extends Scene {
         });
 
         this.gameOverText = this.add
-            .text(300, 100, "Game Over", largeText({}))
+            .text(160, 130, "Game Over", largeText({}))
             .setOrigin(0.5);
 
         this.restartGameText = this.add
-            .text(300, 300, "Go To Main Menu", {
+            .text(160, 300, "Main Menu", {
                 ...largeText({}),
                 backgroundColor: "white",
             })

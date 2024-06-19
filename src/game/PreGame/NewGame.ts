@@ -171,10 +171,7 @@ export class NewGame extends Scene {
     }
 
     createAscensionBoard() {
-        this.ascensionBoard = this.add.container(
-            this.scale.width / 2 - 300,
-            470,
-        );
+        this.ascensionBoard = this.add.container(100, 470);
         this.ascensionBoard.add(
             this.add.text(
                 0,
@@ -184,7 +181,7 @@ export class NewGame extends Scene {
             ),
         );
         this.ascensionLevelNumber = this.add.text(
-            250,
+            255,
             0,
             `${this.ascension}`,
             mainMenuText({ fontSize: "36px" }),
@@ -200,7 +197,7 @@ export class NewGame extends Scene {
             this.handleAscensionButtonClick(true),
         );
         this.ascensionDecrementButton = this.add.text(
-            280,
+            300,
             0,
             "-",
             mainMenuText({ fontSize: "36px" }),

@@ -48,7 +48,7 @@ class SettingsManagerClass {
                 SETTING_CONSTANTS.inputHint,
             );
         } else {
-            LocalStorageManager.setItem(SETTING_CONSTANTS.inputHint, true);
+            LocalStorageManager.setItem(SETTING_CONSTANTS.inputHint, false);
         }
 
         if (
@@ -127,6 +127,12 @@ class SettingsManagerClass {
                 SETTING_CONSTANTS.hasActiveCampaign,
                 false,
             );
+        }
+
+        if (LocalStorageManager.getItem(SETTING_CONSTANTS.ascension) === null) {
+            LocalStorageManager.setItem(SETTING_CONSTANTS.ascension, {
+                ascension: {},
+            });
         }
     }
 

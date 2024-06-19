@@ -188,9 +188,10 @@ export class GameStateClass {
                 false,
             );
             LocalStorageManager.removeCurrentCampaignItem();
-            const ascensionInfo = LocalStorageManager.getItem(
+            let ascensionInfo = LocalStorageManager.getItem(
                 SETTING_CONSTANTS.ascension,
             );
+
             if (!ascensionInfo.ascension[this.character.id]) {
                 ascensionInfo.ascension[this.character.id] = 0;
             }
@@ -200,7 +201,7 @@ export class GameStateClass {
                 this.ascension < GAME_CONSTANTS.maxAscension
             ) {
                 EventBus.emit(GAME_EVENTS.UNLOCK_ASCENSION, this.ascension + 1);
-                ascensionInfo[this.character.id]++;
+                ascensionInfo.ascension[this.character.id] = this.ascension + 1;
                 console.log(
                     "in game won, setting new ascension info:",
                     ascensionInfo,
@@ -589,11 +590,14 @@ export class GameStateClass {
             this.bombIntensity++;
         }
         if (this.ascension >= 14) {
+            // does not actually affect the game yet (right click)
             this.fightInputTypes.splice(
-                this.fightInputTypes.indexOf(FIGHT_INPUT_TYPES.FLAG, 1),
+                this.fightInputTypes.indexOf(FIGHT_INPUT_TYPES.FLAG),
+                1,
             );
             this.fightInputTypes.splice(
-                this.fightInputTypes.indexOf(FIGHT_INPUT_TYPES.QUERY, 1),
+                this.fightInputTypes.indexOf(FIGHT_INPUT_TYPES.QUERY),
+                1,
             );
         }
         if (this.ascension >= 15) {
@@ -699,12 +703,12 @@ export class GameStateClass {
         this.bombIntensity++;
         this.bombNum += 8;
         this.overworldGridWidth++;
-        this.overworldGridHeight++;
+        // this.overworldGridHeight++;
         if (this.ascension <= 5) {
             this.fightGridWidth += 2;
             this.fightGridHeight += 2;
         }
-        this.overworldFights += 3;
+        this.overworldFights += 2;
         this.overworldBuffs += 2;
         // this.overworldTraps++;
         this.bossFightBombChange += 8;
