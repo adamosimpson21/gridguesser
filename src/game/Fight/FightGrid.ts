@@ -289,6 +289,7 @@ export default class FightGrid extends GameObject {
                     !cell.open &&
                     cell.bombNum > 0 &&
                     cell.flagNum <= 0 &&
+                    !cell.exploded &&
                     !hasRemovedBomb
                 ) {
                     cell.removeBomb();

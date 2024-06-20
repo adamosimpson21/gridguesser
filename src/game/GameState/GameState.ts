@@ -359,10 +359,23 @@ export class GameStateClass {
     useCharacterChoice() {
         EventBus.emit(UI_EVENTS.UPDATE_NAME, this.character.name);
         if (this.character.id === "CHAR_SIX") {
+            EventBus.emit(
+                PLAYER_EVENTS.GAIN_UPGRADE,
+                SHOP_ITEMS["REDUCE_DAMAGE_ONE"],
+            );
+            EventBus.emit(
+                PLAYER_EVENTS.GAIN_UPGRADE,
+                SHOP_ITEMS["GRID_SHRINK_ONE"],
+            );
+            EventBus.emit(
+                PLAYER_EVENTS.GAIN_UPGRADE,
+                SHOP_ITEMS["GRID_SHRINK_ONE"],
+            );
+            // no clue why this is so janky
             this.playerDamageReduction++;
-            EventBus.emit(PLAYER_EVENTS.GAIN_MAX_HP, 8, 8, true);
             this.fightGridWidth -= 2;
             this.fightGridHeight -= 2;
+            EventBus.emit(PLAYER_EVENTS.GAIN_MAX_HP, 8, 8, true);
         } else if (this.character.id === "CHAR_SEVEN") {
             this.hasDyscalc = true;
             this.lyingTileNum += 3;
@@ -514,6 +527,10 @@ export class GameStateClass {
         this.fightFlawlessGoldReward =
             GAME_CONSTANTS.startingFightFlawlessGoldReward;
 
+        this.upgrades.forEach((upgrade) => {
+            EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, upgrade, true, true);
+        });
+
         this.fightBossGoldReward = GAME_CONSTANTS.startingFightBossGoldReward;
         this.useCharacterChoice();
         this.handleAscension(ascension);
@@ -521,9 +538,6 @@ export class GameStateClass {
         EventBus.emit(UI_EVENTS.UPDATE_NAME, this.character.name);
         EventBus.emit(UI_EVENTS.UPDATE_GOLD, this.gold, 0, true);
         EventBus.emit(UI_EVENTS.UPDATE_HEALTH, this.hp, this.maxHp, 0, true);
-        // this.upgrades.forEach((upgrade) => {
-        //     EventBus.emit(UI_EVENTS.UPDATE_UPGRADES, upgrade, true, true);
-        // });
     }
 
     resetFightConstants() {
