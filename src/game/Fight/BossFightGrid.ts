@@ -35,6 +35,8 @@ export default class BossFightGrid extends FightGrid {
         this.returnButton.setText("Descend down the creepy staircase...");
 
         // final floor
+        console.log("final level:", GameState.level);
+        console.log("end level:", GAME_CONSTANTS.endLevel);
         if (GameState.level === GAME_CONSTANTS.endLevel) {
             this.returnButton.setText(
                 "Floor Cleaned! You find a portal to a parallel dimension ⏩⏩⏩",

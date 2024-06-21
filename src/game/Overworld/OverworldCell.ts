@@ -8,6 +8,7 @@ import { EventBus } from "@/game/EventBus/EventBus";
 import { SCENE_EVENTS } from "@/game/EventBus/events";
 import { transitionScene } from "@/game/functions/transitionScene";
 import OverworldGrid from "@/game/Overworld/OverworldGrid";
+import { GameState } from "@/game/GameState/GameState";
 
 export default class OverworldCell {
     public grid: OverworldGrid;
@@ -25,7 +26,8 @@ export default class OverworldCell {
     public borderLeft: Phaser.GameObjects.Image;
     public borderRight: Phaser.GameObjects.Image;
     public borderBottom: Phaser.GameObjects.Image;
-    public tileText: Phaser.GameObjects.Text;
+    // public tileText: Phaser.GameObjects.Text;
+    public tileImage: Phaser.GameObjects.Image;
     constructor(
         grid: OverworldGrid,
         index: number,
@@ -45,7 +47,7 @@ export default class OverworldCell {
 
         this.typeInfo = typeInfo;
 
-        this.borderSize = 4;
+        this.borderSize = 16;
 
         this.value = 0;
         switch (type) {
@@ -79,31 +81,44 @@ export default class OverworldCell {
                 break;
         }
 
-        this.tileText = grid.scene.add
-            .text(
+        // this.tileText = grid.scene.add
+        //     .text(
+        //         (x - 0.5) * OVERWORLD_CONSTANTS.TILE_WIDTH,
+        //         (y - 0.5) * OVERWORLD_CONSTANTS.TILE_HEIGHT,
+        //         "",
+        //         {
+        //             fontSize: `${Math.floor(OVERWORLD_CONSTANTS.TILE_WIDTH * 0.7)}px`,
+        //             // border: "2px solid black",
+        //             padding: {
+        //                 top: 14,
+        //                 left: 6,
+        //             },
+        //         },
+        //     )
+        //     .setDepth(5);
+
+        this.tileImage = grid.scene.add
+            .image(
                 (x - 0.5) * OVERWORLD_CONSTANTS.TILE_WIDTH,
                 (y - 0.5) * OVERWORLD_CONSTANTS.TILE_HEIGHT,
-                "",
-                {
-                    fontSize: `${Math.floor(OVERWORLD_CONSTANTS.TILE_WIDTH * 0.7)}px`,
-                    // border: "2px solid black",
-                    padding: {
-                        top: 14,
-                        left: 6,
-                    },
-                },
+                "overworld_tile_image",
+                0,
             )
-            .setDepth(5);
+            .setDisplaySize(
+                OVERWORLD_CONSTANTS.TILE_WIDTH,
+                OVERWORLD_CONSTANTS.TILE_HEIGHT,
+            )
+            .setOrigin(0, 0);
 
         this.tile = grid.scene.add
             .image(
                 x * OVERWORLD_CONSTANTS.TILE_WIDTH,
                 y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
-                "dust",
+                "overworld_tile_center",
             )
             .setDisplaySize(
-                OVERWORLD_CONSTANTS.TILE_WIDTH * 0.8,
-                OVERWORLD_CONSTANTS.TILE_HEIGHT * 0.8,
+                OVERWORLD_CONSTANTS.TILE_WIDTH,
+                OVERWORLD_CONSTANTS.TILE_HEIGHT,
             );
 
         this.borderRect = grid.scene.add
@@ -118,7 +133,7 @@ export default class OverworldCell {
             );
 
         grid.board.add(this.borderRect);
-        grid.board.add(this.tileText);
+        grid.board.add(this.tileImage);
         grid.board.add(this.tile);
 
         this.tile.setInteractive();
@@ -158,25 +173,29 @@ export default class OverworldCell {
     }
 
     setTileToVisited(delay: number) {
+        // console.log("you are here");
+        // this.tileImage.setFrame(6);
         const fadeTween = this.grid.scene.add.tween({
-            targets: this.tileText,
+            targets: this.tileImage,
             duration: delay,
             alpha: 0,
         });
         fadeTween.on("complete", (tween: any, targets: any) => {
-            this.grid.board.add(
-                this.grid.scene.add
-                    .image(
-                        this.x * OVERWORLD_CONSTANTS.TILE_WIDTH,
-                        this.y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
-                        "room_cleaned",
-                    )
-                    .setAlpha(0.75)
-                    .setDisplaySize(
-                        OVERWORLD_CONSTANTS.TILE_WIDTH,
-                        OVERWORLD_CONSTANTS.TILE_HEIGHT,
-                    ),
-            );
+            this.tileImage.setFrame(6);
+            this.tileImage.setAlpha(1);
+            // this.grid.board.add(
+            //     this.grid.scene.add
+            //         .image(
+            //             this.x * OVERWORLD_CONSTANTS.TILE_WIDTH,
+            //             this.y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
+            //             "room_cleaned",
+            //         )
+            //         .setAlpha(0.75)
+            //         .setDisplaySize(
+            //             OVERWORLD_CONSTANTS.TILE_WIDTH,
+            //             OVERWORLD_CONSTANTS.TILE_HEIGHT,
+            //         ),
+            // );
         });
     }
 
@@ -243,32 +262,34 @@ export default class OverworldCell {
 
         switch (this.value) {
             case -1:
-                this.tileText.setText("🟢");
+                this.tileImage.setFrame(6);
                 break;
             case 0:
-                this.tileText.setText("");
+                this.tileImage.setFrame(0);
                 break;
             case 1:
-                this.tileText.setText("🏠");
+                if (GameState.level === 1) {
+                    this.tileImage.setFrame(3);
+                } else {
+                    this.tileImage.setFrame(2);
+                }
                 break;
             case 2:
-                this.tileText.setText("⚔");
+                this.tileImage.setFrame(1);
                 break;
             case 3:
-                this.tileText.setText("🏪");
+                this.tileImage.setFrame(5);
                 break;
             case 4:
-                this.tileText.setText("😈");
+                this.tileImage.setFrame(7);
                 break;
             case 5:
-                this.tileText.setText("↗");
-                break;
             case 6:
-                this.tileText.setText("🕷");
+                this.tileImage.setFrame(4);
                 break;
 
             default:
-                this.tileText.setText("❓");
+                this.tileImage.setFrame(0);
                 break;
         }
 

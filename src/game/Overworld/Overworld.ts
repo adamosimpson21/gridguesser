@@ -43,7 +43,7 @@ export class Overworld extends Scene {
         this.load.spritesheet(
             "overworldBorders",
             "/assets/overworld/overworldBordersSS.png",
-            { frameWidth: 64, frameHeight: 64 },
+            { frameWidth: 128, frameHeight: 128 },
         );
         this.load.spritesheet("characters", "/assets/overworld/janitorSS.png", {
             frameWidth: 128,
@@ -56,6 +56,15 @@ export class Overworld extends Scene {
         this.load.image("purple_border", "assets/overworld/purpleBorder.png");
         this.load.image("yellow_border", "assets/overworld/yellowBorder.png");
         this.load.image("dust", "assets/overworld/dustBunny.png");
+        this.load.image(
+            "overworld_tile_center",
+            "assets/overworld/overworldTileCenter.png",
+        );
+        this.load.spritesheet(
+            "overworld_tile_image",
+            "assets/overworld/overworldTilesSS.png",
+            { frameWidth: 128, frameHeight: 128 },
+        );
         this.load.image("player", "assets/overworld/janitor.png");
         this.load.image("carpet_lines", "assets/overworld/carpetLines.png");
         this.load.image("room_cleaned", "assets/overworld/roomCleaned.png");

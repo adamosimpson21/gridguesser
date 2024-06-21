@@ -338,36 +338,38 @@ export default class OverworldGrid {
 
     paintNeighborBorders(cell: OverworldCell) {
         const orthogonalCells = this.getOrthogonalCells(cell);
-        let frame: number;
+        let row: number;
         if (cell.value === 2) {
-            frame = 2;
+            row = 1;
         } else if (cell.value === 4) {
-            frame = 1;
+            row = 4;
         } else if (cell.value === 5 || cell.value === 6) {
-            frame = 3;
+            row = 3;
         } else if (cell.value === 3) {
-            frame = 4;
+            row = 0;
         } else {
-            frame = 7;
+            row = 2;
         }
 
         // cell above
         if (orthogonalCells[0]) {
             const cellAbove = orthogonalCells[0];
             if (cellAbove.borderBottom) {
-                cellAbove.borderBottom.setFrame(frame);
+                cellAbove.borderBottom.setFrame(row * 4 + 2);
             } else {
                 const borderBottom = this.scene.add
                     .image(
                         cellAbove.x * OVERWORLD_CONSTANTS.TILE_WIDTH,
-                        cellAbove.y * OVERWORLD_CONSTANTS.TILE_HEIGHT -
-                            cellAbove.borderSize / 2 +
-                            OVERWORLD_CONSTANTS.TILE_HEIGHT / 2,
+                        cellAbove.y * OVERWORLD_CONSTANTS.TILE_HEIGHT +
+                            cellAbove.borderSize,
                         "overworldBorders",
-                        frame,
+                        row * 4 + 2,
                     )
                     .setAlpha(0)
-                    .setDisplaySize(OVERWORLD_CONSTANTS.TILE_WIDTH, 4);
+                    .setDisplaySize(
+                        OVERWORLD_CONSTANTS.TILE_WIDTH,
+                        OVERWORLD_CONSTANTS.TILE_HEIGHT,
+                    );
                 cellAbove.borderBottom = borderBottom;
                 this.board.add(borderBottom);
             }
@@ -376,19 +378,19 @@ export default class OverworldGrid {
         if (orthogonalCells[1]) {
             const cellLeft = orthogonalCells[1];
             if (cellLeft.borderRight) {
-                cellLeft.borderRight.setFrame(frame);
+                cellLeft.borderRight.setFrame(row * 4 + 3);
             } else {
                 const borderRight = this.scene.add
                     .image(
-                        cellLeft.x * OVERWORLD_CONSTANTS.TILE_WIDTH -
-                            cellLeft.borderSize / 2 +
-                            OVERWORLD_CONSTANTS.TILE_WIDTH / 2,
+                        (cellLeft.x + 1) * OVERWORLD_CONSTANTS.TILE_WIDTH,
                         cellLeft.y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
                         "overworldBorders",
-                        frame,
+                        row * 4 + 3,
                     )
-                    .setDisplaySize(OVERWORLD_CONSTANTS.TILE_HEIGHT, 4)
-                    .setAngle(90)
+                    .setDisplaySize(
+                        OVERWORLD_CONSTANTS.TILE_WIDTH,
+                        OVERWORLD_CONSTANTS.TILE_HEIGHT,
+                    )
                     .setAlpha(0);
                 cellLeft.borderRight = borderRight;
                 this.board.add(borderRight);
@@ -399,19 +401,19 @@ export default class OverworldGrid {
         if (orthogonalCells[2]) {
             const cellRight = orthogonalCells[2];
             if (cellRight.borderLeft) {
-                cellRight.borderLeft.setFrame(frame);
+                cellRight.borderLeft.setFrame(row * 4 + 1);
             } else {
                 const borderLeft = this.scene.add
                     .image(
-                        cellRight.x * OVERWORLD_CONSTANTS.TILE_WIDTH +
-                            cellRight.borderSize / 2 -
-                            OVERWORLD_CONSTANTS.TILE_WIDTH / 2,
+                        (cellRight.x - 1) * OVERWORLD_CONSTANTS.TILE_WIDTH,
                         cellRight.y * OVERWORLD_CONSTANTS.TILE_HEIGHT,
                         "overworldBorders",
-                        frame,
+                        row * 4 + 1,
                     )
-                    .setDisplaySize(OVERWORLD_CONSTANTS.TILE_HEIGHT, 4)
-                    .setAngle(90)
+                    .setDisplaySize(
+                        OVERWORLD_CONSTANTS.TILE_WIDTH,
+                        OVERWORLD_CONSTANTS.TILE_HEIGHT,
+                    )
                     .setAlpha(0);
                 cellRight.borderLeft = borderLeft;
                 this.board.add(borderLeft);
@@ -422,19 +424,21 @@ export default class OverworldGrid {
         if (orthogonalCells[3]) {
             const cellBottom = orthogonalCells[3];
             if (cellBottom.borderTop) {
-                cellBottom.borderTop.setFrame(frame);
+                cellBottom.borderTop.setFrame(row * 4);
             } else {
                 const borderTop = this.scene.add
                     .image(
                         cellBottom.x * OVERWORLD_CONSTANTS.TILE_WIDTH,
-                        cellBottom.y * OVERWORLD_CONSTANTS.TILE_HEIGHT +
-                            cellBottom.borderSize / 2 -
-                            OVERWORLD_CONSTANTS.TILE_HEIGHT / 2,
+                        cellBottom.y * OVERWORLD_CONSTANTS.TILE_HEIGHT -
+                            cellBottom.borderSize,
                         "overworldBorders",
-                        frame,
+                        row * 4,
                     )
                     .setAlpha(0)
-                    .setDisplaySize(OVERWORLD_CONSTANTS.TILE_WIDTH, 4);
+                    .setDisplaySize(
+                        OVERWORLD_CONSTANTS.TILE_WIDTH,
+                        OVERWORLD_CONSTANTS.TILE_HEIGHT,
+                    );
                 cellBottom.borderTop = borderTop;
                 this.board.add(borderTop);
             }

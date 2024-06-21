@@ -21,7 +21,7 @@ export const GAME_CONSTANTS = {
     startingOverworldGridWidth: 3,
     startingOverworldGridHeight: 5,
     startingOverworldShops: 3,
-    startingOverworldFights: 7,
+    startingOverworldFights: 6,
     startingOverworldBuffs: 2,
     startingOverworldTraps: 0,
     startingShopGridWidth: 3,
