@@ -1,4 +1,5 @@
 import { flavorConstants } from "@/game/constants/flavorConstants";
+import { AdvancedMechanic } from "@/game/GameState/gameConstants";
 
 export const KEY_ITEMS: { [key: string]: keyItemType } = {
     REVEAL: {
@@ -20,6 +21,7 @@ export const KEY_ITEMS: { [key: string]: keyItemType } = {
         id: "REMOVE_TRASH",
         name: "Remove Trash",
         description: "Clears a spot of trash",
+        restrictions: AdvancedMechanic.fightCanHaveTrashTiles,
     },
     REMOVE_BOMB: {
         id: "REMOVE_BOMB",
@@ -28,8 +30,9 @@ export const KEY_ITEMS: { [key: string]: keyItemType } = {
     },
     REMOVE_LIES: {
         id: "REMOVE_LIES",
-        name: "Remove Lies",
-        description: "Forces spots to tell the truth",
+        name: "Lie Detector",
+        description: "Forces a 5x5 area to tell the truth",
+        restrictions: AdvancedMechanic.fightCanHaveLyingTiles,
     },
     UMBRELLA: {
         id: "UMBRELLA",
@@ -50,6 +53,7 @@ export const KEY_ITEMS: { [key: string]: keyItemType } = {
         id: "PESTICIDE",
         name: "Pesticide",
         description: `Temporarily Removes Tentacles from a 5x5 Area`,
+        restrictions: AdvancedMechanic.fightCanHaveTentacles,
     },
 };
 
@@ -57,4 +61,5 @@ export type keyItemType = {
     id: string;
     name: string;
     description: string;
+    restrictions?: AdvancedMechanic;
 };

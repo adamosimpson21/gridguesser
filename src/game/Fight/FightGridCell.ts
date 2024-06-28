@@ -395,19 +395,17 @@ export default class FightGridCell {
     removeLies() {
         if (GameState.instanceRemoveLyingNum > 0) {
             this.incrementFightMove();
-            if (!this.lying) {
-                this.tile.setFrame(14);
-                angryShakeTween(this.tile, this.grid.scene).on(
-                    "complete",
-                    (tween: any, targets: any) => {
-                        this.show(true);
-                    },
-                );
-            } else {
-                this.lying = false;
-                // add flip over animation
-                this.show();
-            }
+            this.grid
+                .getAllCellsInDiameter(this, GameState.lyingSize)
+                .forEach((cell: FightGridCell) => {
+                    if (cell) {
+                        cell.lying = false;
+                        // add flip over animation
+                        if (cell.open) {
+                            cell.show();
+                        }
+                    }
+                });
             EventBus.emit(
                 FIGHT_EVENTS.USE_LIMITED_INPUT,
                 FIGHT_INPUT_TYPES.REMOVE_LIES,

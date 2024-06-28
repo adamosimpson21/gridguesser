@@ -164,7 +164,7 @@ export default class FightInputMenu {
                         this.scene.input.setDefaultCursor(
                             "url(/assets/cursors/removeLieSm.cur), pointer",
                         );
-                        this.hideInputHint();
+                        this.showInputHint(6, GameState.lyingSize);
                         break;
                     case FIGHT_INPUT_TYPES.BLOCK:
                         this.scene.input.setDefaultCursor(

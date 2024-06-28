@@ -18,6 +18,7 @@ import {
     transitionSceneToOverworldFromBoss,
 } from "@/game/functions/transitionScene";
 import { flavorConstants } from "@/game/constants/flavorConstants";
+import { Game } from "phaser";
 
 export default class BossFightGrid extends FightGrid {
     constructor(
@@ -161,7 +162,7 @@ export default class BossFightGrid extends FightGrid {
             this.scene.add.text(
                 -200,
                 -200,
-                `After cleaning the Boss's ${flavorConstants.FIGHT_NAME}, you find 3 keys you could add to your wondrous key ring. Choose one. Uses refill after every ${flavorConstants.FIGHT_NAME}`,
+                `After cleaning the Boss's ${flavorConstants.FIGHT_NAME}, you find 3 keys you could add to your wondrous key ring. Choose one. Charges refill after every ${flavorConstants.FIGHT_NAME}`,
                 {
                     fontSize: "40px",
                     wordWrap: { width: 800, useAdvancedWrap: true },
@@ -169,9 +170,18 @@ export default class BossFightGrid extends FightGrid {
             ),
         );
 
-        const totalKeysAvailable = Object.entries(KEY_ITEMS).filter(
-            (item) => !GameState.fightInputTypes.includes(item[1].id),
-        );
+        const totalKeysAvailable = Object.entries(KEY_ITEMS).filter((item) => {
+            const keyInfo = item[1];
+            if (!GameState.fightInputTypes.includes(keyInfo.id)) {
+                if (keyInfo.restrictions) {
+                    return GameState[keyInfo.restrictions];
+                } else {
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        });
         let threeKeys = [] as [string, keyItemType][];
         if (totalKeysAvailable.length <= 3) {
             threeKeys = totalKeysAvailable;

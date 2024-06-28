@@ -71,6 +71,7 @@ export class GameStateClass {
     public instanceTowerNum: number;
     public instanceBlockNum: number;
     public umbrellaSize: number;
+    public lyingSize: number;
     public pesticideSize: number;
     public towerSize: number;
     public blockSize: number;
@@ -513,6 +514,7 @@ export class GameStateClass {
         this.removeTrashNum = GAME_CONSTANTS.startingRemoveTrashNum;
         this.removeBombNum = GAME_CONSTANTS.startingRemoveBombNum;
         this.removeLyingNum = GAME_CONSTANTS.startingRemoveLyingNum;
+        this.lyingSize = GAME_CONSTANTS.startingRemoveLyingSize;
         this.umbrellaNum = GAME_CONSTANTS.startingUmbrellaNum;
         this.umbrellaSize = GAME_CONSTANTS.startingUmbrellaSize;
         this.pesticideNum = GAME_CONSTANTS.startingPesticideNum;
