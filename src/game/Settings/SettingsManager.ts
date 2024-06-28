@@ -134,6 +134,10 @@ class SettingsManagerClass {
                 ascension: {},
             });
         }
+
+        if (LocalStorageManager.getItem(SETTING_CONSTANTS.isMobile) === null) {
+            LocalStorageManager.setItem(SETTING_CONSTANTS.isMobile, false);
+        }
     }
 
     onBeforeUnload() {

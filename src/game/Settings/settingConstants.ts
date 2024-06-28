@@ -18,6 +18,7 @@ export const SETTING_CONSTANTS = {
     currentCampaignDetails: "currentCampaignDetails",
     highestAscensionBeaten: "highestAscensionBeaten",
     ascension: "ascension",
+    isMobile: "isMobile",
 };
 
 export type currentCampaignDetails = {

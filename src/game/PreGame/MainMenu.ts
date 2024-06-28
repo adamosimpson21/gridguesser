@@ -19,6 +19,7 @@ export class MainMenu extends Scene {
     overworldButton: GameObjects.Text;
     public tutorialButton: Phaser.GameObjects.Text;
     public hallOfFameButton: Phaser.GameObjects.Text;
+    public settingsButton: Phaser.GameObjects.Text;
     public continueRunButton: Phaser.GameObjects.Text;
 
     constructor() {
@@ -82,7 +83,7 @@ export class MainMenu extends Scene {
         this.tutorialButton = this.add
             .text(
                 this.scale.width / 2,
-                800,
+                760,
                 "Minesweeper Tutorial",
                 mainMenuText({ wordWrapWidth: 800 }),
             )
@@ -99,7 +100,7 @@ export class MainMenu extends Scene {
         this.hallOfFameButton = this.add
             .text(
                 this.scale.width / 2,
-                900,
+                830,
                 "Employees of the Month",
                 mainMenuText({ wordWrapWidth: 1000 }),
             )
@@ -108,7 +109,27 @@ export class MainMenu extends Scene {
         this.hallOfFameButton.on("pointerdown", () => {
             this.scene.start(SCENES.HallOfFame);
         });
+
+        this.settingsButton = this.add
+            .text(
+                this.scale.width / 2,
+                900,
+                "Settings",
+                mainMenuText({ wordWrapWidth: 1000 }),
+            )
+            .setOrigin(0.5, 0.5);
+        this.settingsButton.setInteractive();
+        this.settingsButton.on("pointerdown", () => {
+            this.scene.launch(SCENES.Settings);
+        });
+
         EventBus.emit("current-scene-ready", this);
+
+        if (LocalStorageManager.getItem(SETTING_CONSTANTS.isMobile) === false) {
+            window.addEventListener("touchstart", () => {
+                LocalStorageManager.setItem(SETTING_CONSTANTS.isMobile, true);
+            });
+        }
 
         this.events.on(Phaser.Scenes.Events.CREATE, () => {
             EventBus.emit(SCENE_EVENTS.ENTER_MAIN_MENU);
