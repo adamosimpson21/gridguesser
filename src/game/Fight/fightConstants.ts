@@ -28,4 +28,5 @@ export const FIGHT_INPUT_TYPES = {
     UMBRELLA: "UMBRELLA",
     TOWER: "TOWER",
     BLOCK: "BLOCK",
+    PESTICIDE: "PESTICIDE",
 };

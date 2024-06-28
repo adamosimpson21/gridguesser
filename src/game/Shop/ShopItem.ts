@@ -350,6 +350,13 @@ export default class ShopItem {
                         message: "Added 2 Uses of the Towel Key",
                     });
                     break;
+                case "pesticideUses":
+                    GameState.pesticideNum += itemEffect.pesticideUses;
+                    EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {
+                        type: UI_MESSAGE_TYPES.SUCCESS,
+                        message: "Added 3 Uses of the Pesticide Key",
+                    });
+                    break;
                 case "blockUses":
                     GameState.blockNum += itemEffect.blockUses;
                     EventBus.emit(UI_EVENTS.DISPLAY_MESSAGE, {

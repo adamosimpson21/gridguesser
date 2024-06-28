@@ -381,6 +381,18 @@ export const SHOP_ITEMS: { [key: string]: shopItemType } = {
         activated: false,
         restrictions: { advancedMechanics: "fightCanHaveTentacles" },
     },
+    PESTICIDE_USES_THREE: {
+        id: "PESTICIDE_USES_THREE",
+        name: "Pesticide Barrel",
+        description: "Adds 3 uses to Pesticide key",
+        cost: 7,
+        effect: { pesticideUses: 3 },
+        icon: 18,
+        permanent: true,
+        singleton: false,
+        activated: false,
+        restrictions: { key: "PESTICIDE" },
+    },
     TRUSTED_NUMBER_THREE: {
         id: "TRUSTED_NUMBER_THREE",
         name: "Trusty 3s",

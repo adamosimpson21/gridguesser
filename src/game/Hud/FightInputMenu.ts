@@ -97,6 +97,12 @@ export default class FightInputMenu {
                             inputText.setText(
                                 `${GameState.instanceUmbrellaNum}`,
                             );
+                        } else if (
+                            inputTypeUse === FIGHT_INPUT_TYPES.PESTICIDE
+                        ) {
+                            inputText.setText(
+                                `${GameState.instancePesticideNum}`,
+                            );
                         } else if (inputTypeUse === FIGHT_INPUT_TYPES.TOWER) {
                             inputText.setText(`${GameState.instanceTowerNum}`);
                         } else if (inputTypeUse === FIGHT_INPUT_TYPES.BLOCK) {
@@ -180,6 +186,13 @@ export default class FightInputMenu {
 
                         this.showInputHint(3, GameState.towerSize);
                         break;
+                    case FIGHT_INPUT_TYPES.PESTICIDE:
+                        this.scene.input.setDefaultCursor(
+                            "url(/assets/cursors/pesticideSm.cur), pointer",
+                        );
+
+                        this.showInputHint(5, GameState.pesticideSize);
+                        break;
                     default:
                         this.hideInputHint();
                         break;
@@ -228,6 +241,8 @@ export default class FightInputMenu {
                     inputText.setText(`${GameState.instanceRemoveLyingNum}`);
                 } else if (inputType === FIGHT_INPUT_TYPES.UMBRELLA) {
                     inputText.setText(`${GameState.instanceUmbrellaNum}`);
+                } else if (inputType === FIGHT_INPUT_TYPES.PESTICIDE) {
+                    inputText.setText(`${GameState.instancePesticideNum}`);
                 } else if (inputType === FIGHT_INPUT_TYPES.TOWER) {
                     inputText.setText(`${GameState.instanceTowerNum}`);
                 } else if (inputType === FIGHT_INPUT_TYPES.BLOCK) {

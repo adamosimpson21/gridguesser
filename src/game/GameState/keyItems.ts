@@ -46,6 +46,11 @@ export const KEY_ITEMS: { [key: string]: keyItemType } = {
         name: "Cement",
         description: `Covers a 2x2 area in cement, removing it from the ${flavorConstants.FIGHT_NAME}`,
     },
+    PESTICIDE: {
+        id: "PESTICIDE",
+        name: "Pesticide",
+        description: `Temporarily Removes Tentacles from a 5x5 Area`,
+    },
 };
 
 export type keyItemType = {

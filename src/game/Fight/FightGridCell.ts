@@ -157,6 +157,8 @@ export default class FightGridCell {
             this.useTower();
         } else if (inputType === FIGHT_INPUT_TYPES.UMBRELLA) {
             this.useUmbrella();
+        } else if (inputType === FIGHT_INPUT_TYPES.PESTICIDE) {
+            this.usePesticide();
         }
     }
 
@@ -626,6 +628,30 @@ export default class FightGridCell {
             this.specialOverlayContainer.add(umbrellaText);
 
             this.grid.board.add(umbrellaShadow);
+        }
+    }
+
+    usePesticide() {
+        if (GameState.instancePesticideNum > 0) {
+            this.incrementFightMove();
+            EventBus.emit(
+                FIGHT_EVENTS.USE_LIMITED_INPUT,
+                FIGHT_INPUT_TYPES.PESTICIDE,
+            );
+
+            const adjacentCells = this.grid.getAllCellsInDiameter(
+                this,
+                GameState.pesticideSize,
+            );
+
+            adjacentCells.forEach((cell: FightGridCell) => {
+                if (cell && cell.isTentacle) {
+                    cell.isTentacle = false;
+                    if (cell.open) {
+                        cell.flagOverlay.setFrame(0);
+                    }
+                }
+            });
         }
     }
 

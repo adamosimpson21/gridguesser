@@ -21,6 +21,8 @@ export const getInputUsesAvailable = (inputType: string) => {
             return GameState.towerNum;
         case FIGHT_INPUT_TYPES.BLOCK:
             return GameState.blockNum;
+        case FIGHT_INPUT_TYPES.PESTICIDE:
+            return GameState.pesticideNum;
         default:
             return -1;
     }
@@ -46,6 +48,8 @@ export const getInputInstanceUsesAvailable = (inputType: string) => {
             return GameState.instanceTowerNum;
         case FIGHT_INPUT_TYPES.BLOCK:
             return GameState.instanceBlockNum;
+        case FIGHT_INPUT_TYPES.PESTICIDE:
+            return GameState.instancePesticideNum;
         default:
             return -1;
     }

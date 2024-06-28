@@ -63,12 +63,15 @@ export class GameStateClass {
     public instanceRemoveBombNum: number;
     public instanceRemoveLyingNum: number;
     public umbrellaNum: number;
+    public pesticideNum: number;
     public towerNum: number;
     public blockNum: number;
     public instanceUmbrellaNum: number;
+    public instancePesticideNum: number;
     public instanceTowerNum: number;
     public instanceBlockNum: number;
     public umbrellaSize: number;
+    public pesticideSize: number;
     public towerSize: number;
     public blockSize: number;
     public bombNumFightIncrement: number;
@@ -120,6 +123,14 @@ export class GameStateClass {
             } else if (inputType === FIGHT_INPUT_TYPES.UMBRELLA) {
                 GameState.instanceUmbrellaNum--;
                 if (GameState.instanceUmbrellaNum === 0) {
+                    EventBus.emit(
+                        FIGHT_EVENTS.CHANGE_INPUT_TYPE,
+                        FIGHT_INPUT_TYPES.REVEAL,
+                    );
+                }
+            } else if (inputType === FIGHT_INPUT_TYPES.PESTICIDE) {
+                GameState.instancePesticideNum--;
+                if (GameState.instancePesticideNum === 0) {
                     EventBus.emit(
                         FIGHT_EVENTS.CHANGE_INPUT_TYPE,
                         FIGHT_INPUT_TYPES.REVEAL,
@@ -504,6 +515,8 @@ export class GameStateClass {
         this.removeLyingNum = GAME_CONSTANTS.startingRemoveLyingNum;
         this.umbrellaNum = GAME_CONSTANTS.startingUmbrellaNum;
         this.umbrellaSize = GAME_CONSTANTS.startingUmbrellaSize;
+        this.pesticideNum = GAME_CONSTANTS.startingPesticideNum;
+        this.pesticideSize = GAME_CONSTANTS.startingPesticideSize;
         this.towerNum = GAME_CONSTANTS.startingTowerNum;
         this.towerSize = GAME_CONSTANTS.startingTowerSize;
         this.blockNum = GAME_CONSTANTS.startingBlockNum;
@@ -545,6 +558,7 @@ export class GameStateClass {
         this.instanceRemoveBombNum = this.removeBombNum;
         this.instanceRemoveLyingNum = this.removeLyingNum;
         this.instanceUmbrellaNum = this.umbrellaNum;
+        this.instancePesticideNum = this.pesticideNum;
         this.instanceTowerNum = this.towerNum;
         this.instanceBlockNum = this.blockNum;
         EventBus.emit(GAME_EVENTS.RESET_FIGHT_INPUT_MENU);
