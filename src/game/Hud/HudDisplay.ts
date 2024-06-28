@@ -9,12 +9,14 @@ import {
     paragraphText,
 } from "@/game/constants/textStyleConstructor";
 import { addTooltip, TOOLTIP_CONSTANTS } from "@/game/functions/addTooltip";
+import { SCENES } from "@/game/constants/scenes";
 
 export default class HudDisplay {
     public scene: Hud;
     public nameDisplay: Phaser.GameObjects.Text;
     public hpDisplay: Phaser.GameObjects.Text;
     public goldDisplay: Phaser.GameObjects.Text;
+    public settingsGear: Phaser.GameObjects.Text;
     public upgradeDisplay: Phaser.GameObjects.Container;
     public height: number;
     public width: number;
@@ -74,11 +76,23 @@ export default class HudDisplay {
             this.yOffset + this.lineHeight * 4,
         );
 
+        this.settingsGear = this.scene.add.text(
+            350,
+            this.yOffset - 50,
+            "⚙",
+            headingText({}),
+        );
+        this.settingsGear.setInteractive();
+        this.settingsGear.on("pointerdown", () => {
+            this.scene.scene.launch(SCENES.Settings);
+        });
+
         this.hudBoard.add(this.clipboard);
         this.hudBoard.add(this.nameDisplay);
         this.hudBoard.add(this.hpDisplay);
         this.hudBoard.add(this.goldDisplay);
         this.hudBoard.add(this.upgradeDisplay);
+        this.hudBoard.add(this.settingsGear);
 
         EventBus.on(SCENE_EVENTS.LEAVE_FIGHT, () => {
             this.fightInputDisplay.hide();
