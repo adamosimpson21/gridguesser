@@ -32,10 +32,10 @@ export default class ShopGrid {
 
         this.data = [];
         this.board = scene.add.container(x, y);
-        this.numPadBoard = scene.add.container(
-            1250,
-            (scene.scale.height - 300) / 2,
-        );
+        this.numPadBoard = scene.add
+            .container(1250, (scene.scale.height - 300) / 2)
+            // hide for now
+            .setAlpha(0);
 
         this.returnButton = this.scene.make.text({
             x: 600,

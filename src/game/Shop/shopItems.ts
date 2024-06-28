@@ -247,7 +247,7 @@ export const SHOP_ITEMS: { [key: string]: shopItemType } = {
     SHOP_ITEMS_ADD_3_AGAIN: {
         id: "SHOP_ITEMS_ADD_3_AGAIN",
         name: "Biggest Vending Machine",
-        description: "Completely fills vending machines",
+        description: "Adds 3 more items to future vending machines",
         cost: 7,
         effect: { shopItemsAdd: 3 },
         icon: 50,
@@ -491,6 +491,18 @@ export const SPECIAL_ITEMS: { [key: string]: shopItemType } = {
         singleton: true,
         activated: false,
         restrictions: { character: "CHAR_TWO" },
+    },
+    INFINITY_CHIPS: {
+        id: "INFINITY_CHIPS",
+        name: "Pocket Potato Chips",
+        description: `Gain 2 hp after each Office`,
+        cost: 0,
+        effect: {},
+        icon: 24,
+        permanent: true,
+        singleton: true,
+        activated: false,
+        restrictions: { character: "CHAR_ONE" },
     },
     LUCKY_COIN: {
         id: "LUCKY_COIN",

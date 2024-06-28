@@ -6,7 +6,7 @@ import {
     SCENE_EVENTS,
     UI_EVENTS,
 } from "@/game/EventBus/events";
-import { SHOP_ITEMS, shopItemType } from "@/game/Shop/shopItems";
+import { SHOP_ITEMS, shopItemType, SPECIAL_ITEMS } from "@/game/Shop/shopItems";
 import {
     AdvancedMechanic,
     CHARACTER_CHOICES,
@@ -370,7 +370,12 @@ export class GameStateClass {
 
     useCharacterChoice() {
         EventBus.emit(UI_EVENTS.UPDATE_NAME, this.character.name);
-        if (this.character.id === "CHAR_SIX") {
+        if (this.character.id === "CHAR_ONE") {
+            EventBus.emit(
+                PLAYER_EVENTS.GAIN_UPGRADE,
+                SPECIAL_ITEMS["INFINITY_CHIPS"],
+            );
+        } else if (this.character.id === "CHAR_SIX") {
             EventBus.emit(
                 PLAYER_EVENTS.GAIN_UPGRADE,
                 SHOP_ITEMS["REDUCE_DAMAGE_ONE"],

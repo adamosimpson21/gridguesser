@@ -84,7 +84,7 @@ export const CHARACTER_CHOICES: { [key: string]: characterType } = {
         name: "Jan Eator",
         imageFrame: 3,
         specialPower: {
-            name: "Average",
+            name: "Pocket Chips",
             description: `Has pocket potato chips, 2hp after each ${flavorConstants.FIGHT_NAME}`,
         },
         unlocked: true,
