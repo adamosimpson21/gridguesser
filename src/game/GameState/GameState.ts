@@ -482,6 +482,15 @@ export class GameStateClass {
     }
 
     initializeNewGameConstants(ascension: number, character: string) {
+        console.log(
+            "is mobile? ",
+            LocalStorageManager.getItem(SETTING_CONSTANTS.isMobile),
+        );
+        if (LocalStorageManager.getItem(SETTING_CONSTANTS.isMobile)) {
+            FIGHT_CONSTANTS.TILE_HEIGHT = 64;
+            FIGHT_CONSTANTS.TILE_WIDTH = 64;
+        }
+
         this.character = CHARACTER_CHOICES[character];
         this.hp = GAME_CONSTANTS.startingHp;
         this.maxHp = GAME_CONSTANTS.startingMaxHp;
