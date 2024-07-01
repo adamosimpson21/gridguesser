@@ -205,10 +205,10 @@ export default class FightGrid extends GameObject {
     }
 
     update() {
-        if (
-            this.isLarge &&
-            !LocalStorageManager.getItem(SETTING_CONSTANTS.isMobile)
-        ) {
+        if (this.isLarge) {
+            const isMobile = LocalStorageManager.getItem(
+                SETTING_CONSTANTS.isMobile,
+            );
             const sceneWidth = this.scene.scale.width;
             const sceneHeight = this.scene.scale.height;
             const pointerX = this.scene.input.x;
@@ -220,7 +220,9 @@ export default class FightGrid extends GameObject {
                 pointerX < (sceneWidth - HUD_CONSTANTS.width) / 10 &&
                 this.board.x < sceneWidth * (1 - edgeSize)
             ) {
-                this.board.setX(this.board.x + speed);
+                if (!isMobile || this.scene.input.activePointer.isDown) {
+                    this.board.setX(this.board.x + speed);
+                }
                 // scroll right
             } else if (
                 pointerX < sceneWidth - HUD_CONSTANTS.width &&
@@ -228,14 +230,18 @@ export default class FightGrid extends GameObject {
                 this.board.x + this.width * FIGHT_CONSTANTS.TILE_WIDTH >
                     (sceneWidth - HUD_CONSTANTS.width) * edgeSize
             ) {
-                this.board.setX(this.board.x - speed);
+                if (!isMobile || this.scene.input.activePointer.isDown) {
+                    this.board.setX(this.board.x - speed);
+                }
             }
             // scroll up
             if (
                 pointerY < sceneHeight / 10 &&
                 this.board.y < sceneHeight * (1 - edgeSize)
             ) {
-                this.board.setY(this.board.y + speed);
+                if (!isMobile || this.scene.input.activePointer.isDown) {
+                    this.board.setY(this.board.y + speed);
+                }
                 // scroll down
             } else if (
                 pointerY < sceneHeight &&
@@ -243,7 +249,9 @@ export default class FightGrid extends GameObject {
                 this.board.y + this.height * FIGHT_CONSTANTS.TILE_HEIGHT >
                     sceneHeight * edgeSize - 200
             ) {
-                this.board.setY(this.board.y - speed);
+                if (!isMobile || this.scene.input.activePointer.isDown) {
+                    this.board.setY(this.board.y - speed);
+                }
             }
         }
     }
