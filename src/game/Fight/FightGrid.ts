@@ -139,38 +139,38 @@ export default class FightGrid extends GameObject {
         this.createAndHideEndGame();
 
         // .setDisplaySize(300, 600);
-        this.scrollTop = this.scene.add
-            .image(0, 0, "clipboard")
-            .setOrigin(0, 0)
-            .setDisplaySize(
-                this.scene.scale.width - HUD_CONSTANTS.width,
-                this.scene.scale.height / 10,
-            );
-        this.scrollRight = this.scene.add
-            .image(
-                (this.scene.scale.width - HUD_CONSTANTS.width) * 0.9,
-                0,
-                "clipboard",
-            )
-            .setOrigin(0, 0)
-            .setDisplaySize(
-                (this.scene.scale.width - HUD_CONSTANTS.width) * 0.1,
-                this.scene.scale.height,
-            );
-        this.scrollBottom = this.scene.add
-            .image(0, this.scene.scale.height * 0.9, "clipboard")
-            .setOrigin(0, 0)
-            .setDisplaySize(
-                this.scene.scale.width - HUD_CONSTANTS.width,
-                this.scene.scale.height / 10,
-            );
-        this.scrollLeft = this.scene.add
-            .image(0, 0, "clipboard")
-            .setOrigin(0, 0)
-            .setDisplaySize(
-                (this.scene.scale.width - HUD_CONSTANTS.width) * 0.1,
-                this.scene.scale.height,
-            );
+        // this.scrollTop = this.scene.add
+        //     .image(0, 0, "clipboard")
+        //     .setOrigin(0, 0)
+        //     .setDisplaySize(
+        //         this.scene.scale.width - HUD_CONSTANTS.width,
+        //         this.scene.scale.height / 10,
+        //     );
+        // this.scrollRight = this.scene.add
+        //     .image(
+        //         (this.scene.scale.width - HUD_CONSTANTS.width) * 0.9,
+        //         0,
+        //         "clipboard",
+        //     )
+        //     .setOrigin(0, 0)
+        //     .setDisplaySize(
+        //         (this.scene.scale.width - HUD_CONSTANTS.width) * 0.1,
+        //         this.scene.scale.height,
+        //     );
+        // this.scrollBottom = this.scene.add
+        //     .image(0, this.scene.scale.height * 0.9, "clipboard")
+        //     .setOrigin(0, 0)
+        //     .setDisplaySize(
+        //         this.scene.scale.width - HUD_CONSTANTS.width,
+        //         this.scene.scale.height / 10,
+        //     );
+        // this.scrollLeft = this.scene.add
+        //     .image(0, 0, "clipboard")
+        //     .setOrigin(0, 0)
+        //     .setDisplaySize(
+        //         (this.scene.scale.width - HUD_CONSTANTS.width) * 0.1,
+        //         this.scene.scale.height,
+        //     );
 
         if (
             this.height >= 18 ||
@@ -180,21 +180,21 @@ export default class FightGrid extends GameObject {
         ) {
             this.isLarge = true;
         }
-
-        if (
-            this.isLarge &&
-            LocalStorageManager.getItem(SETTING_CONSTANTS.isMobile)
-        ) {
-            this.scrollTop.setInteractive();
-            this.scrollTop.on(
-                "pointerover",
-                (pointer: Phaser.Input.Pointer) => {
-                    if (pointer.leftButtonDown()) {
-                        this.board.setY(this.board.y - 3);
-                    }
-                },
-            );
-        }
+        //
+        // if (
+        //     this.isLarge &&
+        //     LocalStorageManager.getItem(SETTING_CONSTANTS.isMobile)
+        // ) {
+        //     this.scrollTop.setInteractive();
+        //     this.scrollTop.on(
+        //         "pointerover",
+        //         (pointer: Phaser.Input.Pointer) => {
+        //             if (pointer.leftButtonDown()) {
+        //                 this.board.setY(this.board.y - 3);
+        //             }
+        //         },
+        //     );
+        // }
 
         EventBus.on(GAME_EVENTS.GAME_OVER, () => {
             this.playing = false;
