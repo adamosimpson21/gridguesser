@@ -143,4 +143,8 @@ export class BossFight extends Scene {
             GameState.addAdvancedMechanic();
         });
     }
+
+    update() {
+        this.grid.update();
+    }
 }
