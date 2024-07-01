@@ -90,4 +90,8 @@ export class Fight extends Scene {
             this,
         );
     }
+
+    update() {
+        this.grid.update();
+    }
 }

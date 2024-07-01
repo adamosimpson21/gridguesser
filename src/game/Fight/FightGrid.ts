@@ -19,6 +19,9 @@ import { flavorConstants } from "@/game/constants/flavorConstants";
 import { headingText } from "@/game/constants/textStyleConstructor";
 import { transitionSceneToOverworld } from "@/game/functions/transitionScene";
 import { start } from "node:repl";
+import { LocalStorageManager } from "@/game/Settings/LocalStorageManager";
+import { SETTING_CONSTANTS } from "@/game/Settings/settingConstants";
+import { HUD_CONSTANTS } from "@/game/Hud/hudConstants";
 
 export default class FightGrid extends GameObject {
     public scene: Fight;
@@ -48,6 +51,11 @@ export default class FightGrid extends GameObject {
     public endGameTrashCanOver: Phaser.GameObjects.Image;
     public returnButton: Phaser.GameObjects.Text;
     public returnButtonSubtext: Phaser.GameObjects.Text;
+    public scrollTop: Phaser.GameObjects.Image;
+    public scrollBottom: Phaser.GameObjects.Image;
+    public scrollLeft: Phaser.GameObjects.Image;
+    public scrollRight: Phaser.GameObjects.Image;
+    public isLarge: boolean;
 
     constructor(scene: Fight, width: number, height: number, bombs: number) {
         super(scene, "fightGrid");
@@ -75,6 +83,7 @@ export default class FightGrid extends GameObject {
         this.moveCounter = 0;
         this.chordCount = 0;
         this.chordMoves = [];
+        this.isLarge = false;
 
         //  0 = waiting to create the grid
         //  1 = playing
@@ -130,6 +139,14 @@ export default class FightGrid extends GameObject {
         this.createAndHideEndGame();
 
         // .setDisplaySize(300, 600);
+        if (
+            this.height >= 18 ||
+            this.width >= 18 ||
+            (LocalStorageManager.getItem(SETTING_CONSTANTS.isMobile) &&
+                (this.height >= 12 || this.width >= 12))
+        ) {
+            this.isLarge = true;
+        }
 
         EventBus.on(GAME_EVENTS.GAME_OVER, () => {
             this.playing = false;
@@ -137,6 +154,47 @@ export default class FightGrid extends GameObject {
             this.removalAllLies();
             this.revealAllOpenCells();
         });
+    }
+
+    update() {
+        if (this.isLarge) {
+            const sceneWidth = this.scene.scale.width;
+            const sceneHeight = this.scene.scale.height;
+            const pointerX = this.scene.input.x;
+            const pointerY = this.scene.input.y;
+            const edgeSize = 0.8;
+            const speed = 3;
+            // scroll left
+            if (
+                pointerX < (sceneWidth - HUD_CONSTANTS.width) / 10 &&
+                this.board.x < sceneWidth * (1 - edgeSize)
+            ) {
+                this.board.setX(this.board.x + speed);
+                // scroll right
+            } else if (
+                pointerX < sceneWidth - HUD_CONSTANTS.width &&
+                pointerX > sceneWidth - HUD_CONSTANTS.width - sceneWidth / 10 &&
+                this.board.x + this.width * FIGHT_CONSTANTS.TILE_WIDTH >
+                    (sceneWidth - HUD_CONSTANTS.width) * edgeSize
+            ) {
+                this.board.setX(this.board.x - speed);
+            }
+            // scroll up
+            if (
+                pointerY < sceneHeight / 10 &&
+                this.board.y < sceneHeight * (1 - edgeSize)
+            ) {
+                this.board.setY(this.board.y + speed);
+                // scroll down
+            } else if (
+                pointerY < sceneHeight &&
+                pointerY > sceneHeight - sceneHeight / 10 &&
+                this.board.y + this.height * FIGHT_CONSTANTS.TILE_HEIGHT >
+                    sceneHeight * edgeSize - 200
+            ) {
+                this.board.setY(this.board.y - speed);
+            }
+        }
     }
 
     createCells() {

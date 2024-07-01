@@ -10,6 +10,7 @@ import {
 } from "@/game/constants/textStyleConstructor";
 import { addTooltip, TOOLTIP_CONSTANTS } from "@/game/functions/addTooltip";
 import { SCENES } from "@/game/constants/scenes";
+import { HUD_CONSTANTS } from "@/game/Hud/hudConstants";
 
 export default class HudDisplay {
     public scene: Hud;
@@ -33,13 +34,16 @@ export default class HudDisplay {
 
     constructor(scene: Hud) {
         this.scene = scene;
-        this.width = 420;
+        this.width = HUD_CONSTANTS.width;
         this.height = this.scene.scale.height;
-        this.xOffset = 40;
-        this.yOffset = 160;
-        this.lineHeight = 60;
+        this.xOffset = HUD_CONSTANTS.xOffset;
+        this.yOffset = HUD_CONSTANTS.yOffset;
+        this.lineHeight = HUD_CONSTANTS.lineHeight;
 
-        this.hudBoard = this.scene.add.container(1500, 0);
+        this.hudBoard = this.scene.add.container(
+            this.scene.scale.width - this.width,
+            0,
+        );
 
         this.fightInputDisplay = new FightInputMenu(scene);
 
