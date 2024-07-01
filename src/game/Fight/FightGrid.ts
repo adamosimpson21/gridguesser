@@ -22,6 +22,9 @@ import { start } from "node:repl";
 import { LocalStorageManager } from "@/game/Settings/LocalStorageManager";
 import { SETTING_CONSTANTS } from "@/game/Settings/settingConstants";
 import { HUD_CONSTANTS } from "@/game/Hud/hudConstants";
+import { getNumByLuck } from "@/game/functions/getNumByLuck";
+import { SHOP_ITEMS } from "@/game/Shop/shopItems";
+import { doXTimes } from "@/game/functions/doXTimes";
 
 export default class FightGrid extends GameObject {
     public scene: Fight;
@@ -138,40 +141,6 @@ export default class FightGrid extends GameObject {
 
         this.createAndHideEndGame();
 
-        // .setDisplaySize(300, 600);
-        // this.scrollTop = this.scene.add
-        //     .image(0, 0, "clipboard")
-        //     .setOrigin(0, 0)
-        //     .setDisplaySize(
-        //         this.scene.scale.width - HUD_CONSTANTS.width,
-        //         this.scene.scale.height / 10,
-        //     );
-        // this.scrollRight = this.scene.add
-        //     .image(
-        //         (this.scene.scale.width - HUD_CONSTANTS.width) * 0.9,
-        //         0,
-        //         "clipboard",
-        //     )
-        //     .setOrigin(0, 0)
-        //     .setDisplaySize(
-        //         (this.scene.scale.width - HUD_CONSTANTS.width) * 0.1,
-        //         this.scene.scale.height,
-        //     );
-        // this.scrollBottom = this.scene.add
-        //     .image(0, this.scene.scale.height * 0.9, "clipboard")
-        //     .setOrigin(0, 0)
-        //     .setDisplaySize(
-        //         this.scene.scale.width - HUD_CONSTANTS.width,
-        //         this.scene.scale.height / 10,
-        //     );
-        // this.scrollLeft = this.scene.add
-        //     .image(0, 0, "clipboard")
-        //     .setOrigin(0, 0)
-        //     .setDisplaySize(
-        //         (this.scene.scale.width - HUD_CONSTANTS.width) * 0.1,
-        //         this.scene.scale.height,
-        //     );
-
         if (
             this.height >= 18 ||
             this.width >= 18 ||
@@ -180,21 +149,6 @@ export default class FightGrid extends GameObject {
         ) {
             this.isLarge = true;
         }
-        //
-        // if (
-        //     this.isLarge &&
-        //     LocalStorageManager.getItem(SETTING_CONSTANTS.isMobile)
-        // ) {
-        //     this.scrollTop.setInteractive();
-        //     this.scrollTop.on(
-        //         "pointerover",
-        //         (pointer: Phaser.Input.Pointer) => {
-        //             if (pointer.leftButtonDown()) {
-        //                 this.board.setY(this.board.y - 3);
-        //             }
-        //         },
-        //     );
-        // }
 
         EventBus.on(GAME_EVENTS.GAME_OVER, () => {
             this.playing = false;
@@ -625,6 +579,55 @@ export default class FightGrid extends GameObject {
 
         const bombs = [];
 
+        // parse remove X by luck items
+        if (GameState.hasUpgrade("REMOVE_TRASH_BY_LUCK")) {
+            console.log("removing trash", trashQuantity);
+            trashQuantity -= getNumByLuck(
+                SHOP_ITEMS["REMOVE_TRASH_BY_LUCK"].effect
+                    .trashNumberReduceByLuck,
+            );
+        }
+        console.log("removed trash", trashQuantity);
+
+        if (GameState.hasUpgrade("REMOVE_LIES_BY_LUCK")) {
+            console.log("removing lies", lyingQuantity);
+            lyingQuantity -= getNumByLuck(
+                SHOP_ITEMS["REMOVE_LIES_BY_LUCK"].effect
+                    .lyingNumberReduceByLuck,
+            );
+        }
+        console.log("removed lies", lyingQuantity);
+
+        if (GameState.hasUpgrade("REMOVE_TENTACLES_BY_LUCK")) {
+            console.log("removing tentacles", tentacleQuantity);
+            tentacleQuantity -= getNumByLuck(
+                SHOP_ITEMS["REMOVE_TENTACLES_BY_LUCK"].effect
+                    .tentacleNumberReduceByLuck,
+            );
+        }
+        console.log("removed tentacles", tentacleQuantity);
+
+        const removeBombItemNum = GameState.numberOfUpgrade(
+            "REMOVE_BOMBS_BY_LUCK",
+        );
+        if (removeBombItemNum > 0) {
+            console.log("removing bombs", qty);
+            doXTimes(removeBombItemNum, () => {
+                const changeQty = getNumByLuck(
+                    SHOP_ITEMS["REMOVE_BOMBS_BY_LUCK"].effect
+                        .bombNumberReduceByLuck,
+                );
+                qty -= changeQty;
+                this.updateBombs(changeQty);
+                console.log("removed bombs", changeQty);
+            });
+
+            if (qty < 1) {
+                this.updateBombs(qty - 1);
+                qty = 1;
+            }
+        }
+
         do {
             this.emergencyGeneratorCutoffNumber++;
             const location = Phaser.Math.Between(0, this.size - 1);
@@ -672,7 +675,7 @@ export default class FightGrid extends GameObject {
             });
         });
 
-        if (GameState.fightCanHaveTrashTiles) {
+        if (GameState.fightCanHaveTrashTiles && trashQuantity > 0) {
             do {
                 this.emergencyGeneratorCutoffNumber++;
                 const location = Phaser.Math.Between(0, this.size - 1);
@@ -695,7 +698,7 @@ export default class FightGrid extends GameObject {
             );
         }
 
-        if (GameState.fightCanHaveLyingTiles) {
+        if (GameState.fightCanHaveLyingTiles && lyingQuantity > 0) {
             const trustedNum = GameState.trustedNumbers;
             do {
                 this.emergencyGeneratorCutoffNumber++;
@@ -720,7 +723,7 @@ export default class FightGrid extends GameObject {
             );
         }
 
-        if (GameState.fightCanHaveTentacles) {
+        if (GameState.fightCanHaveTentacles && tentacleQuantity > 0) {
             do {
                 this.emergencyGeneratorCutoffNumber++;
                 const location = Phaser.Math.Between(0, this.size - 1);
