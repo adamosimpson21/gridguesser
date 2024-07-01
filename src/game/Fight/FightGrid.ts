@@ -139,6 +139,35 @@ export default class FightGrid extends GameObject {
         this.createAndHideEndGame();
 
         // .setDisplaySize(300, 600);
+        this.scrollTop = this.scene.add
+            .image(0, 0, "clipboard")
+            .setOrigin(0, 0)
+            .setDisplaySize(
+                this.scene.scale.width - HUD_CONSTANTS.width,
+                this.scene.scale.height / 10,
+            );
+        this.scrollRight = this.scene.add
+            .image(0, 0, "clipboard")
+            .setOrigin(0, 0)
+            .setDisplaySize(
+                this.scene.scale.width - HUD_CONSTANTS.width,
+                this.scene.scale.height,
+            );
+        this.scrollBottom = this.scene.add
+            .image(0, this.scene.scale.height * 0.9, "clipboard")
+            .setOrigin(0, 0)
+            .setDisplaySize(
+                this.scene.scale.width - HUD_CONSTANTS.width,
+                this.scene.scale.height / 10,
+            );
+        this.scrollLeft = this.scene.add
+            .image(0, 0, "clipboard")
+            .setOrigin(0, 0)
+            .setDisplaySize(
+                (this.scene.scale.width - HUD_CONSTANTS.width) * 0.1,
+                this.scene.scale.height,
+            );
+
         if (
             this.height >= 18 ||
             this.width >= 18 ||
@@ -146,6 +175,16 @@ export default class FightGrid extends GameObject {
                 (this.height >= 12 || this.width >= 12))
         ) {
             this.isLarge = true;
+        }
+
+        if (
+            this.isLarge &&
+            LocalStorageManager.getItem(SETTING_CONSTANTS.isMobile)
+        ) {
+            this.scrollTop.setInteractive();
+            this.scrollTop.on("pointerover", () => {
+                this.board.setY(this.board.y - 3);
+            });
         }
 
         EventBus.on(GAME_EVENTS.GAME_OVER, () => {
@@ -157,7 +196,10 @@ export default class FightGrid extends GameObject {
     }
 
     update() {
-        if (this.isLarge) {
+        if (
+            this.isLarge &&
+            !LocalStorageManager.getItem(SETTING_CONSTANTS.isMobile)
+        ) {
             const sceneWidth = this.scene.scale.width;
             const sceneHeight = this.scene.scale.height;
             const pointerX = this.scene.input.x;
