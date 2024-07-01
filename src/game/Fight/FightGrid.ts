@@ -186,8 +186,10 @@ export default class FightGrid extends GameObject {
             LocalStorageManager.getItem(SETTING_CONSTANTS.isMobile)
         ) {
             this.scrollTop.setInteractive();
-            this.scrollTop.on("pointerover", () => {
-                this.board.setY(this.board.y - 3);
+            this.scrollTop.on("pointerover", (pointer: { isDown: boolean }) => {
+                if (pointer.isDown) {
+                    this.board.setY(this.board.y - 3);
+                }
             });
         }
 
