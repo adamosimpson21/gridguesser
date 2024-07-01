@@ -147,10 +147,14 @@ export default class FightGrid extends GameObject {
                 this.scene.scale.height / 10,
             );
         this.scrollRight = this.scene.add
-            .image(0, 0, "clipboard")
+            .image(
+                (this.scene.scale.width - HUD_CONSTANTS.width) * 0.9,
+                0,
+                "clipboard",
+            )
             .setOrigin(0, 0)
             .setDisplaySize(
-                this.scene.scale.width - HUD_CONSTANTS.width,
+                (this.scene.scale.width - HUD_CONSTANTS.width) * 0.1,
                 this.scene.scale.height,
             );
         this.scrollBottom = this.scene.add
